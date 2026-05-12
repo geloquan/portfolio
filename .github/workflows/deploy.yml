@@ -119,25 +119,35 @@ jobs:
 
             free_port_from_docker_containers() {
               local port="$1"
-              local container_ids
-              container_ids="$(docker ps -q --filter "publish=${port}" || true)"
-              if [ -z "$container_ids" ]; then
+              local containers
+              containers="$(docker ps --filter "publish=${port}" --format "{{.ID}} {{.Names}}" || true)"
+              if [ -z "$containers" ]; then
                 return
               fi
 
               log "⚠️ Port ${port} is in use by Docker container(s). Releasing it before deploy..."
-              while IFS= read -r container_id; do
+              while IFS=' ' read -r container_id container_name; do
                 [ -z "$container_id" ] && continue
-                container_name="$(docker ps --filter "id=$container_id" --format "{{.Names}}" | head -n 1)"
                 log "🛑 Stopping container ${container_name:-$container_id} (ID: $container_id) using port ${port}"
-                docker stop "$container_id"
-                docker rm "$container_id"
-              done <<< "$container_ids"
+                docker stop "$container_id" || fail "Failed to stop container $container_id while releasing port ${port}."
+                docker rm "$container_id" || fail "Failed to remove container $container_id while releasing port ${port}."
+              done <<< "$containers"
             }
 
             verify_port_available() {
               local port="$1"
-              if command -v ss >/dev/null 2>&1 && [ -n "$(ss -ltnH "sport = :$port" || true)" ]; then
+              local in_use
+              in_use=""
+
+              if command -v ss >/dev/null 2>&1; then
+                in_use="$(ss -ltnH | awk '{print $4}' | grep -E "[:.]${port}$" || true)"
+              elif command -v netstat >/dev/null 2>&1; then
+                in_use="$(netstat -ltn 2>/dev/null | awk '{print $4}' | grep -E "[:.]${port}$" || true)"
+              else
+                fail "Unable to verify port ${port} availability (neither ss nor netstat is installed)."
+              fi
+
+              if [ -n "$in_use" ]; then
                 fail "Port ${port} is still in use by a non-Docker process. Stop the process and re-run deployment."
               fi
             }
