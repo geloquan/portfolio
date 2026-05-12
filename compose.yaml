@@ -4,6 +4,14 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "8080:80"
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
     cpus: 0.5
     mem_limit: 200m
+
+volumes:
+  caddy_data:
+  caddy_config:

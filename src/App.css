@@ -21,15 +21,27 @@
 
 .top-nav {
   position: sticky;
-  top: 0;
+  top: 0.8rem;
   z-index: 10;
   background: color-mix(in srgb, var(--bg) 92%, white 8%);
-  border-bottom: 1px solid var(--border);
+  border: 1px solid var(--border);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 0.9rem 1rem;
+  justify-content: center;
+  gap: 0.75rem;
+  width: fit-content;
+  margin: 0.6rem auto 0;
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+  transition: box-shadow 0.25s ease, transform 0.25s ease, border-radius 0.25s ease, background-color 0.25s ease;
+}
+
+.top-nav.island {
+  border-radius: 999px;
+  box-shadow: 0 14px 35px rgb(0 0 0 / 16%);
+  transform: translateY(0.1rem);
+  background: color-mix(in srgb, var(--surface) 88%, var(--bg) 12%);
 }
 
 .brand {
@@ -70,7 +82,7 @@
 main {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 1.2rem 1rem 2rem;
+  padding: 0.35rem 1rem 2rem;
 }
 
 section {
@@ -198,6 +210,29 @@ p {
   padding: 0.85rem;
 }
 
+.floater-showcase {
+  margin-top: 0.8rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.floater-showcase span {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 84%, var(--primary) 16%);
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  animation: floater 3.2s ease-in-out infinite;
+}
+
+.floater-showcase span:nth-child(2) {
+  animation-delay: 0.6s;
+}
+
+.floater-showcase span:nth-child(3) {
+  animation-delay: 1.2s;
+}
+
 .footer {
   border-top: 1px solid var(--border);
   margin: 0 auto;
@@ -233,6 +268,16 @@ p {
   }
 }
 
+@keyframes floater {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
 .reduce-motion * {
   animation-duration: 0s;
   animation-iteration-count: 1;
@@ -247,8 +292,8 @@ p {
 
   .nav-links {
     position: absolute;
-    right: 1rem;
-    top: 4.1rem;
+    right: 0.2rem;
+    top: 3.6rem;
     flex-direction: column;
     align-items: stretch;
     padding: 0.6rem;

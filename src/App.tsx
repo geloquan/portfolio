@@ -38,6 +38,7 @@ function App() {
   })
   const [menuOpen, setMenuOpen] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
+  const [isNavIsland, setIsNavIsland] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -62,6 +63,15 @@ function App() {
 
     mediaQuery.addEventListener('change', onPreferenceChange)
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
+  }, [])
+
+  useEffect(() => {
+    const onScroll = () => setIsNavIsland(window.scrollY > 20)
+
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   const projects: Project[] = useMemo(
@@ -105,15 +115,16 @@ function App() {
   const sections = [
     { id: 'about', label: 'About' },
     { id: 'projects', label: 'Projects' },
+    { id: 'skills', label: 'Skills' },
     { id: 'education', label: 'Education' },
     { id: 'contact', label: 'Contact' },
   ]
 
   return (
     <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
-      <header className="top-nav">
+      <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
         <a className="brand" href="#about">
-          Gelo Quan
+          Marco Angelo Quanico
         </a>
 
         <button
@@ -146,15 +157,15 @@ function App() {
           <img
             className="profile-photo"
             src="/profile-placeholder.svg"
-            alt="Gelo Quan profile placeholder"
+            alt="Marco Angelo Quanico character portrait"
             loading="lazy"
           />
           <div>
-            <p className="pill">Frontend Engineer · Product Builder</p>
-            <h1>Building thoughtful, high-performance digital experiences.</h1>
+            <p className="pill">Marco Angelo Quanico · Frontend Engineer · Product Builder</p>
+            <h1>Building expressive, high-performance digital experiences.</h1>
             <p>
-              I design and ship modern portfolio and business experiences that blend performance, storytelling, and
-              social-friendly media previews.
+              I design and ship modern portfolio and product experiences that blend performance, storytelling, and
+              visual interaction.
             </p>
           </div>
         </section>
@@ -212,6 +223,19 @@ function App() {
           </div>
         </section>
 
+        <section id="skills">
+          <h2>Skill Gain: Three.js Floaters</h2>
+          <p>
+            I recently leveled up in building floater systems with three.js, focusing on lightweight motion, depth, and
+            smooth interaction timing for portfolio visuals.
+          </p>
+          <div className="floater-showcase" aria-label="Three.js floater skill showcase">
+            <span>three.js scene setup</span>
+            <span>floating meshes</span>
+            <span>interaction tuning</span>
+          </div>
+        </section>
+
         <section id="education">
           <h2>Education</h2>
           <div className="education-card">
@@ -223,7 +247,7 @@ function App() {
       </main>
 
       <footer id="contact" className="footer">
-        <p>Let's collaborate on modern web experiences.</p>
+        <p>Let&apos;s collaborate on modern web experiences.</p>
         <div className="social-links">
           <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">
             GitHub

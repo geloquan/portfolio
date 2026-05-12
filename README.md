@@ -7,7 +7,9 @@ A Vite + React single-page portfolio with light/dark mode, responsive navigation
 - Primary branding color: `#92DCE5`
 - Light/dark mode toggle
 - Responsive navigation menu and mobile layout support
+- Scroll-aware floating “island” navigation style
 - Smooth section transitions with reduced-motion support for low-power devices
+- Skill section highlighting three.js floater creation progress
 - Projects section (under 10 projects) with:
   - avatar/logo
   - image/video preview from Cloudflare URLs (via `.env`)
@@ -50,16 +52,16 @@ npm run dev
 npm run build
 ```
 
-## Docker (production)
+## Docker (production with Caddy)
 
 Build and run with Docker CLI using CPU/RAM limits:
 
 ```bash
 docker build -t portfolio .
-docker run --rm -p 8080:80 --cpus=0.5 --memory=200m portfolio
+docker run --rm -p 80:80 -p 443:443 --cpus=0.5 --memory=200m portfolio
 ```
 
-Or use Compose (`compose.yaml`) with the same limits:
+Or use Compose (`compose.yaml` or `dockerCompose.yml`) with the same limits:
 
 ```bash
 docker compose up --build

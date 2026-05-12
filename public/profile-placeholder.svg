@@ -8,6 +8,7 @@
   <rect width="1080" height="1920" fill="url(#bg)"/>
   <circle cx="540" cy="700" r="250" fill="#FFFFFF" fill-opacity="0.2"/>
   <rect x="260" y="1020" width="560" height="500" rx="220" fill="#FFFFFF" fill-opacity="0.2"/>
-  <text x="540" y="1640" text-anchor="middle" fill="#FFFFFF" font-size="72" font-family="Arial, sans-serif">1080 x 1920</text>
-  <text x="540" y="1730" text-anchor="middle" fill="#FFFFFF" font-size="48" font-family="Arial, sans-serif">Profile Placeholder</text>
+  <text x="540" y="770" text-anchor="middle" fill="#FFFFFF" font-size="220" font-family="Arial, sans-serif" font-weight="700">MAQ</text>
+  <text x="540" y="1640" text-anchor="middle" fill="#FFFFFF" font-size="58" font-family="Arial, sans-serif">Marco Angelo Quanico</text>
+  <text x="540" y="1730" text-anchor="middle" fill="#FFFFFF" font-size="44" font-family="Arial, sans-serif">Frontend Engineer · Product Builder</text>
 </svg>
