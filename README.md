@@ -72,7 +72,6 @@ cp .env.example .env
 Set these deployment variables in `.env` for HTTPS:
 
 - `SITE_HOSTNAMES=marcoangeloquanico.work, www.marcoangeloquanico.work`
-- `ACME_EMAIL=you@example.com`
 
 Then start both services:
 
@@ -124,15 +123,15 @@ If you see a generic **Host Error** instead of the site:
    ```
    You should see both `portfolio` and `caddy` in `Up` status.
 2. Confirm DNS points both hostnames to the VPS public IP:
-    - `marcoangeloquanico.work` (A/AAAA as needed)
-    - `www.marcoangeloquanico.work` (CNAME or A/AAAA)
+   - `marcoangeloquanico.work` (A/AAAA as needed)
+   - `www.marcoangeloquanico.work` (CNAME or A/AAAA)
 3. If DNS is proxied through a provider (Cloudflare, etc.), verify the proxy/origin settings still target this VPS and are not pointing at an old host.
 4. Confirm ports `80/tcp` and `443/tcp` are open in the VPS firewall/security group and mapped by Compose:
    ```bash
    docker compose ps --format "table {{.Name}}\t{{.Ports}}"
    ```
    Expected `caddy` mappings include `:80->80/tcp` and `:443->443/tcp`.
-5. If HTTPS is not issuing, verify `.env` includes `SITE_HOSTNAMES` and `ACME_EMAIL`, then restart:
+5. If HTTPS is not issuing, verify `.env` includes `SITE_HOSTNAMES`, then restart:
    ```bash
    docker compose up -d --build
    ```
