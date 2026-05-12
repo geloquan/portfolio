@@ -15,7 +15,7 @@ const primaryColor = '#92DCE5'
 const env = import.meta.env as Record<string, string | undefined>
 
 const getCloudflareR2EnvValue = (name: string) =>
-  env[`CLOUDflare_R2_${name}`] ?? env[`CLOUDFLARE_R2_${name}`]
+  env[`CLOUDFLARE_R2_${name}`] ?? env[`CLOUDflare_R2_${name}`]
 
 const toEmbedYoutubeUrl = (url?: string) => {
   if (!url) return undefined
@@ -168,7 +168,7 @@ function App() {
                     />
                 ) : (
                     <div className="preview-fallback">
-                      <span>Set CLOUDflare_R2_PROFILE_IMAGE_URL in .env to show profile photo.</span>
+                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in .env to show profile photo.</span>
                     </div>
                 )}
                 <div className="profile-glow" aria-hidden="true" />
@@ -233,7 +233,7 @@ function App() {
                             )
                         ) : (
                             <div className="preview-fallback">
-                              <span>Set CLOUDflare_R2_PROJECT_*_MEDIA_URL in .env to show preview.</span>
+                              <span>Set CLOUDFLARE_R2_PROJECT_*_MEDIA_URL in .env to show preview.</span>
                             </div>
                         )}
                       </div>

@@ -26,15 +26,15 @@ cp .env.example .env.local
 cp .env.example .env.production
 ```
 
-Set Cloudflare R2 media URLs with the `CLOUDflare_R2_` prefix:
+Set Cloudflare R2 media URLs with the `CLOUDFLARE_R2_` prefix:
 
-- `CLOUDflare_R2_PROFILE_IMAGE_URL`
-- `CLOUDflare_R2_PROJECT_ONE_MEDIA_URL`
-- `CLOUDflare_R2_PROJECT_TWO_MEDIA_URL`
-- `CLOUDflare_R2_PROJECT_THREE_MEDIA_URL`
-- `CLOUDflare_R2_PROJECT_FOUR_MEDIA_URL`
+- `CLOUDFLARE_R2_PROFILE_IMAGE_URL`
+- `CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL`
+- `CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL`
+- `CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL`
+- `CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL`
 
-Vite is configured to expose both `CLOUDflare_R2_*` and `CLOUDFLARE_R2_*` prefixes to the app, so either naming style works during migration.
+Vite is configured to expose both `CLOUDFLARE_R2_*` and `CLOUDflare_R2_*` prefixes to the app, so either naming style works during migration.
 
 Optional social preview links are also supported:
 
