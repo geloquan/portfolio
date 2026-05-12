@@ -117,12 +117,41 @@ jobs:
               fi
             }
 
+            free_port_from_docker_containers() {
+              local port="$1"
+              local container_ids
+              container_ids="$(docker ps -q --filter "publish=${port}" || true)"
+              if [ -z "$container_ids" ]; then
+                return
+              fi
+
+              log "⚠️ Port ${port} is in use by Docker container(s). Releasing it before deploy..."
+              while IFS= read -r container_id; do
+                [ -z "$container_id" ] && continue
+                container_name="$(docker ps --filter "id=$container_id" --format "{{.Names}}" | head -n 1)"
+                log "🛑 Stopping container ${container_name:-$container_id} (ID: $container_id) using port ${port}"
+                docker stop "$container_id"
+                docker rm "$container_id"
+              done <<< "$container_ids"
+            }
+
+            verify_port_available() {
+              local port="$1"
+              if command -v ss >/dev/null 2>&1 && [ -n "$(ss -ltnH "sport = :$port" || true)" ]; then
+                fail "Port ${port} is still in use by a non-Docker process. Stop the process and re-run deployment."
+              fi
+            }
+
             log "🚀 Starting secure Portfolio deployment (Caddy stack)..."
             check_deployment_keys
             ensure_known_hosts
             sync_repository
 
             cd "$DEPLOY_DIR"
+            free_port_from_docker_containers 80
+            free_port_from_docker_containers 443
+            verify_port_available 80
+            verify_port_available 443
             log "♻️ Restarting stack (portfolio + caddy)..."
             docker compose up -d --build
 
