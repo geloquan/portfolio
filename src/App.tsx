@@ -1,37 +1,28 @@
 import { useEffect, useMemo, useState } from 'react'
 import './App.css'
+import portfolioLogo from './assets/portfolio-logo.png'
+import projectOneLogo from './assets/project-1-logo.svg'
+import projectTwoLogo from './assets/project-2-logo.png'
+import projectThreeLogo from './assets/project-3-logo.svg'
+import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
+import resumePdf from './resume-ma-quanico.pdf'
 
 type Project = {
   name: string
   summary: string
   avatarUrl: string
+  category: string
+  techstack: string
+  highlights: string[]
   mediaType: 'image' | 'video'
   mediaUrl?: string
-  youtubeUrl?: string
-  facebookUrl?: string
 }
 
 const primaryColor = '#92DCE5'
 const env = import.meta.env
 
-// Keep CLOUDFLARE_R2_ fallback temporarily to avoid breaking mixed-case legacy env files.
 const getCloudflareR2EnvValue = (name: string) =>
   env[`CLOUDFLARE_R2_${name}`] ?? env[`CLOUDFLARE_R2_${name}`]
-
-const toEmbedYoutubeUrl = (url?: string) => {
-  if (!url) return undefined
-  try {
-    const parsedUrl = new URL(url)
-    if (parsedUrl.hostname.includes('youtu.be')) {
-      const videoId = parsedUrl.pathname.replace('/', '')
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : undefined
-    }
-    const videoId = parsedUrl.searchParams.get('v')
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : undefined
-  } catch {
-    return undefined
-  }
-}
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -71,249 +62,319 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL')
+  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL') || fallbackProfilePhoto
+  const thesisPaperUrl =
+    import.meta.env.VITE_THESIS_PAPER_URL || getCloudflareR2EnvValue('THESIS_PAPER_URL')
 
   const projects: Project[] = useMemo(
-      () => [
-        {
-          name: 'Portfolio Experience',
-          summary: 'A responsive, conversion-focused portfolio showcasing product, UI, and frontend engineering work.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=portfolio',
-          mediaType: 'image',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
-          youtubeUrl: import.meta.env.VITE_PROJECT_ONE_YOUTUBE_URL,
-          facebookUrl: import.meta.env.VITE_PROJECT_ONE_FACEBOOK_URL,
-        },
-        {
-          name: 'Creator Demo Reel',
-          summary: 'A short-form highlight reel for social campaigns and interactive launch pages.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=creator',
-          mediaType: 'video',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
-          youtubeUrl: import.meta.env.VITE_PROJECT_TWO_YOUTUBE_URL,
-        },
-        {
-          name: 'Cloud Media Hub',
-          summary: 'Cloudflare-first media delivery with optimized image/video pipelines and lightweight UX.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=cloud',
-          mediaType: 'image',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
-          facebookUrl: import.meta.env.VITE_PROJECT_THREE_FACEBOOK_URL,
-        },
-        {
-          name: 'Community Launch Kit',
-          summary: 'Landing experience with social storytelling, creator assets, and audience-ready previews.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=community',
-          mediaType: 'video',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_FOUR_MEDIA_URL'),
-        },
-      ],
-      [],
+    () => [
+      {
+        name: 'Medical Arts Platform',
+        category: 'Enterprise Healthcare Platform',
+        summary:
+          'A medical doctor platform with dynamic scheduling and clinic operations support for enterprise-level workflows.',
+        avatarUrl: projectOneLogo,
+        techstack:
+          'React + Laravel + Monitoring Automation (Grafana) + Queue Jobs + Schedule Jobs + Email system + Ubuntu + Node + RESTful API + Cloudflare R2 Bucket + Git',
+        highlights: [
+          'Doctor dynamic scheduling',
+          'Doctor directory and notifications',
+          'Clinic role management',
+          'Only project with Cloudflare R2-hosted video preview',
+        ],
+        mediaType: 'video',
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
+      },
+      {
+        name: 'Seashell Counting and Logging Application',
+        category: 'Android + Computer Vision',
+        summary:
+          'A mobile Android application that uses Kotlin with YOLOv8 OBB-assisted Python inferences to classify and quantify seashell data.',
+        avatarUrl: projectTwoLogo,
+        techstack: 'Kotlin + Python Inference Pipeline + YOLOv8 OBB + JSON logging structure',
+        highlights: [
+          'Proof-of-work for bachelor research thesis',
+          'Quantifies metadata from detection outputs',
+          'Stores and logs counting records',
+        ],
+        mediaType: 'image',
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
+      },
+      {
+        name: 'Doctor Directory Information System',
+        category: 'Medical Compliance System',
+        summary:
+          "A compliance-driven local deployment for a medical center in Bacolod City, focused on admin-only doctor's directory operations.",
+        avatarUrl: projectThreeLogo,
+        techstack: 'PHP Blade + Laravel + PostgreSQL',
+        highlights: [
+          'Admin user role only',
+          'Doctor directory full CRUD and search',
+          'Built for local medical center compliance requirements',
+        ],
+        mediaType: 'image',
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
+      },
+    ],
+    [],
   )
 
   const sections = [
     { id: 'about', label: 'About' },
+    { id: 'research', label: 'Research' },
     { id: 'projects', label: 'Projects' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'education', label: 'Education' },
+    { id: 'experience', label: 'Experience' },
     { id: 'contact', label: 'Contact' },
   ]
 
   return (
-      <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
-        <div className="grain" aria-hidden="true" />
+    <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
+      <div className="grain" aria-hidden="true" />
 
-        {/* ── NAV ── */}
-        <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
-          <a className="brand" href="#about">MAQ</a>
+      <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
+        <a className="brand" href="#about">
+          <img src={portfolioLogo} alt="Marco Angelo Quanico logo" />
+          <span>MAQ</span>
+        </a>
 
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((c) => !c)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          {sections.map((section) => (
+            <a key={section.id} href={`#${section.id}`} onClick={() => setMenuOpen(false)}>
+              {section.label}
+            </a>
+          ))}
           <button
-              className="menu-toggle"
-              type="button"
-              aria-label="Toggle navigation"
-              onClick={() => setMenuOpen((c) => !c)}
+            className="theme-toggle"
+            type="button"
+            onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
+            aria-label="Toggle theme"
           >
-            <span />
-            <span />
-            <span />
+            {theme === 'dark' ? '☀' : '◑'}
           </button>
+        </nav>
+      </header>
 
-          <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
-            {sections.map((section) => (
-                <a key={section.id} href={`#${section.id}`} onClick={() => setMenuOpen(false)}>
-                  {section.label}
-                </a>
-            ))}
-            <button
-                className="theme-toggle"
-                type="button"
-                onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
-                aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? '☀' : '◑'}
-            </button>
-          </nav>
-        </header>
-
-        <main>
-          {/* ── HERO ── */}
-          <section className="hero" id="about">
-            <div className="hero-visual">
-              <div className="profile-wrap">
-                {profileImageUrl ? (
-                    <img
-                        className="profile-photo"
-                        src={profileImageUrl}
-                        alt="Marco Angelo Quanico character portrait"
-                        loading="lazy"
-                    />
-                ) : (
-                    <div className="preview-fallback">
-                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
-                    </div>
-                )}
-                <div className="profile-glow" aria-hidden="true" />
-              </div>
-              <div className="hero-badge">
-                <span className="badge-dot" />
-                Available for work
-              </div>
+      <main>
+        <section className="hero" id="about">
+          <div className="hero-visual">
+            <div className="profile-wrap">
+              <img
+                className="profile-photo"
+                src={profileImageUrl}
+                alt="Marco Angelo P. Quanico portrait"
+                loading="lazy"
+              />
+              <div className="profile-glow" aria-hidden="true" />
             </div>
-
-            <div className="hero-text">
-              <div className="hero-roles">
-                <span>Frontend Engineer</span>
-                <span>·</span>
-                <span>Product Builder</span>
-              </div>
-              <h1>
-                Building<br />
-                <em>expressive</em><br />
-                experiences.
-              </h1>
-              <p className="hero-desc">
-                I design and ship modern portfolio and product experiences that blend
-                performance, storytelling, and visual interaction.
-              </p>
-              <div className="hero-actions">
-                <a href="#projects" className="btn-primary">View Projects</a>
-                <a href="#contact" className="btn-ghost">Get in Touch ↗</a>
-              </div>
+            <div className="hero-badge">
+              <span className="badge-dot" />
+              Open for client projects + free consultations
             </div>
-          </section>
+          </div>
 
-          {/* ── PROJECTS ── */}
-          <section id="projects">
-            <div className="section-label-row">
-              <span className="section-index">02</span>
-              <h2>Selected Projects</h2>
+          <div className="hero-text">
+            <div className="hero-roles">
+              <span>Software Developer</span>
+              <span>·</span>
+              <span>Business-Oriented Builder</span>
             </div>
-
-            <div className="bento-grid">
-              {projects.map((project, i) => {
-                const youtubeEmbed = toEmbedYoutubeUrl(project.youtubeUrl)
-                return (
-                    <article key={project.name} className={`project-card span-${i === 0 || i === 3 ? 'full' : 'half'}`}>
-                      <div className="card-stripe" aria-hidden="true" />
-
-                      <div className="project-head">
-                        <img src={project.avatarUrl} alt={`${project.name} avatar`} width={48} height={48} loading="lazy" />
-                        <div>
-                          <h3>{project.name}</h3>
-                          <p>{project.summary}</p>
-                        </div>
-                        <span className="card-index">{String(i + 1).padStart(2, '0')}</span>
-                      </div>
-
-                      <div className="preview-box">
-                        {project.mediaUrl ? (
-                            project.mediaType === 'video' ? (
-                                <video controls preload="metadata" src={project.mediaUrl} />
-                            ) : (
-                                <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
-                            )
-                        ) : (
-                            <div className="preview-fallback">
-                              <span>Set CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL (and other project media vars) in your env file.</span>
-                            </div>
-                        )}
-                      </div>
-
-                      {youtubeEmbed && (
-                          <div className="embed-wrap">
-                            <iframe
-                                title={`${project.name} YouTube preview`}
-                                src={youtubeEmbed}
-                                loading="lazy"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            />
-                          </div>
-                      )}
-
-                      {project.facebookUrl && (
-                          <a className="facebook-preview" href={project.facebookUrl} target="_blank" rel="noreferrer">
-                            <span className="fb-label">Facebook</span>
-                            <strong>{project.name} launch post</strong>
-                            <small>Tap to open the full post ↗</small>
-                          </a>
-                      )}
-                    </article>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* ── SKILLS ── */}
-          <section id="skills">
-            <div className="section-label-row">
-              <span className="section-index">03</span>
-              <h2>Skill Gain: Three.js Floaters</h2>
-            </div>
-            <p className="section-body">
-              I recently leveled up in building floater systems with three.js, focusing on lightweight
-              motion, depth, and smooth interaction timing for portfolio visuals.
+            <h1>
+              Building systems that
+              <br />
+              create better
+              <em> outcomes.</em>
+            </h1>
+            <p className="hero-desc">
+              Fresh Computer Science graduate with 4+ years of project-building and healthcare IT
+              experience. I focus on reliable delivery, client satisfaction, and software that
+              supports real business and operational goals.
             </p>
-            <div className="floater-showcase" aria-label="Three.js floater skill showcase">
-              <span>three.js scene setup</span>
-              <span>floating meshes</span>
-              <span>interaction tuning</span>
+            <div className="hero-actions">
+              <a href="#projects" className="btn-primary">
+                Explore My Work
+              </a>
+              <a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">
+                Download Resume
+              </a>
+              <a
+                href="mailto:marcoangelo.quanico@gmail.com?subject=Free%20Consultation%20Request"
+                className="btn-ghost"
+              >
+                Request Free Consultation
+              </a>
             </div>
-          </section>
-
-          {/* ── EDUCATION ── */}
-          <section id="education">
-            <div className="section-label-row">
-              <span className="section-index">04</span>
-              <h2>Education</h2>
-            </div>
-            <div className="education-card">
-              <div className="edu-year">B.S. Information Technology</div>
-              <h3>University-focused training in software engineering, UI/UX, and web systems architecture.</h3>
-              <p>Core focus: frontend engineering, cloud deployment, and multimedia web delivery.</p>
-            </div>
-          </section>
-        </main>
-
-        {/* ── FOOTER / CONTACT ── */}
-        <footer id="contact" className="footer">
-          <div className="footer-inner">
-            <div className="footer-left">
-              <span className="section-index">05</span>
-              <p className="footer-tagline">Let's collaborate on modern web experiences.</p>
-            </div>
-            <div className="social-links">
-              <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">GitHub ↗</a>
-              <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-              <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook ↗</a>
+            <div className="hero-signals">
+              <span>10 months healthcare IT industry experience</span>
+              <span>9 units MSCS in progress</span>
+              <span>Best in Thesis - ICT Expo 2026</span>
             </div>
           </div>
-          <div className="footer-bottom">
-            <span>© 2025 Marco Angelo Quanico</span>
-            <span>Cebu City, PH</span>
+        </section>
+
+        <section id="research">
+          <div className="section-label-row">
+            <span className="section-index">02</span>
+            <h2>Academic Research Spotlight</h2>
           </div>
-        </footer>
-      </div>
+          <div className="research-grid">
+            <article className="research-card">
+              <h3>Determining Seashell Abundance through Image Processing</h3>
+              <p>
+                Research focused on computer vision with YOLOv8 for classifying and counting three
+                seashell species. This thesis was presented and awarded as the Best Thesis during
+                the 2026 ICT Expo.
+              </p>
+              <div className="research-points">
+                <span>YOLOv8-based classification</span>
+                <span>Three-species abundance counting</span>
+                <span>Bachelor degree requirement proof-of-work</span>
+              </div>
+              <div className="research-actions">
+                {thesisPaperUrl ? (
+                  <>
+                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">
+                      Open Thesis
+                    </a>
+                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-ghost">
+                      Download Thesis
+                    </a>
+                  </>
+                ) : (
+                  <div className="preview-fallback">
+                    <span>Set VITE_THESIS_PAPER_URL or CLOUDFLARE_R2_THESIS_PAPER_URL for thesis file.</span>
+                  </div>
+                )}
+              </div>
+            </article>
+
+            <article className="thesis-preview-card">
+              <div className="preview-title">Visual Thesis Preview</div>
+              {thesisPaperUrl ? (
+                <iframe title="Research thesis visual preview" src={thesisPaperUrl} />
+              ) : (
+                <div className="preview-fallback">
+                  <span>Thesis preview appears here when thesis URL is provided.</span>
+                </div>
+              )}
+            </article>
+          </div>
+        </section>
+
+        <section id="projects">
+          <div className="section-label-row">
+            <span className="section-index">03</span>
+            <h2>Selected Projects</h2>
+          </div>
+
+          <div className="bento-grid">
+            {projects.map((project, i) => (
+              <article key={project.name} className={`project-card span-${i === 0 ? 'full' : 'half'}`}>
+                <div className="card-stripe" aria-hidden="true" />
+                <div className="project-head">
+                  <img src={project.avatarUrl} alt={`${project.name} logo`} width={48} height={48} loading="lazy" />
+                  <div>
+                    <p className="project-category">{project.category}</p>
+                    <h3>{project.name}</h3>
+                    <p>{project.summary}</p>
+                  </div>
+                  <span className="card-index">{String(i + 1).padStart(2, '0')}</span>
+                </div>
+
+                <p className="techstack-text">
+                  <strong>Tech stack:</strong> {project.techstack}
+                </p>
+                <ul className="project-highlights">
+                  {project.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
+                  ))}
+                </ul>
+
+                <div className="preview-box">
+                  {project.mediaUrl ? (
+                    project.mediaType === 'video' ? (
+                      <video controls preload="metadata" src={project.mediaUrl} />
+                    ) : (
+                      <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
+                    )
+                  ) : (
+                    <div className="preview-fallback">
+                      <span>Set Cloudflare R2 project media env values to display preview assets.</span>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="experience">
+          <div className="section-label-row">
+            <span className="section-index">04</span>
+            <h2>Industry Experience & Client Focus</h2>
+          </div>
+          <div className="experience-grid">
+            <article className="experience-card">
+              <h3>Adventist Medical Center Bacolod · IT Staff (Probationary)</h3>
+              <p>
+                Led maintenance and improvement of a hospital HR system, resolved production issues,
+                cleared 60% backlog fixes, and developed shift scheduling with swap/approval flow.
+              </p>
+            </article>
+            <article className="experience-card">
+              <h3>Riverside Medical Center Inc. · Practicum / OJT</h3>
+              <p>
+                Designed and developed an institution doctor directory with 85% UX satisfaction
+                feedback from software stakeholders.
+              </p>
+            </article>
+            <article className="experience-card consultation-card">
+              <h3>Consultation Approach</h3>
+              <p>
+                I prioritize requirement clarity, business practicality, and measurable outcomes. I
+                also accept free consultations via video-call platforms to discuss your project.
+              </p>
+              <a
+                href="mailto:marcoangelo.quanico@gmail.com?subject=Video%20Consultation%20Booking"
+                className="btn-primary"
+              >
+                Book a Free Video Consultation
+              </a>
+            </article>
+          </div>
+        </section>
+      </main>
+
+      <footer id="contact" className="footer">
+        <div className="footer-inner">
+          <div className="footer-left">
+            <span className="section-index">05</span>
+            <p className="footer-tagline">Let&apos;s build software that your users and clients can trust.</p>
+          </div>
+          <div className="social-links">
+            <a href="mailto:marcoangelo.quanico@gmail.com">Email</a>
+            <a href="tel:+639218692170">Call</a>
+            <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Marco Angelo P. Quanico</span>
+          <span>Bacolod City, PH</span>
+        </div>
+      </footer>
+    </div>
   )
 }
 
