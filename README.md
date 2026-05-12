@@ -61,7 +61,7 @@ npm run build
 Use Compose for the production stack. It runs two uniquely named services:
 
 - `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `80`
-- `caddy` (`portfolio-caddy:local`) — reverse proxies host port `8080` (default) to `portfolio` on internal port `80`
+- `caddy` (`portfolio-caddy:local`) — handles TLS, redirects HTTP to HTTPS, and reverse proxies to `portfolio` on internal port `80`
 
 Compose reads build-time variables from your shell or a local `.env` file in the repo root.
 
@@ -69,18 +69,23 @@ Compose reads build-time variables from your shell or a local `.env` file in the
 cp .env.example .env
 ```
 
+Set these deployment variables in `.env` for HTTPS:
+
+- `SITE_HOSTNAMES=marcoangeloquanico.work, www.marcoangeloquanico.work`
+- `ACME_EMAIL=you@example.com`
+
 Then start both services:
 
 ```bash
 docker compose up --build
 ```
 
-Open `http://localhost:8080` after startup.
+Open `https://marcoangeloquanico.work` after DNS is pointed to the VPS and certificates are issued.
 
-If you need a different host port, set `CADDY_HOST_PORT` before starting Compose:
+For local/non-root testing where binding to 80/443 is not available, override host ports:
 
 ```bash
-CADDY_HOST_PORT=8081 docker compose up --build
+CADDY_HTTP_PORT=8080 CADDY_HTTPS_PORT=8443 docker compose up --build
 ```
 
 The production deployment workflow also runs the full stack (`docker compose up -d --build`) so both `portfolio` and `caddy` are always running.
@@ -119,6 +124,15 @@ If you see a generic **Host Error** instead of the site:
    ```
    You should see both `portfolio` and `caddy` in `Up` status.
 2. Confirm DNS points both hostnames to the VPS public IP:
-   - `marcoangeloquanico.work` (A/AAAA as needed)
-   - `www.marcoangeloquanico.work` (CNAME or A/AAAA)
+    - `marcoangeloquanico.work` (A/AAAA as needed)
+    - `www.marcoangeloquanico.work` (CNAME or A/AAAA)
 3. If DNS is proxied through a provider (Cloudflare, etc.), verify the proxy/origin settings still target this VPS and are not pointing at an old host.
+4. Confirm ports `80/tcp` and `443/tcp` are open in the VPS firewall/security group and mapped by Compose:
+   ```bash
+   docker compose ps --format "table {{.Name}}\t{{.Ports}}"
+   ```
+   Expected `caddy` mappings include `:80->80/tcp` and `:443->443/tcp`.
+5. If HTTPS is not issuing, verify `.env` includes `SITE_HOSTNAMES` and `ACME_EMAIL`, then restart:
+   ```bash
+   docker compose up -d --build
+   ```

@@ -37,3 +37,4 @@ EXPOSE 80
 FROM caddy:2.10-alpine AS caddy
 COPY Caddyfile /etc/caddy/Caddyfile
 EXPOSE 80
+EXPOSE 443

@@ -1,4 +1,13 @@
-:80 {
+{
+	email {$ACME_EMAIL:admin@example.com}
+}
+
+{$SITE_HOSTNAMES:marcoangeloquanico.work, www.marcoangeloquanico.work} {
+	encode gzip zstd
+	reverse_proxy portfolio:80
+}
+
+localhost {
 	encode gzip zstd
 	reverse_proxy portfolio:80
 }
