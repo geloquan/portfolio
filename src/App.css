@@ -240,15 +240,6 @@ p {
   scroll-behavior: auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation-duration: 0s;
-    animation-iteration-count: 1;
-    transition-duration: 0s;
-    scroll-behavior: auto;
-  }
-}
-
 @media (max-width: 780px) {
   .menu-toggle {
     display: inline-block;
