@@ -48,7 +48,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
-          envs: DEPLOY_IMAGE,DEPLOY_LOCAL_TAG,GHCR_USERNAME,GHCR_TOKEN
+          envs: DEPLOY_LOCAL_TAG
           script: |
             set -euo pipefail
             echo "🚀 Starting deployment of Portfolio..."
@@ -66,14 +66,6 @@ jobs:
 
             # Return to deployment root
             cd ~/mabdoc-deploy
-
-            if [ -z "${GHCR_USERNAME}" ] || [ -z "${GHCR_TOKEN}" ]; then
-              echo "❌ Missing GHCR credentials. Configure GHCR_USERNAME and GHCR_TOKEN secrets on this repository."
-              exit 1
-            fi
-
-            echo "🔐 Logging in to GHCR..."
-            echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
 
             echo "📦 Pulling image ${DEPLOY_IMAGE}..."
             docker pull "${DEPLOY_IMAGE}"
