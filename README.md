@@ -10,12 +10,11 @@ A Vite + React single-page portfolio with light/dark mode, responsive navigation
 - Scroll-aware floating “island” navigation style
 - Smooth section transitions with reduced-motion support for low-power devices
 - Skill section highlighting three.js floater creation progress
-- Projects section (under 10 projects) with:
-  - avatar/logo
-  - image/video preview from Cloudflare R2 URLs (via `.env`)
-  - optional YouTube embed preview
-  - optional Facebook post-style preview
-- Education section and social links footer
+- Projects section with healthcare and research project showcases
+- Research thesis spotlight with:
+  - visual preview via PDF URL
+  - downloadable thesis action
+  - best thesis award context
 
 ## Environment variables
 
@@ -32,16 +31,11 @@ Set Cloudflare R2 media URLs with the `CLOUDFLARE_R2_` prefix:
 - `CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL`
 - `CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL`
 - `CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL`
-- `CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL`
+- `CLOUDFLARE_R2_THESIS_PAPER_URL`
 
-Vite is configured to expose both `CLOUDFLARE_R2_*` and `CLOUDFLARE_R2_*` prefixes to the app, so either naming style works during migration.
+Optional thesis URL override:
 
-Optional social preview links are also supported:
-
-- `VITE_PROJECT_ONE_YOUTUBE_URL`
-- `VITE_PROJECT_TWO_YOUTUBE_URL`
-- `VITE_PROJECT_ONE_FACEBOOK_URL`
-- `VITE_PROJECT_THREE_FACEBOOK_URL`
+- `VITE_THESIS_PAPER_URL`
 
 ## Local development
 
