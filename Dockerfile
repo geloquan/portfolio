@@ -29,13 +29,10 @@ ENV CLOUDFLARE_R2_PROFILE_IMAGE_URL=$CLOUDFLARE_R2_PROFILE_IMAGE_URL \
 
 RUN npm run build
 
-FROM node:20-alpine AS portfolio
-WORKDIR /app
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/dist ./dist
-EXPOSE 4173
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "4173"]
+FROM nginx:1.27-alpine AS portfolio
+COPY --from=builder /app/dist /usr/share/nginx/html
+COPY portfolio.nginx.conf /etc/nginx/conf.d/default.conf
+EXPOSE 80
 
 FROM caddy:2.10-alpine AS caddy
 COPY Caddyfile /etc/caddy/Caddyfile

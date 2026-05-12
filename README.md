@@ -60,7 +60,7 @@ npm run build
 
 Use Compose for the production stack. It runs two uniquely named services:
 
-- `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `4173`
+- `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `80`
 - `caddy` (`portfolio-caddy:local`) — reverse proxies public port `80` to `portfolio`
 
 Compose reads build-time variables from your shell or a local `.env` file in the repo root.
