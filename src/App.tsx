@@ -45,6 +45,10 @@ function App() {
   }, [theme])
 
   useEffect(() => {
+    document.documentElement.style.setProperty('--primary', primaryColor)
+  }, [])
+
+  useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const isLowPowerDevice =
       (navigator.hardwareConcurrency ?? 4) <= 2 ||
@@ -106,7 +110,7 @@ function App() {
   ]
 
   return (
-    <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`} style={{ ['--primary' as string]: primaryColor }}>
+    <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
       <header className="top-nav">
         <a className="brand" href="#about">
           Gelo Quan
@@ -143,8 +147,6 @@ function App() {
             className="profile-photo"
             src="/profile-placeholder.svg"
             alt="Gelo Quan profile placeholder"
-            width={1080}
-            height={1920}
             loading="lazy"
           />
           <div>
