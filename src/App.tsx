@@ -12,7 +12,7 @@ type Project = {
 }
 
 const primaryColor = '#92DCE5'
-const env = import.meta.env as Record<string, string | undefined>
+const env = import.meta.env
 
 // Keep CLOUDflare_R2_ fallback temporarily to avoid breaking mixed-case legacy env files.
 const getCloudflareR2EnvValue = (name: string) =>
@@ -169,7 +169,7 @@ function App() {
                     />
                 ) : (
                     <div className="preview-fallback">
-                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in .env.local or .env.production.</span>
+                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
                     </div>
                 )}
                 <div className="profile-glow" aria-hidden="true" />
@@ -234,7 +234,7 @@ function App() {
                             )
                         ) : (
                             <div className="preview-fallback">
-                              <span>Set CLOUDFLARE_R2_PROJECT_*_MEDIA_URL in .env.local or .env.production.</span>
+                              <span>Set CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL (and other project media vars) in your env file.</span>
                             </div>
                         )}
                       </div>
