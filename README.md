@@ -61,7 +61,7 @@ npm run build
 Use Compose for the production stack. It runs two uniquely named services:
 
 - `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `80`
-- `caddy` (`portfolio-caddy:local`) — reverse proxies public port `80` to `portfolio`
+- `caddy` (`portfolio-caddy:local`) — reverse proxies host port `8080` (default) to `portfolio` on internal port `80`
 
 Compose reads build-time variables from your shell or a local `.env` file in the repo root.
 
@@ -73,6 +73,14 @@ Then start both services:
 
 ```bash
 docker compose up --build
+```
+
+Open `http://localhost:8080` after startup.
+
+If you need a different host port, set `CADDY_HOST_PORT` before starting Compose:
+
+```bash
+CADDY_HOST_PORT=8081 docker compose up --build
 ```
 
 The production deployment workflow also runs the full stack (`docker compose up -d --build`) so both `portfolio` and `caddy` are always running.
