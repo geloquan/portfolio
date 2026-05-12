@@ -54,8 +54,11 @@ jobs:
             LOG_FILE="$HOME/portfolio-deploy.log"
             DEPLOY_DIR="$HOME/portfolio"
             DEPLOY_KEY_PATH="$HOME/.ssh/portfolio_deploy_key"
-            REPO_SSH_URL="git@github.com:geloquan/portfolio.git"
-            SSH_COMMAND="ssh -i $DEPLOY_KEY_PATH -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+            KNOWN_HOSTS_FILE="$HOME/.ssh/known_hosts"
+            REPO_SLUG="geloquan/portfolio"
+            REPO_SSH_URL="git@github.com:${REPO_SLUG}.git"
+            REPO_SETTINGS_URL="https://github.com/${REPO_SLUG}/settings/keys"
+            SSH_COMMAND="ssh -i $DEPLOY_KEY_PATH -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$KNOWN_HOSTS_FILE"
 
             exec > >(tee -a "$LOG_FILE") 2>&1
 
@@ -71,7 +74,7 @@ jobs:
             check_deployment_keys() {
               log "🔐 Validating deployment key: $DEPLOY_KEY_PATH"
               if [ ! -f "$DEPLOY_KEY_PATH" ]; then
-                fail "Deployment key not found. Run ./generate-deploy-keys.sh on the VPS, then add ${DEPLOY_KEY_PATH}.pub as a read-only deploy key at https://github.com/geloquan/portfolio/settings/keys."
+                fail "Deployment key not found. Run ./generate-deploy-keys.sh on the VPS, then add ${DEPLOY_KEY_PATH}.pub as a read-only deploy key at $REPO_SETTINGS_URL."
               fi
 
               if [ ! -f "${DEPLOY_KEY_PATH}.pub" ]; then
@@ -82,27 +85,41 @@ jobs:
               chmod 644 "${DEPLOY_KEY_PATH}.pub"
             }
 
+            ensure_known_hosts() {
+              mkdir -p "$HOME/.ssh"
+              chmod 700 "$HOME/.ssh"
+              touch "$KNOWN_HOSTS_FILE"
+              chmod 644 "$KNOWN_HOSTS_FILE"
+              if ! ssh-keygen -F github.com -f "$KNOWN_HOSTS_FILE" > /dev/null; then
+                log "🔑 Adding github.com to known_hosts"
+                ssh-keyscan -H github.com >> "$KNOWN_HOSTS_FILE" || fail "Unable to add github.com host key to known_hosts."
+              fi
+            }
+
             sync_repository() {
               if [ -d "$DEPLOY_DIR/.git" ]; then
                 log "📥 Updating existing repository in $DEPLOY_DIR"
                 cd "$DEPLOY_DIR"
                 GIT_SSH_COMMAND="$SSH_COMMAND" git remote set-url origin "$REPO_SSH_URL"
-                GIT_SSH_COMMAND="$SSH_COMMAND" git fetch --prune origin main
-                GIT_SSH_COMMAND="$SSH_COMMAND" git checkout -B main origin/main
+                GIT_SSH_COMMAND="$SSH_COMMAND" git fetch --prune origin
+                if ! git rev-parse --verify --quiet origin/main; then
+                  fail "Remote branch origin/main not found after fetch. Verify the branch exists and the deploy key has repository access."
+                fi
+                if ! git checkout main; then
+                  git checkout -b main
+                fi
+                git reset --hard origin/main
               elif [ -d "$DEPLOY_DIR" ]; then
                 fail "$DEPLOY_DIR exists but is not a git repository. Move it aside or initialize it correctly before deploying."
               else
                 log "📥 Cloning repository into $DEPLOY_DIR"
-                tmp_dir="$(mktemp -d "$HOME/portfolio.clone.XXXXXX")"
-                trap 'rm -rf "$tmp_dir"' EXIT
-                GIT_SSH_COMMAND="$SSH_COMMAND" git clone --branch main --single-branch "$REPO_SSH_URL" "$tmp_dir"
-                mv "$tmp_dir" "$DEPLOY_DIR"
-                trap - EXIT
+                GIT_SSH_COMMAND="$SSH_COMMAND" git clone --branch main --single-branch "$REPO_SSH_URL" "$DEPLOY_DIR"
               fi
             }
 
             log "🚀 Starting secure Portfolio deployment (Caddy stack)..."
             check_deployment_keys
+            ensure_known_hosts
             sync_repository
 
             cd "$DEPLOY_DIR"

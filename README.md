@@ -98,6 +98,8 @@ Then:
 If the key is missing, deployment now fails early with a clear error and guidance before any git pull/clone step.
 
 > Note: `VPS_SSH_KEY` in GitHub Actions secrets is still required for Actions to connect to the VPS. The deploy key above is separately used by the VPS for secure git operations.
+>
+> For unattended deployments, `generate-deploy-keys.sh` uses an empty passphrase by default. Keep this key read-only and dedicated to this repository. You can set `DEPLOY_KEY_PASSPHRASE` before running the script if you want a passphrase-protected key.
 
 ## Troubleshooting: "Host Error" on the domain
 
