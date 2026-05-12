@@ -1,69 +1,66 @@
-# React + TypeScript + Vite
+# Portfolio SPA
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A Vite + React single-page portfolio with light/dark mode, responsive navigation, project previews, and Cloudflare-configurable media.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Primary branding color: `#92DCE5`
+- Light/dark mode toggle
+- Responsive navigation menu and mobile layout support
+- Smooth section transitions with reduced-motion support for low-power devices
+- Projects section (under 10 projects) with:
+  - avatar/logo
+  - image/video preview from Cloudflare URLs (via `.env`)
+  - optional YouTube embed preview
+  - optional Facebook post-style preview
+- Education section and social links footer
 
-## Expanding the ESLint configuration
+## Environment variables
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Copy `.env.example` to `.env` and update values:
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cp .env.example .env
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Use Cloudflare-hosted URLs in these variables:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `VITE_PROJECT_ONE_MEDIA_URL`
+- `VITE_PROJECT_TWO_MEDIA_URL`
+- `VITE_PROJECT_THREE_MEDIA_URL`
+- `VITE_PROJECT_FOUR_MEDIA_URL`
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Optional social preview links are also supported:
+
+- `VITE_PROJECT_ONE_YOUTUBE_URL`
+- `VITE_PROJECT_TWO_YOUTUBE_URL`
+- `VITE_PROJECT_ONE_FACEBOOK_URL`
+- `VITE_PROJECT_THREE_FACEBOOK_URL`
+
+## Local development
+
+```bash
+npm ci
+npm run dev
+```
+
+## Build
+
+```bash
+npm run build
+```
+
+## Docker (production)
+
+Build and run with Docker CLI using CPU/RAM limits:
+
+```bash
+docker build -t portfolio .
+docker run --rm -p 8080:80 --cpus=0.5 --memory=200m portfolio
+```
+
+Or use Compose (`compose.yaml`) with the same limits:
+
+```bash
+docker compose up --build
 ```
