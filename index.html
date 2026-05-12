@@ -1,13 +1,116 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/assets/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ─── Primary Meta ─────────────────────────────────────────────── -->
+  <title>Marco Angelo Quanico · Software Developer & Healthcare IT</title>
+  <meta
+          name="description"
+          content="Fresh CS graduate with 4+ years building production systems in healthcare IT. Specialising in React, Laravel, and computer-vision pipelines. Open to client projects & free consultations."
+  />
+  <meta name="author" content="Marco Angelo P. Quanico" />
+  <meta
+          name="keywords"
+          content="Marco Angelo Quanico, MAQ, software developer, healthcare IT, React developer, Laravel developer, Philippines developer, Bacolod, computer vision, YOLOv8, portfolio"
+  />
+  <link rel="canonical" href="https://marcoangelo.dev/" />
+
+  <!-- ─── Favicon set ───────────────────────────────────────────────── -->
+  <!--
+    Drop these files in /public/ and uncomment:
+    <link rel="icon"             href="/favicon.ico" sizes="any" />
+    <link rel="icon"             href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest"         href="/site.webmanifest" />
+
+    Quick generation: https://realfavicongenerator.net/
+  -->
+
+  <!-- Fallback: use your existing portfolio logo as the tab icon -->
+  <link rel="icon" href="/src/assets/portfolio-logo-dark.svg" type="image/png" />
+
+  <!-- ─── Theme colour (browser chrome) ───────────────────────────── -->
+  <!-- Matches --primary: #92DCE5 in dark mode; white in light mode    -->
+  <meta name="theme-color" media="(prefers-color-scheme: dark)"  content="#0d1117" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+
+  <!-- ─── Open Graph (Facebook, LinkedIn, iMessage, etc.) ─────────── -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content="https://marcoangelo.dev/" />
+  <meta property="og:site_name"   content="Marco Angelo Quanico" />
+  <meta property="og:title"       content="Marco Angelo Quanico · Software Developer" />
+  <meta
+          property="og:description"
+          content="Building production systems that create better outcomes. Healthcare IT experience · Best Thesis 2026 ICT Expo · Open for client projects."
+  />
+  <!--
+    Replace with your real OG image (1200×630 recommended).
+    <meta property="og:image"       content="https://marcoangelo.dev/og-image.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt"    content="Marco Angelo Quanico – Software Developer portfolio" />
+  -->
+  <meta property="og:locale" content="en_PH" />
+
+  <!-- ─── Twitter / X Card ─────────────────────────────────────────── -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content="Marco Angelo Quanico · Software Developer" />
+  <meta
+          name="twitter:description"
+          content="Building production systems that create better outcomes. Healthcare IT · Best Thesis 2026 · Open to projects."
+  />
+  <!--
+    <meta name="twitter:image" content="https://marcoangelo.dev/og-image.jpg" />
+    <meta name="twitter:image:alt" content="Marco Angelo Quanico portfolio" />
+    <meta name="twitter:site"      content="@yourhandle" />
+    <meta name="twitter:creator"   content="@yourhandle" />
+  -->
+
+  <!-- ─── JSON-LD Structured Data (Google rich results) ───────────── -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Marco Angelo P. Quanico",
+      "alternateName": "MAQ",
+      "url": "https://marcoangelo.dev/",
+      "email": "marcoangelo.quanico@gmail.com",
+      "telephone": "+639218692170",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Bacolod City",
+        "addressCountry": "PH"
+      },
+      "jobTitle": "Software Developer",
+      "description": "Fresh Computer Science graduate with 4+ years of project-building and healthcare IT experience focused on reliable delivery and business outcomes.",
+      "alumniOf": {
+        "@type": "CollegeOrUniversity",
+        "name": "University (CS Graduate)"
+      },
+      "award": "Best Thesis – ICT Expo 2026",
+      "knowsAbout": [
+        "React", "Laravel", "PHP", "Kotlin", "Python",
+        "YOLOv8", "Computer Vision", "PostgreSQL", "Node.js",
+        "Healthcare IT", "RESTful APIs", "Cloudflare R2"
+      ],
+      "sameAs": [
+        "https://github.com/geloquan"
+      ]
+    }
+  </script>
+
+  <!-- ─── Performance hints ─────────────────────────────────────────── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Add your font <link> here if you load from Google Fonts -->
+
+  <!-- ─── Robots ───────────────────────────────────────────────────── -->
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+</head>
+<body>
+<div id="root"></div>
+<script type="module" src="/src/assets/main.tsx"></script>
+</body>
 </html>

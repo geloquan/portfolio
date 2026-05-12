@@ -112,9 +112,13 @@ img, video { display: block; width: 100%; }
   transition: border-color 0.2s, background 0.2s;
 }
 .brand img {
-  width: 22px;
-  height: 22px;
+  height: 36px;
+  width: auto;
+
   object-fit: contain;
+  object-position: center;
+
+  display: block;
 }
 .brand:hover {
   border-color: var(--primary);
@@ -582,6 +586,7 @@ h1 em {
   min-height: 160px;
   padding: 1rem;
   text-align: center;
+  color: light-dark(#888, #555);
 }
 .preview-fallback span {
   font-size: 0.78rem;

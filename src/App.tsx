@@ -1,11 +1,13 @@
-import { useEffect, useMemo, useState } from 'react'
+import {useEffect, useMemo, useRef, useState} from 'react'
 import './App.css'
-import portfolioLogo from './assets/portfolio-logo.png'
+import portfolioLogo from './assets/portfolio-logo-light.svg'
+import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
 import projectOneLogo from './assets/project-1-logo.svg'
 import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
 import resumePdf from './resume-ma-quanico.pdf'
+import {VideoOff} from "lucide-react";
 
 type Project = {
   name: string
@@ -28,6 +30,26 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [isNavIsland, setIsNavIsland] = useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    const video = videoRef.current
+    if (!video) return
+
+    const observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            video.play().catch(() => {}) // catch needed — browser may block autoplay
+          } else {
+            video.pause()
+          }
+        },
+        { threshold: 0.4 }, // plays when 40% of the video is visible
+    )
+
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -126,10 +148,11 @@ function App() {
 
       <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
         <a className="brand" href="#about">
-          <img src={portfolioLogo} alt="Marco Angelo Quanico logo" />
-          <span>MAQ</span>
+          <img
+            src={theme === 'dark' ? portfolioLogoDark : portfolioLogo}
+            alt="Marco Angelo Quanico logo"
+          />
         </a>
-
         <button
           className="menu-toggle"
           type="button"
@@ -275,7 +298,14 @@ function App() {
               <article key={project.name} className={`project-card span-${i === 0 ? 'full' : 'half'}`}>
                 <div className="card-stripe" aria-hidden="true" />
                 <div className="project-head">
-                  <img src={project.avatarUrl} alt={`${project.name} logo`} width={48} height={48} loading="lazy" />
+                  <img
+                      src={project.avatarUrl}
+                      alt={`${project.name} logo`}
+                      width={48}
+                      height={48}
+                      loading="lazy"
+                      style={i === 2 ? { padding: '10px 0', objectFit: 'contain', width: '48px', height: '48px' } : undefined}
+                  />
                   <div>
                     <p className="project-category">{project.category}</p>
                     <h3>{project.name}</h3>
@@ -295,14 +325,22 @@ function App() {
 
                 <div className="preview-box">
                   {project.mediaUrl ? (
-                    project.mediaType === 'video' ? (
-                      <video controls preload="metadata" src={project.mediaUrl} />
-                    ) : (
-                      <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
-                    )
+                      project.mediaType === 'video' ? (
+                          <video
+                              ref={i === 0 ? videoRef : undefined}
+                              preload="metadata"
+                              src={project.mediaUrl}
+                              muted           // required by browsers for autoplay to work
+                              loop
+                              playsInline     // prevents iOS from going fullscreen
+                          />
+                      ) : (
+                          <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
+                      )
                   ) : (
                     <div className="preview-fallback">
-                      <span>Set Cloudflare R2 project media env values to display preview assets.</span>
+                      <VideoOff size={48} strokeWidth={1.5} className="fallback-icon" />
+                      <span className="fallback-label">Video unavailable</span>
                     </div>
                   )}
                 </div>
@@ -360,11 +398,17 @@ function App() {
             <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">
               GitHub ↗
             </a>
+            <a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer">
+              LinkedIn ↗
+            </a>
+            <a href="https://www.facebook.com/Yusiyernem/" target="_blank" rel="noreferrer">
+              Facebook ↗
+            </a>
           </div>
         </div>
         <div className="footer-bottom">
           <span>© 2026 Marco Angelo P. Quanico</span>
-          <span>Bacolod City, PH</span>
+          <span>Bacolod City, Philippines</span>
         </div>
       </footer>
     </div>
