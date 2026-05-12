@@ -52,6 +52,30 @@ function App() {
   }, [])
 
   useEffect(() => {
+    let scrollTimeout: ReturnType<typeof setTimeout>
+
+    const onScroll = () => {
+      setIsNavIsland(window.scrollY > 20)
+
+      if (menuOpen) {
+        setMenuOpen(false)
+      }
+
+      clearTimeout(scrollTimeout)
+
+      scrollTimeout = setTimeout(() => {
+      }, 300)
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      clearTimeout(scrollTimeout)
+    }
+  }, [menuOpen])
+
+  useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('theme', theme)
   }, [theme])
