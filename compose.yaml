@@ -1,63 +1,17 @@
 services:
-  portfolio:
+  caddy:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: portfolio-caddy
+    restart: unless-stopped
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - caddy_data:/data
       - caddy_config:/config
     cpus: 0.5
     mem_limit: 200m
-
-  caddy:
-    build:
-      context: ./caddy
-      dockerfile: Dockerfile
-    container_name: mabdoc-caddy
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-      - "127.0.0.1:2019:2019"
-    volumes:
-      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
-      - ./caddy/ssl:/etc/caddy/ssl:ro
-      - caddy-data:/data
-      - caddy-logs:/var/log/caddy
-    depends_on:
-      laravel-api:
-        condition: service_healthy
-      frontend-app:
-        condition: service_started
-      frontend-public:
-        condition: service_started
-    networks:
-      - mabdoc-network
-    environment:
-      CADDY_PROMETHEUS_HASH: ${CADDY_PROMETHEUS_HASH}
-    deploy:
-      resources:
-        limits:
-          cpus: '0.2'
-          memory: 384M
-        reservations:
-          cpus: '0.15'
-          memory: 256M
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:2019/config/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 30s
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        tag: "caddy"
 
 volumes:
   caddy_data:
