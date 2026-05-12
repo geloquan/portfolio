@@ -66,3 +66,5 @@ Or use Compose (Caddy serves the built SPA on port `80`):
 ```bash
 docker compose up --build
 ```
+
+Compose treats the preview and Cloudflare R2 variables as optional for local/default runs, so leaving them unset will not emit Docker variable warnings.
