@@ -12,25 +12,29 @@ A Vite + React single-page portfolio with light/dark mode, responsive navigation
 - Skill section highlighting three.js floater creation progress
 - Projects section (under 10 projects) with:
   - avatar/logo
-  - image/video preview from Cloudflare URLs (via `.env`)
+  - image/video preview from Cloudflare R2 URLs (via `.env`)
   - optional YouTube embed preview
   - optional Facebook post-style preview
 - Education section and social links footer
 
 ## Environment variables
 
-Copy `.env.example` to `.env` and update values:
+Copy `.env.example` to `.env.local` for development and `.env.production` for production:
 
 ```bash
-cp .env.example .env
+cp .env.example .env.local
+cp .env.example .env.production
 ```
 
-Use Cloudflare-hosted URLs in these variables:
+Set Cloudflare R2 media URLs with the `CLOUDflare_R2_` prefix:
 
-- `VITE_PROJECT_ONE_MEDIA_URL`
-- `VITE_PROJECT_TWO_MEDIA_URL`
-- `VITE_PROJECT_THREE_MEDIA_URL`
-- `VITE_PROJECT_FOUR_MEDIA_URL`
+- `CLOUDflare_R2_PROFILE_IMAGE_URL`
+- `CLOUDflare_R2_PROJECT_ONE_MEDIA_URL`
+- `CLOUDflare_R2_PROJECT_TWO_MEDIA_URL`
+- `CLOUDflare_R2_PROJECT_THREE_MEDIA_URL`
+- `CLOUDflare_R2_PROJECT_FOUR_MEDIA_URL`
+
+Vite is configured to expose both `CLOUDflare_R2_*` and `CLOUDFLARE_R2_*` prefixes to the app, so either naming style works during migration.
 
 Optional social preview links are also supported:
 
