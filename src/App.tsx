@@ -1,17 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
-import resumePdf from './resume-ma-quanico.pdf'
+import './App.css'
+import portfolioLogo from './assets/portfolio-logo.png'
 import projectOneLogo from './assets/project-1-logo.svg'
 import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
-import './App.css'
+import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
+import resumePdf from './resume-ma-quanico.pdf'
 
 type Project = {
   name: string
   summary: string
-  stack: string[]
-  outcome: string
-  logo: string
-  mediaType: 'image' | 'video' | 'none'
+  avatarUrl: string
+  category: string
+  techstack: string
+  highlights: string[]
+  mediaType: 'image' | 'video'
   mediaUrl?: string
 }
 
@@ -42,8 +45,8 @@ function App() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const isLowPowerDevice =
-      (navigator.hardwareConcurrency ?? 4) <= 2 ||
-      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
+        (navigator.hardwareConcurrency ?? 4) <= 2 ||
+        ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
     setReducedMotion(mediaQuery.matches || isLowPowerDevice)
     const onPreferenceChange = (event: MediaQueryListEvent) => {
       setReducedMotion(event.matches || isLowPowerDevice)
@@ -59,64 +62,68 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL')
-  const projectOneVideoUrl = getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL')
-  const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL
+  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL') || fallbackProfilePhoto
+  const thesisPaperUrl =
+    import.meta.env.VITE_THESIS_PAPER_URL || getCloudflareR2EnvValue('THESIS_PAPER_URL')
 
   const projects: Project[] = useMemo(
     () => [
       {
-        name: 'Project 1 · Enterprise Medical Doctor Platform',
+        name: 'Medical Arts Platform',
+        category: 'Enterprise Healthcare Platform',
         summary:
-          'A production-focused healthcare platform with dynamic doctor scheduling, searchable directory, notification workflows, and clinic role management.',
-        stack: [
-          'React',
-          'Laravel',
-          'Grafana Automation',
-          'Queue Jobs',
-          'Schedule Jobs',
-          'Email System',
-          'Ubuntu',
-          'Node',
-          'RESTful API',
-          'Cloudflare R2',
-          'Git',
+          'A medical doctor platform with dynamic scheduling and clinic operations support for enterprise-level workflows.',
+        avatarUrl: projectOneLogo,
+        techstack:
+          'React + Laravel + Monitoring Automation (Grafana) + Queue Jobs + Schedule Jobs + Email system + Ubuntu + Node + RESTful API + Cloudflare R2 Bucket + Git',
+        highlights: [
+          'Doctor dynamic scheduling',
+          'Doctor directory and notifications',
+          'Clinic role management',
+          'Only project with Cloudflare R2-hosted video preview',
         ],
-        outcome:
-          'Built for enterprise-level operations with reliability, observability, and communication flow as core priorities.',
-        logo: projectOneLogo,
         mediaType: 'video',
-        mediaUrl: projectOneVideoUrl,
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
       },
       {
-        name: 'Project 2 · Kotlin Mobile Research Application',
+        name: 'Seashell Counting and Logging Application',
+        category: 'Android + Computer Vision',
         summary:
-          "An Android app developed with Kotlin that uses YOLOv8 OBB outputs and Python inference readings to quantify metadata and store structured results.",
-        stack: ['Kotlin', 'Android', 'YOLOv8 OBB', 'Python Inference', 'Data Quantification'],
-        outcome:
-          'Served as proof-of-work for a bachelor research thesis requirement, validating practical mobile-to-model workflow integration.',
-        logo: projectTwoLogo,
-        mediaType: 'none',
+          'A mobile Android application that uses Kotlin with YOLOv8 OBB-assisted Python inferences to classify and quantify seashell data.',
+        avatarUrl: projectTwoLogo,
+        techstack: 'Kotlin + Python Inference Pipeline + YOLOv8 OBB + JSON logging structure',
+        highlights: [
+          'Proof-of-work for bachelor research thesis',
+          'Quantifies metadata from detection outputs',
+          'Stores and logs counting records',
+        ],
+        mediaType: 'image',
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
       },
       {
-        name: "Project 3 · Doctor's Directory Information System",
+        name: 'Doctor Directory Information System',
+        category: 'Medical Compliance System',
         summary:
-          'A compliance-driven implementation for a local medical center in Bacolod City, focused on secure and streamlined doctor directory management.',
-        stack: ['Admin Role', 'Directory Management', 'Healthcare Compliance', 'Records Workflow'],
-        outcome:
-          'Delivered as an admin-only solution aligned with organizational controls and local operational requirements.',
-        logo: projectThreeLogo,
-        mediaType: 'none',
+          "A compliance-driven local deployment for a medical center in Bacolod City, focused on admin-only doctor's directory operations.",
+        avatarUrl: projectThreeLogo,
+        techstack: 'PHP Blade + Laravel + PostgreSQL',
+        highlights: [
+          'Admin user role only',
+          'Doctor directory full CRUD and search',
+          'Built for local medical center compliance requirements',
+        ],
+        mediaType: 'image',
+        mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
       },
     ],
-    [projectOneVideoUrl],
+    [],
   )
 
   const sections = [
     { id: 'about', label: 'About' },
     { id: 'research', label: 'Research' },
     { id: 'projects', label: 'Projects' },
-    { id: 'services', label: 'Client Value' },
+    { id: 'experience', label: 'Experience' },
     { id: 'contact', label: 'Contact' },
   ]
 
@@ -125,13 +132,16 @@ function App() {
       <div className="grain" aria-hidden="true" />
 
       <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
-        <a className="brand" href="#about">MAQ</a>
+        <a className="brand" href="#about">
+          <img src={portfolioLogo} alt="Marco Angelo Quanico logo" />
+          <span>MAQ</span>
+        </a>
 
         <button
           className="menu-toggle"
           type="button"
           aria-label="Toggle navigation"
-          onClick={() => setMenuOpen((current) => !current)}
+          onClick={() => setMenuOpen((c) => !c)}
         >
           <span />
           <span />
@@ -147,7 +157,7 @@ function App() {
           <button
             className="theme-toggle"
             type="button"
-            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+            onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
             aria-label="Toggle theme"
           >
             {theme === 'dark' ? '☀' : '◑'}
@@ -159,44 +169,55 @@ function App() {
         <section className="hero" id="about">
           <div className="hero-visual">
             <div className="profile-wrap">
-              {profileImageUrl ? (
-                <img
-                  className="profile-photo"
-                  src={profileImageUrl}
-                  alt="Marco Angelo Quanico profile"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="preview-fallback">
-                  <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
-                </div>
-              )}
+              <img
+                className="profile-photo"
+                src={profileImageUrl}
+                alt="Marco Angelo P. Quanico portrait"
+                loading="lazy"
+              />
               <div className="profile-glow" aria-hidden="true" />
             </div>
             <div className="hero-badge">
               <span className="badge-dot" />
-              Open for client collaboration
+              Open for client projects + free consultations
             </div>
           </div>
 
           <div className="hero-text">
             <div className="hero-roles">
-              <span>Computer Vision Researcher</span>
+              <span>Software Developer</span>
               <span>·</span>
-              <span>Business-Oriented Software Builder</span>
+              <span>Business-Oriented Builder</span>
             </div>
             <h1>
-              I build<br />
-              <em>outcome-first</em><br />
-              digital systems.
+              Building systems that
+              <br />
+              create better
+              <em> outcomes.</em>
             </h1>
             <p className="hero-desc">
-              I prioritize client satisfaction, measurable outcomes, and reliable delivery. I also offer free
-              consultation sessions via your preferred video-call platform.
+              Fresh Computer Science graduate with 4+ years of project-building and healthcare IT
+              experience. I focus on reliable delivery, client satisfaction, and software that
+              supports real business and operational goals.
             </p>
             <div className="hero-actions">
-              <a href="#research" className="btn-primary">View Research</a>
-              <a href={resumePdf} className="btn-ghost" download>Download Resume</a>
+              <a href="#projects" className="btn-primary">
+                Explore My Work
+              </a>
+              <a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">
+                Download Resume
+              </a>
+              <a
+                href="mailto:marcoangelo.quanico@gmail.com?subject=Free%20Consultation%20Request"
+                className="btn-ghost"
+              >
+                Request Free Consultation
+              </a>
+            </div>
+            <div className="hero-signals">
+              <span>10 months healthcare IT industry experience</span>
+              <span>9 units MSCS in progress</span>
+              <span>Best in Thesis - ICT Expo 2026</span>
             </div>
           </div>
         </section>
@@ -204,41 +225,46 @@ function App() {
         <section id="research">
           <div className="section-label-row">
             <span className="section-index">02</span>
-            <h2>Academic Research Highlight</h2>
+            <h2>Academic Research Spotlight</h2>
           </div>
-
           <div className="research-grid">
             <article className="research-card">
-              <p className="research-tag">Best Thesis · 2026 ICT Expo</p>
-              <h3>YOLOv8-based Computer Vision for Classifying and Counting Three Species</h3>
+              <h3>Determining Seashell Abundance through Image Processing</h3>
               <p>
-                The thesis explores practical computer vision pipelines using YOLOv8 to classify and count three
-                species accurately, with emphasis on real-world deployment reliability and output interpretation.
+                Research focused on computer vision with YOLOv8 for classifying and counting three
+                seashell species. This thesis was presented and awarded as the Best Thesis during
+                the 2026 ICT Expo and was offered a chance to be publicized at a Singaporean university.
               </p>
-              <div className="hero-actions">
+              <div className="research-points">
+                <span>YOLOv8-based classification</span>
+                <span>Three-species abundance counting</span>
+                <span>Bachelor degree requirement proof-of-work</span>
+              </div>
+              <div className="research-actions">
                 {thesisPaperUrl ? (
-                  <a href={thesisPaperUrl} className="btn-primary" target="_blank" rel="noreferrer" download>
-                    Download Thesis Paper
-                  </a>
+                  <>
+                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">
+                      Open Thesis
+                    </a>
+                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-ghost">
+                      Download Thesis
+                    </a>
+                  </>
                 ) : (
-                  <span className="research-note">Set VITE_THESIS_PAPER_URL to enable paper preview and download.</span>
+                  <div className="preview-fallback">
+                    <span>Set VITE_THESIS_PAPER_URL or CLOUDFLARE_R2_THESIS_PAPER_URL for thesis file.</span>
+                  </div>
                 )}
-                <a href={resumePdf} className="btn-ghost" download>
-                  Download Resume
-                </a>
               </div>
             </article>
 
-            <article className="thesis-preview">
+            <article className="thesis-preview-card">
+              <div className="preview-title">Visual Thesis Preview</div>
               {thesisPaperUrl ? (
-                <iframe
-                  title="Research thesis paper preview"
-                  src={thesisPaperUrl}
-                  loading="lazy"
-                />
+                <iframe title="Research thesis visual preview" src={thesisPaperUrl} />
               ) : (
                 <div className="preview-fallback">
-                  <span>Thesis preview appears here when VITE_THESIS_PAPER_URL is set.</span>
+                  <span>Thesis preview appears here when thesis URL is provided.</span>
                 </div>
               )}
             </article>
@@ -248,41 +274,42 @@ function App() {
         <section id="projects">
           <div className="section-label-row">
             <span className="section-index">03</span>
-            <h2>Project Portfolio</h2>
+            <h2>Selected Projects</h2>
           </div>
 
           <div className="bento-grid">
-            {projects.map((project, index) => (
-              <article key={project.name} className="project-card span-full">
+            {projects.map((project, i) => (
+              <article key={project.name} className={`project-card span-${i === 0 ? 'full' : 'half'}`}>
                 <div className="card-stripe" aria-hidden="true" />
-
                 <div className="project-head">
-                  <img src={project.logo} alt={`${project.name} logo`} width={48} height={48} loading="lazy" />
+                  <img src={project.avatarUrl} alt={`${project.name} logo`} width={48} height={48} loading="lazy" />
                   <div>
+                    <p className="project-category">{project.category}</p>
                     <h3>{project.name}</h3>
                     <p>{project.summary}</p>
                   </div>
-                  <span className="card-index">{String(index + 1).padStart(2, '0')}</span>
+                  <span className="card-index">{String(i + 1).padStart(2, '0')}</span>
                 </div>
 
-                <div className="stack-list" aria-label={`${project.name} technologies`}>
-                  {project.stack.map((item) => (
-                    <span key={`${project.name}-${item}`}>{item}</span>
+                <p className="techstack-text">
+                  <strong>Tech stack:</strong> {project.techstack}
+                </p>
+                <ul className="project-highlights">
+                  {project.highlights.map((highlight) => (
+                    <li key={highlight}>{highlight}</li>
                   ))}
-                </div>
-
-                <p className="project-outcome">{project.outcome}</p>
+                </ul>
 
                 <div className="preview-box">
-                  {project.mediaUrl && project.mediaType === 'video' ? (
-                    <video controls preload="metadata" src={project.mediaUrl} />
-                  ) : project.mediaUrl && project.mediaType === 'image' ? (
-                    <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
+                  {project.mediaUrl ? (
+                    project.mediaType === 'video' ? (
+                      <video controls preload="metadata" src={project.mediaUrl} />
+                    ) : (
+                      <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
+                    )
                   ) : (
                     <div className="preview-fallback">
-                      <span>
-                        No public media file is attached for this project. Demo walk-through is available by request.
-                      </span>
+                      <span>Set Cloudflare R2 project media env values to display preview assets.</span>
                     </div>
                   )}
                 </div>
@@ -291,20 +318,39 @@ function App() {
           </div>
         </section>
 
-        <section id="services">
+        <section id="experience">
           <div className="section-label-row">
             <span className="section-index">04</span>
-            <h2>Client Outcome Focus</h2>
+            <h2>Industry Experience & Client Focus</h2>
           </div>
-          <p className="section-body">
-            I work with a business lens: aligning system design, delivery pace, and product decisions with client
-            goals, satisfaction, and long-term operational value.
-          </p>
-          <div className="floater-showcase" aria-label="Client value pillars">
-            <span>Outcome-driven planning</span>
-            <span>Transparent communication</span>
-            <span>Quality-first implementation</span>
-            <span>Free video-call consultation</span>
+          <div className="experience-grid">
+            <article className="experience-card">
+              <h3>Adventist Medical Center Bacolod · IT Staff (Probationary)</h3>
+              <p>
+                Led maintenance and improvement of a hospital HR system, resolved production issues,
+                cleared 60% backlog fixes, and developed shift scheduling with swap/approval flow.
+              </p>
+            </article>
+            <article className="experience-card">
+              <h3>Riverside Medical Center Inc. · Practicum / OJT</h3>
+              <p>
+                Designed and developed an institution doctor directory with 85% UX satisfaction
+                feedback from software stakeholders.
+              </p>
+            </article>
+            <article className="experience-card consultation-card">
+              <h3>Consultation Approach</h3>
+              <p>
+                I prioritize requirement clarity, business practicality, and measurable outcomes. I
+                also accept free consultations via video-call platforms to discuss your project.
+              </p>
+              <a
+                href="mailto:marcoangelo.quanico@gmail.com?subject=Video%20Consultation%20Booking"
+                className="btn-primary"
+              >
+                Book a Free Video Consultation
+              </a>
+            </article>
           </div>
         </section>
       </main>
@@ -313,18 +359,19 @@ function App() {
         <div className="footer-inner">
           <div className="footer-left">
             <span className="section-index">05</span>
-            <p className="footer-tagline">Let’s plan your next system with clarity and business impact.</p>
+            <p className="footer-tagline">Let&apos;s build software that your users and clients can trust.</p>
           </div>
           <div className="social-links">
-            <a href="mailto:geloquanico@gmail.com">Email for Consultation ↗</a>
-            <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-            <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook ↗</a>
+            <a href="mailto:marcoangelo.quanico@gmail.com">Email</a>
+            <a href="tel:+639218692170">Call</a>
+            <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">
+              GitHub ↗
+            </a>
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© 2026 Marco Angelo Quanico</span>
-          <span>Bacolod City / Cebu City, PH</span>
+          <span>© 2026 Marco Angelo P. Quanico</span>
+          <span>Bacolod City, PH</span>
         </div>
       </footer>
     </div>
