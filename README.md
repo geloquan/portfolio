@@ -74,3 +74,19 @@ Then start both services:
 ```bash
 docker compose up --build
 ```
+
+The production deployment workflow also runs the full stack (`docker compose up -d --build`) so both `portfolio` and `caddy` are always running.
+
+## Troubleshooting: "Host Error" on the domain
+
+If you see a generic **Host Error** instead of the site:
+
+1. Confirm deployment started the full Compose stack (not only `portfolio`):
+   ```bash
+   docker compose ps
+   ```
+   You should see both `portfolio` and `caddy` in `Up` status.
+2. Confirm DNS points both hostnames to the VPS public IP:
+   - `marcoangeloquanico.work` (A/AAAA as needed)
+   - `www.marcoangeloquanico.work` (CNAME or A/AAAA)
+3. If DNS is proxied through a provider (Cloudflare, etc.), verify the proxy/origin settings still target this VPS and are not pointing at an old host.

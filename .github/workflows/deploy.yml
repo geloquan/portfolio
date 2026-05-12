@@ -67,9 +67,9 @@ jobs:
             # Return to deployment root
             cd ~/portfolio
 
-            # Restart the service with zero downtime
-            echo "♻️  Restarting service..."
-            docker compose up -d portfolio
+            # Restart the stack with zero downtime
+            echo "♻️  Restarting stack..."
+            docker compose up -d --build
 
             # Clean up old images to free disk space
             echo "🧹 Cleaning up old images..."
@@ -77,13 +77,13 @@ jobs:
 
             # Verify deployment
             echo "✅ Verifying deployment..."
-            docker compose ps portfolio
+            docker compose ps
 
             echo ""
             echo "========================================"
             echo "✅ Portfolio deployment complete!"
             echo "========================================"
-            echo "Service: portfolio"
-            echo "Domain: www.marcoangeloquanico.work"
+            echo "Services: portfolio, caddy"
+            echo "Domains: marcoangeloquanico.work, www.marcoangeloquanico.work"
             echo "Container status:"
-            docker compose ps portfolio --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
+            docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"
