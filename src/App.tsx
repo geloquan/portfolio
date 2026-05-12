@@ -19,10 +19,6 @@ type Project = {
 }
 
 const primaryColor = '#92DCE5'
-const env = import.meta.env
-
-const getCloudflareR2EnvValue = (name: string) =>
-  env[`CLOUDFLARE_R2_${name}`] ?? env[`CLOUDFLARE_R2_${name}`]
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -62,9 +58,8 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL') || fallbackProfilePhoto
-  const thesisPaperUrl =
-    import.meta.env.VITE_THESIS_PAPER_URL || getCloudflareR2EnvValue('THESIS_PAPER_URL')
+  const profileImageUrl = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
+  const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL
 
   const projects: Project[] = useMemo(
     () => [
@@ -83,7 +78,7 @@ function App() {
           'Only project with Cloudflare R2-hosted video preview',
         ],
         mediaType: 'video',
-        mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
+        mediaUrl: import.meta.env.VITE_PROJECT_ONE_MEDIA_URL,
       },
       {
         name: 'Seashell Counting and Logging Application',
@@ -98,7 +93,6 @@ function App() {
           'Stores and logs counting records',
         ],
         mediaType: 'image',
-        mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
       },
       {
         name: 'Doctor Directory Information System',
@@ -113,7 +107,6 @@ function App() {
           'Built for local medical center compliance requirements',
         ],
         mediaType: 'image',
-        mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
       },
     ],
     [],
@@ -252,7 +245,7 @@ function App() {
                   </>
                 ) : (
                   <div className="preview-fallback">
-                    <span>Set VITE_THESIS_PAPER_URL or CLOUDFLARE_R2_THESIS_PAPER_URL for thesis file.</span>
+                    <span>Set VITE_THESIS_PAPER_URL for thesis file.</span>
                   </div>
                 )}
               </div>
