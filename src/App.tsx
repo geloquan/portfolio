@@ -12,6 +12,11 @@ type Project = {
 }
 
 const primaryColor = '#92DCE5'
+const env = import.meta.env
+
+// Keep CLOUDFLARE_R2_ fallback temporarily to avoid breaking mixed-case legacy env files.
+const getCloudflareR2EnvValue = (name: string) =>
+  env[`CLOUDFLARE_R2_${name}`] ?? env[`CLOUDFLARE_R2_${name}`]
 
 const toEmbedYoutubeUrl = (url?: string) => {
   if (!url) return undefined
@@ -66,6 +71,8 @@ function App() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL')
+
   const projects: Project[] = useMemo(
       () => [
         {
@@ -73,7 +80,7 @@ function App() {
           summary: 'A responsive, conversion-focused portfolio showcasing product, UI, and frontend engineering work.',
           avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=portfolio',
           mediaType: 'image',
-          mediaUrl: import.meta.env.VITE_PROJECT_ONE_MEDIA_URL,
+          mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
           youtubeUrl: import.meta.env.VITE_PROJECT_ONE_YOUTUBE_URL,
           facebookUrl: import.meta.env.VITE_PROJECT_ONE_FACEBOOK_URL,
         },
@@ -82,7 +89,7 @@ function App() {
           summary: 'A short-form highlight reel for social campaigns and interactive launch pages.',
           avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=creator',
           mediaType: 'video',
-          mediaUrl: import.meta.env.VITE_PROJECT_TWO_MEDIA_URL,
+          mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
           youtubeUrl: import.meta.env.VITE_PROJECT_TWO_YOUTUBE_URL,
         },
         {
@@ -90,7 +97,7 @@ function App() {
           summary: 'Cloudflare-first media delivery with optimized image/video pipelines and lightweight UX.',
           avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=cloud',
           mediaType: 'image',
-          mediaUrl: import.meta.env.VITE_PROJECT_THREE_MEDIA_URL,
+          mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
           facebookUrl: import.meta.env.VITE_PROJECT_THREE_FACEBOOK_URL,
         },
         {
@@ -98,7 +105,7 @@ function App() {
           summary: 'Landing experience with social storytelling, creator assets, and audience-ready previews.',
           avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=community',
           mediaType: 'video',
-          mediaUrl: import.meta.env.VITE_PROJECT_FOUR_MEDIA_URL,
+          mediaUrl: getCloudflareR2EnvValue('PROJECT_FOUR_MEDIA_URL'),
         },
       ],
       [],
@@ -153,12 +160,18 @@ function App() {
           <section className="hero" id="about">
             <div className="hero-visual">
               <div className="profile-wrap">
-                <img
-                    className="profile-photo"
-                    src="/profile-placeholder.svg"
-                    alt="Marco Angelo Quanico character portrait"
-                    loading="lazy"
-                />
+                {profileImageUrl ? (
+                    <img
+                        className="profile-photo"
+                        src={profileImageUrl}
+                        alt="Marco Angelo Quanico character portrait"
+                        loading="lazy"
+                    />
+                ) : (
+                    <div className="preview-fallback">
+                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
+                    </div>
+                )}
                 <div className="profile-glow" aria-hidden="true" />
               </div>
               <div className="hero-badge">
@@ -221,7 +234,7 @@ function App() {
                             )
                         ) : (
                             <div className="preview-fallback">
-                              <span>Set Cloudflare media URL in .env to show preview.</span>
+                              <span>Set CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL (and other project media vars) in your env file.</span>
                             </div>
                         )}
                       </div>
