@@ -41,26 +41,6 @@ jobs:
             type=raw,value=latest
             type=sha,format=short
 
-      - name: Build and push portfolio image
-        id: build
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          target: portfolio
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            CLOUDFLARE_R2_PROFILE_IMAGE_URL=${{ secrets.CLOUDFLARE_R2_PROFILE_IMAGE_URL }}
-            CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL }}
-            CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL }}
-            CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL }}
-            CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL }}
-            VITE_PROJECT_ONE_YOUTUBE_URL=${{ secrets.VITE_PROJECT_ONE_YOUTUBE_URL }}
-            VITE_PROJECT_TWO_YOUTUBE_URL=${{ secrets.VITE_PROJECT_TWO_YOUTUBE_URL }}
-            VITE_PROJECT_ONE_FACEBOOK_URL=${{ secrets.VITE_PROJECT_ONE_FACEBOOK_URL }}
-            VITE_PROJECT_THREE_FACEBOOK_URL=${{ secrets.VITE_PROJECT_THREE_FACEBOOK_URL }}
-
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
         with:
