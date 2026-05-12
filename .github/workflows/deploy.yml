@@ -51,39 +51,70 @@ jobs:
           envs: DEPLOY_LOCAL_TAG
           script: |
             set -euo pipefail
-            echo "🚀 Starting deployment of Portfolio..."
+            LOG_FILE="$HOME/portfolio-deploy.log"
+            DEPLOY_DIR="$HOME/portfolio"
+            DEPLOY_KEY_PATH="$HOME/.ssh/portfolio_deploy_key"
+            REPO_SSH_URL="git@github.com:geloquan/portfolio.git"
+            SSH_COMMAND="ssh -i $DEPLOY_KEY_PATH -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
 
-            echo "📥 Pulling latest changes..."
-            cd ~/portfolio
+            exec > >(tee -a "$LOG_FILE") 2>&1
 
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git remote set-url origin git@github.com:geloquan/portfolio.git
+            log() {
+              printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$1"
+            }
 
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git fetch origin
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git fetch --all
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git checkout main
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git status
-            GIT_SSH_COMMAND='ssh -i ~/.ssh/portfolio_deploy_key' git reset --hard origin/main
+            fail() {
+              log "❌ $1"
+              exit 1
+            }
 
-            # Return to deployment root
-            cd ~/portfolio
+            check_deployment_keys() {
+              log "🔐 Validating deployment key: $DEPLOY_KEY_PATH"
+              if [ ! -f "$DEPLOY_KEY_PATH" ]; then
+                fail "Deployment key not found. Run ./generate-deploy-keys.sh on the VPS, then add ${DEPLOY_KEY_PATH}.pub as a read-only deploy key at https://github.com/geloquan/portfolio/settings/keys."
+              fi
 
-            # Restart the stack with zero downtime
-            echo "♻️  Restarting stack..."
+              if [ ! -f "${DEPLOY_KEY_PATH}.pub" ]; then
+                fail "Public deployment key not found at ${DEPLOY_KEY_PATH}.pub. Re-run ./generate-deploy-keys.sh on the VPS and add the public key to GitHub deploy keys."
+              fi
+
+              chmod 600 "$DEPLOY_KEY_PATH"
+              chmod 644 "${DEPLOY_KEY_PATH}.pub"
+            }
+
+            sync_repository() {
+              if [ -d "$DEPLOY_DIR/.git" ]; then
+                log "📥 Updating existing repository in $DEPLOY_DIR"
+                cd "$DEPLOY_DIR"
+                GIT_SSH_COMMAND="$SSH_COMMAND" git remote set-url origin "$REPO_SSH_URL"
+                GIT_SSH_COMMAND="$SSH_COMMAND" git fetch --prune origin main
+                git checkout -B main origin/main
+              elif [ -d "$DEPLOY_DIR" ]; then
+                fail "$DEPLOY_DIR exists but is not a git repository. Move it aside or initialize it correctly before deploying."
+              else
+                log "📥 Cloning repository into $DEPLOY_DIR"
+                tmp_dir="$(mktemp -d "$HOME/portfolio.clone.XXXXXX")"
+                GIT_SSH_COMMAND="$SSH_COMMAND" git clone --branch main --single-branch "$REPO_SSH_URL" "$tmp_dir"
+                mv "$tmp_dir" "$DEPLOY_DIR"
+              fi
+            }
+
+            log "🚀 Starting secure Portfolio deployment (Caddy stack)..."
+            check_deployment_keys
+            sync_repository
+
+            cd "$DEPLOY_DIR"
+            log "♻️ Restarting stack (portfolio + caddy)..."
             docker compose up -d --build
 
-            # Clean up old images to free disk space
-            echo "🧹 Cleaning up old images..."
+            log "🧹 Cleaning up old images..."
             docker image prune -f
 
-            # Verify deployment
-            echo "✅ Verifying deployment..."
+            log "✅ Verifying deployment..."
             docker compose ps
 
-            echo ""
-            echo "========================================"
-            echo "✅ Portfolio deployment complete!"
-            echo "========================================"
-            echo "Services: portfolio, caddy"
-            echo "Domains: marcoangeloquanico.work, www.marcoangeloquanico.work"
-            echo "Container status:"
+            log "========================================"
+            log "✅ Portfolio deployment complete!"
+            log "Services: portfolio, caddy"
+            log "Domains: marcoangeloquanico.work, www.marcoangeloquanico.work"
             docker compose ps --format "table {{.Name}}\t{{.Status}}\t{{.Ports}}"

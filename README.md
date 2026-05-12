@@ -77,6 +77,28 @@ docker compose up --build
 
 The production deployment workflow also runs the full stack (`docker compose up -d --build`) so both `portfolio` and `caddy` are always running.
 
+## Secure VPS deploy keys for Caddy deployments
+
+The deploy workflow SSHes into the VPS and pulls this repository using a dedicated deploy key (`~/.ssh/portfolio_deploy_key`).
+
+On the VPS:
+
+```bash
+cd ~/portfolio
+chmod +x ./generate-deploy-keys.sh
+./generate-deploy-keys.sh
+```
+
+Then:
+
+1. Copy the printed public key (`~/.ssh/portfolio_deploy_key.pub`).
+2. Add it as a **read-only Deploy Key** in GitHub: `https://github.com/geloquan/portfolio/settings/keys`
+3. Ensure the private key remains on the VPS at `~/.ssh/portfolio_deploy_key`.
+
+If the key is missing, deployment now fails early with a clear error and guidance before any git pull/clone step.
+
+> Note: `VPS_SSH_KEY` in GitHub Actions secrets is still required for Actions to connect to the VPS. The deploy key above is separately used by the VPS for secure git operations.
+
 ## Troubleshooting: "Host Error" on the domain
 
 If you see a generic **Host Error** instead of the site:
