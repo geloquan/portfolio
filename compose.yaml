@@ -1,23 +1,35 @@
 services:
-  caddy:
+  portfolio:
+    image: portfolio-app:local
     build:
+      context: .
+      dockerfile: Dockerfile
+      target: portfolio
       args:
-        CLOUDFLARE_R2_ACCESS_KEY_ID: ${CLOUDFLARE_R2_ACCESS_KEY_ID:-}
-        VITE_PROJECT_ONE_MEDIA_URL: ${VITE_PROJECT_ONE_MEDIA_URL:-}
-        VITE_PROJECT_TWO_MEDIA_URL: ${VITE_PROJECT_TWO_MEDIA_URL:-}
-        VITE_PROJECT_THREE_MEDIA_URL: ${VITE_PROJECT_THREE_MEDIA_URL:-}
-        VITE_PROJECT_FOUR_MEDIA_URL: ${VITE_PROJECT_FOUR_MEDIA_URL:-}
+        CLOUDFLARE_R2_PROFILE_IMAGE_URL: ${CLOUDFLARE_R2_PROFILE_IMAGE_URL:-}
+        CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL: ${CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL:-}
+        CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL: ${CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL:-}
+        CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL: ${CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL:-}
+        CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL: ${CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL:-}
         VITE_PROJECT_ONE_YOUTUBE_URL: ${VITE_PROJECT_ONE_YOUTUBE_URL:-}
         VITE_PROJECT_TWO_YOUTUBE_URL: ${VITE_PROJECT_TWO_YOUTUBE_URL:-}
         VITE_PROJECT_ONE_FACEBOOK_URL: ${VITE_PROJECT_ONE_FACEBOOK_URL:-}
         VITE_PROJECT_THREE_FACEBOOK_URL: ${VITE_PROJECT_THREE_FACEBOOK_URL:-}
-        CLOUDFLARE_R2_SECRET_ACCESS_KEY: ${CLOUDFLARE_R2_SECRET_ACCESS_KEY:-}
-        CLOUDFLARE_R2_TOKEN_VALUE: ${CLOUDFLARE_R2_TOKEN_VALUE:-}
-        CLOUDFLARE_R2_BUCKET_NAME: ${CLOUDFLARE_R2_BUCKET_NAME:-}
-        CLOUDFLARE_R2_S3_ENDPOINT: ${CLOUDFLARE_R2_S3_ENDPOINT:-}
+    restart: unless-stopped
+    expose:
+      - "4173"
+    networks:
+      - portfolio_network
+
+  caddy:
+    image: portfolio-caddy:local
+    build:
       context: .
       dockerfile: Dockerfile
+      target: caddy
     container_name: portfolio-caddy
+    depends_on:
+      - portfolio
     restart: unless-stopped
     ports:
       - "80:80"
@@ -26,7 +38,12 @@ services:
       - caddy_config:/config
     cpus: 0.5
     mem_limit: 200m
+    networks:
+      - portfolio_network
 
 volumes:
   caddy_data:
   caddy_config:
+
+networks:
+  portfolio_network:

@@ -58,17 +58,19 @@ npm run build
 
 ## Docker (production with Caddy)
 
-Build and run with Docker CLI using CPU/RAM limits:
+Use Compose for the production stack. It runs two uniquely named services:
+
+- `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `4173`
+- `caddy` (`portfolio-caddy:local`) — reverse proxies public port `80` to `portfolio`
+
+Compose reads build-time variables from your shell or a local `.env` file in the repo root.
 
 ```bash
-docker build -t portfolio .
-docker run --rm -p 80:80 -p 443:443 --cpus=0.5 --memory=200m portfolio
+cp .env.example .env
 ```
 
-Or use Compose (Caddy serves the built SPA on port `80`):
+Then start both services:
 
 ```bash
 docker compose up --build
 ```
-
-Compose treats the preview and Cloudflare R2 variables as optional for local/default runs, so leaving them unset will not emit Docker variable warnings.

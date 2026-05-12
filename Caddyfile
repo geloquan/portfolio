@@ -1,6 +1,4 @@
 :80 {
-	root * /srv
 	encode gzip zstd
-	try_files {path} /index.html
-	file_server
+	reverse_proxy portfolio:4173
 }
