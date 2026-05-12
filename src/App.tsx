@@ -1,37 +1,25 @@
 import { useEffect, useMemo, useState } from 'react'
+import resumePdf from './resume-ma-quanico.pdf'
+import projectOneLogo from './assets/project-1-logo.svg'
+import projectTwoLogo from './assets/project-2-logo.png'
+import projectThreeLogo from './assets/project-3-logo.svg'
 import './App.css'
 
 type Project = {
   name: string
   summary: string
-  avatarUrl: string
-  mediaType: 'image' | 'video'
+  stack: string[]
+  outcome: string
+  logo: string
+  mediaType: 'image' | 'video' | 'none'
   mediaUrl?: string
-  youtubeUrl?: string
-  facebookUrl?: string
 }
 
 const primaryColor = '#92DCE5'
 const env = import.meta.env
 
-// Keep CLOUDFLARE_R2_ fallback temporarily to avoid breaking mixed-case legacy env files.
 const getCloudflareR2EnvValue = (name: string) =>
   env[`CLOUDFLARE_R2_${name}`] ?? env[`CLOUDFLARE_R2_${name}`]
-
-const toEmbedYoutubeUrl = (url?: string) => {
-  if (!url) return undefined
-  try {
-    const parsedUrl = new URL(url)
-    if (parsedUrl.hostname.includes('youtu.be')) {
-      const videoId = parsedUrl.pathname.replace('/', '')
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : undefined
-    }
-    const videoId = parsedUrl.searchParams.get('v')
-    return videoId ? `https://www.youtube.com/embed/${videoId}` : undefined
-  } catch {
-    return undefined
-  }
-}
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -54,8 +42,8 @@ function App() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const isLowPowerDevice =
-        (navigator.hardwareConcurrency ?? 4) <= 2 ||
-        ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
+      (navigator.hardwareConcurrency ?? 4) <= 2 ||
+      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
     setReducedMotion(mediaQuery.matches || isLowPowerDevice)
     const onPreferenceChange = (event: MediaQueryListEvent) => {
       setReducedMotion(event.matches || isLowPowerDevice)
@@ -72,248 +60,274 @@ function App() {
   }, [])
 
   const profileImageUrl = getCloudflareR2EnvValue('PROFILE_IMAGE_URL')
+  const projectOneVideoUrl = getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL')
+  const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL
 
   const projects: Project[] = useMemo(
-      () => [
-        {
-          name: 'Portfolio Experience',
-          summary: 'A responsive, conversion-focused portfolio showcasing product, UI, and frontend engineering work.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=portfolio',
-          mediaType: 'image',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_ONE_MEDIA_URL'),
-          youtubeUrl: import.meta.env.VITE_PROJECT_ONE_YOUTUBE_URL,
-          facebookUrl: import.meta.env.VITE_PROJECT_ONE_FACEBOOK_URL,
-        },
-        {
-          name: 'Creator Demo Reel',
-          summary: 'A short-form highlight reel for social campaigns and interactive launch pages.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=creator',
-          mediaType: 'video',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_TWO_MEDIA_URL'),
-          youtubeUrl: import.meta.env.VITE_PROJECT_TWO_YOUTUBE_URL,
-        },
-        {
-          name: 'Cloud Media Hub',
-          summary: 'Cloudflare-first media delivery with optimized image/video pipelines and lightweight UX.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=cloud',
-          mediaType: 'image',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_THREE_MEDIA_URL'),
-          facebookUrl: import.meta.env.VITE_PROJECT_THREE_FACEBOOK_URL,
-        },
-        {
-          name: 'Community Launch Kit',
-          summary: 'Landing experience with social storytelling, creator assets, and audience-ready previews.',
-          avatarUrl: 'https://api.dicebear.com/9.x/thumbs/svg?seed=community',
-          mediaType: 'video',
-          mediaUrl: getCloudflareR2EnvValue('PROJECT_FOUR_MEDIA_URL'),
-        },
-      ],
-      [],
+    () => [
+      {
+        name: 'Project 1 · Enterprise Medical Doctor Platform',
+        summary:
+          'A production-focused healthcare platform with dynamic doctor scheduling, searchable directory, notification workflows, and clinic role management.',
+        stack: [
+          'React',
+          'Laravel',
+          'Grafana Automation',
+          'Queue Jobs',
+          'Schedule Jobs',
+          'Email System',
+          'Ubuntu',
+          'Node',
+          'RESTful API',
+          'Cloudflare R2',
+          'Git',
+        ],
+        outcome:
+          'Built for enterprise-level operations with reliability, observability, and communication flow as core priorities.',
+        logo: projectOneLogo,
+        mediaType: 'video',
+        mediaUrl: projectOneVideoUrl,
+      },
+      {
+        name: 'Project 2 · Kotlin Mobile Research Application',
+        summary:
+          "An Android app developed with Kotlin that uses YOLOv8 OBB outputs and Python inference readings to quantify metadata and store structured results.",
+        stack: ['Kotlin', 'Android', 'YOLOv8 OBB', 'Python Inference', 'Data Quantification'],
+        outcome:
+          'Served as proof-of-work for a bachelor research thesis requirement, validating practical mobile-to-model workflow integration.',
+        logo: projectTwoLogo,
+        mediaType: 'none',
+      },
+      {
+        name: "Project 3 · Doctor's Directory Information System",
+        summary:
+          'A compliance-driven implementation for a local medical center in Bacolod City, focused on secure and streamlined doctor directory management.',
+        stack: ['Admin Role', 'Directory Management', 'Healthcare Compliance', 'Records Workflow'],
+        outcome:
+          'Delivered as an admin-only solution aligned with organizational controls and local operational requirements.',
+        logo: projectThreeLogo,
+        mediaType: 'none',
+      },
+    ],
+    [projectOneVideoUrl],
   )
 
   const sections = [
     { id: 'about', label: 'About' },
+    { id: 'research', label: 'Research' },
     { id: 'projects', label: 'Projects' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'education', label: 'Education' },
+    { id: 'services', label: 'Client Value' },
     { id: 'contact', label: 'Contact' },
   ]
 
   return (
-      <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
-        <div className="grain" aria-hidden="true" />
+    <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
+      <div className="grain" aria-hidden="true" />
 
-        {/* ── NAV ── */}
-        <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
-          <a className="brand" href="#about">MAQ</a>
+      <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
+        <a className="brand" href="#about">MAQ</a>
 
+        <button
+          className="menu-toggle"
+          type="button"
+          aria-label="Toggle navigation"
+          onClick={() => setMenuOpen((current) => !current)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+
+        <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
+          {sections.map((section) => (
+            <a key={section.id} href={`#${section.id}`} onClick={() => setMenuOpen(false)}>
+              {section.label}
+            </a>
+          ))}
           <button
-              className="menu-toggle"
-              type="button"
-              aria-label="Toggle navigation"
-              onClick={() => setMenuOpen((c) => !c)}
+            className="theme-toggle"
+            type="button"
+            onClick={() => setTheme((current) => (current === 'dark' ? 'light' : 'dark'))}
+            aria-label="Toggle theme"
           >
-            <span />
-            <span />
-            <span />
+            {theme === 'dark' ? '☀' : '◑'}
           </button>
+        </nav>
+      </header>
 
-          <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
-            {sections.map((section) => (
-                <a key={section.id} href={`#${section.id}`} onClick={() => setMenuOpen(false)}>
-                  {section.label}
-                </a>
-            ))}
-            <button
-                className="theme-toggle"
-                type="button"
-                onClick={() => setTheme((t) => (t === 'dark' ? 'light' : 'dark'))}
-                aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? '☀' : '◑'}
-            </button>
-          </nav>
-        </header>
-
-        <main>
-          {/* ── HERO ── */}
-          <section className="hero" id="about">
-            <div className="hero-visual">
-              <div className="profile-wrap">
-                {profileImageUrl ? (
-                    <img
-                        className="profile-photo"
-                        src={profileImageUrl}
-                        alt="Marco Angelo Quanico character portrait"
-                        loading="lazy"
-                    />
-                ) : (
-                    <div className="preview-fallback">
-                      <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
-                    </div>
-                )}
-                <div className="profile-glow" aria-hidden="true" />
-              </div>
-              <div className="hero-badge">
-                <span className="badge-dot" />
-                Available for work
-              </div>
+      <main>
+        <section className="hero" id="about">
+          <div className="hero-visual">
+            <div className="profile-wrap">
+              {profileImageUrl ? (
+                <img
+                  className="profile-photo"
+                  src={profileImageUrl}
+                  alt="Marco Angelo Quanico profile"
+                  loading="lazy"
+                />
+              ) : (
+                <div className="preview-fallback">
+                  <span>Set CLOUDFLARE_R2_PROFILE_IMAGE_URL in your env file.</span>
+                </div>
+              )}
+              <div className="profile-glow" aria-hidden="true" />
             </div>
+            <div className="hero-badge">
+              <span className="badge-dot" />
+              Open for client collaboration
+            </div>
+          </div>
 
-            <div className="hero-text">
-              <div className="hero-roles">
-                <span>Frontend Engineer</span>
-                <span>·</span>
-                <span>Product Builder</span>
-              </div>
-              <h1>
-                Building<br />
-                <em>expressive</em><br />
-                experiences.
-              </h1>
-              <p className="hero-desc">
-                I design and ship modern portfolio and product experiences that blend
-                performance, storytelling, and visual interaction.
+          <div className="hero-text">
+            <div className="hero-roles">
+              <span>Computer Vision Researcher</span>
+              <span>·</span>
+              <span>Business-Oriented Software Builder</span>
+            </div>
+            <h1>
+              I build<br />
+              <em>outcome-first</em><br />
+              digital systems.
+            </h1>
+            <p className="hero-desc">
+              I prioritize client satisfaction, measurable outcomes, and reliable delivery. I also offer free
+              consultation sessions via your preferred video-call platform.
+            </p>
+            <div className="hero-actions">
+              <a href="#research" className="btn-primary">View Research</a>
+              <a href={resumePdf} className="btn-ghost" download>Download Resume</a>
+            </div>
+          </div>
+        </section>
+
+        <section id="research">
+          <div className="section-label-row">
+            <span className="section-index">02</span>
+            <h2>Academic Research Highlight</h2>
+          </div>
+
+          <div className="research-grid">
+            <article className="research-card">
+              <p className="research-tag">Best Thesis · 2026 ICT Expo</p>
+              <h3>YOLOv8-based Computer Vision for Classifying and Counting Three Species</h3>
+              <p>
+                The thesis explores practical computer vision pipelines using YOLOv8 to classify and count three
+                species accurately, with emphasis on real-world deployment reliability and output interpretation.
               </p>
               <div className="hero-actions">
-                <a href="#projects" className="btn-primary">View Projects</a>
-                <a href="#contact" className="btn-ghost">Get in Touch ↗</a>
+                {thesisPaperUrl ? (
+                  <a href={thesisPaperUrl} className="btn-primary" target="_blank" rel="noreferrer" download>
+                    Download Thesis Paper
+                  </a>
+                ) : (
+                  <span className="research-note">Set VITE_THESIS_PAPER_URL to enable paper preview and download.</span>
+                )}
+                <a href={resumePdf} className="btn-ghost" download>
+                  Download Resume
+                </a>
               </div>
-            </div>
-          </section>
+            </article>
 
-          {/* ── PROJECTS ── */}
-          <section id="projects">
-            <div className="section-label-row">
-              <span className="section-index">02</span>
-              <h2>Selected Projects</h2>
-            </div>
-
-            <div className="bento-grid">
-              {projects.map((project, i) => {
-                const youtubeEmbed = toEmbedYoutubeUrl(project.youtubeUrl)
-                return (
-                    <article key={project.name} className={`project-card span-${i === 0 || i === 3 ? 'full' : 'half'}`}>
-                      <div className="card-stripe" aria-hidden="true" />
-
-                      <div className="project-head">
-                        <img src={project.avatarUrl} alt={`${project.name} avatar`} width={48} height={48} loading="lazy" />
-                        <div>
-                          <h3>{project.name}</h3>
-                          <p>{project.summary}</p>
-                        </div>
-                        <span className="card-index">{String(i + 1).padStart(2, '0')}</span>
-                      </div>
-
-                      <div className="preview-box">
-                        {project.mediaUrl ? (
-                            project.mediaType === 'video' ? (
-                                <video controls preload="metadata" src={project.mediaUrl} />
-                            ) : (
-                                <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
-                            )
-                        ) : (
-                            <div className="preview-fallback">
-                              <span>Set CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL (and other project media vars) in your env file.</span>
-                            </div>
-                        )}
-                      </div>
-
-                      {youtubeEmbed && (
-                          <div className="embed-wrap">
-                            <iframe
-                                title={`${project.name} YouTube preview`}
-                                src={youtubeEmbed}
-                                loading="lazy"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                            />
-                          </div>
-                      )}
-
-                      {project.facebookUrl && (
-                          <a className="facebook-preview" href={project.facebookUrl} target="_blank" rel="noreferrer">
-                            <span className="fb-label">Facebook</span>
-                            <strong>{project.name} launch post</strong>
-                            <small>Tap to open the full post ↗</small>
-                          </a>
-                      )}
-                    </article>
-                )
-              })}
-            </div>
-          </section>
-
-          {/* ── SKILLS ── */}
-          <section id="skills">
-            <div className="section-label-row">
-              <span className="section-index">03</span>
-              <h2>Skill Gain: Three.js Floaters</h2>
-            </div>
-            <p className="section-body">
-              I recently leveled up in building floater systems with three.js, focusing on lightweight
-              motion, depth, and smooth interaction timing for portfolio visuals.
-            </p>
-            <div className="floater-showcase" aria-label="Three.js floater skill showcase">
-              <span>three.js scene setup</span>
-              <span>floating meshes</span>
-              <span>interaction tuning</span>
-            </div>
-          </section>
-
-          {/* ── EDUCATION ── */}
-          <section id="education">
-            <div className="section-label-row">
-              <span className="section-index">04</span>
-              <h2>Education</h2>
-            </div>
-            <div className="education-card">
-              <div className="edu-year">B.S. Information Technology</div>
-              <h3>University-focused training in software engineering, UI/UX, and web systems architecture.</h3>
-              <p>Core focus: frontend engineering, cloud deployment, and multimedia web delivery.</p>
-            </div>
-          </section>
-        </main>
-
-        {/* ── FOOTER / CONTACT ── */}
-        <footer id="contact" className="footer">
-          <div className="footer-inner">
-            <div className="footer-left">
-              <span className="section-index">05</span>
-              <p className="footer-tagline">Let's collaborate on modern web experiences.</p>
-            </div>
-            <div className="social-links">
-              <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">GitHub ↗</a>
-              <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-              <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook ↗</a>
-            </div>
+            <article className="thesis-preview">
+              {thesisPaperUrl ? (
+                <iframe
+                  title="Research thesis paper preview"
+                  src={thesisPaperUrl}
+                  loading="lazy"
+                />
+              ) : (
+                <div className="preview-fallback">
+                  <span>Thesis preview appears here when VITE_THESIS_PAPER_URL is set.</span>
+                </div>
+              )}
+            </article>
           </div>
-          <div className="footer-bottom">
-            <span>© 2025 Marco Angelo Quanico</span>
-            <span>Cebu City, PH</span>
+        </section>
+
+        <section id="projects">
+          <div className="section-label-row">
+            <span className="section-index">03</span>
+            <h2>Project Portfolio</h2>
           </div>
-        </footer>
-      </div>
+
+          <div className="bento-grid">
+            {projects.map((project, index) => (
+              <article key={project.name} className="project-card span-full">
+                <div className="card-stripe" aria-hidden="true" />
+
+                <div className="project-head">
+                  <img src={project.logo} alt={`${project.name} logo`} width={48} height={48} loading="lazy" />
+                  <div>
+                    <h3>{project.name}</h3>
+                    <p>{project.summary}</p>
+                  </div>
+                  <span className="card-index">{String(index + 1).padStart(2, '0')}</span>
+                </div>
+
+                <div className="stack-list" aria-label={`${project.name} technologies`}>
+                  {project.stack.map((item) => (
+                    <span key={`${project.name}-${item}`}>{item}</span>
+                  ))}
+                </div>
+
+                <p className="project-outcome">{project.outcome}</p>
+
+                <div className="preview-box">
+                  {project.mediaUrl && project.mediaType === 'video' ? (
+                    <video controls preload="metadata" src={project.mediaUrl} />
+                  ) : project.mediaUrl && project.mediaType === 'image' ? (
+                    <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
+                  ) : (
+                    <div className="preview-fallback">
+                      <span>
+                        No public media file is attached for this project. Demo walk-through is available by request.
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="services">
+          <div className="section-label-row">
+            <span className="section-index">04</span>
+            <h2>Client Outcome Focus</h2>
+          </div>
+          <p className="section-body">
+            I work with a business lens: aligning system design, delivery pace, and product decisions with client
+            goals, satisfaction, and long-term operational value.
+          </p>
+          <div className="floater-showcase" aria-label="Client value pillars">
+            <span>Outcome-driven planning</span>
+            <span>Transparent communication</span>
+            <span>Quality-first implementation</span>
+            <span>Free video-call consultation</span>
+          </div>
+        </section>
+      </main>
+
+      <footer id="contact" className="footer">
+        <div className="footer-inner">
+          <div className="footer-left">
+            <span className="section-index">05</span>
+            <p className="footer-tagline">Let’s plan your next system with clarity and business impact.</p>
+          </div>
+          <div className="social-links">
+            <a href="mailto:geloquanico@gmail.com">Email for Consultation ↗</a>
+            <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">GitHub ↗</a>
+            <a href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+            <a href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook ↗</a>
+          </div>
+        </div>
+        <div className="footer-bottom">
+          <span>© 2026 Marco Angelo Quanico</span>
+          <span>Bacolod City / Cebu City, PH</span>
+        </div>
+      </footer>
+    </div>
   )
 }
 
