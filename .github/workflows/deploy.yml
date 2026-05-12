@@ -4,6 +4,14 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/geloquan/portfolio
 
 jobs:
   deploy:
@@ -11,22 +19,61 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
         with:
-          node-version: '20'
-          cache: 'npm'
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Build and push portfolio image
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: portfolio
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            CLOUDFLARE_R2_PROFILE_IMAGE_URL=${{ secrets.CLOUDFLARE_R2_PROFILE_IMAGE_URL }}
+            CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL }}
+            CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL }}
+            CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL }}
+            CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL=${{ secrets.CLOUDFLARE_R2_PROJECT_FOUR_MEDIA_URL }}
+            VITE_PROJECT_ONE_YOUTUBE_URL=${{ secrets.VITE_PROJECT_ONE_YOUTUBE_URL }}
+            VITE_PROJECT_TWO_YOUTUBE_URL=${{ secrets.VITE_PROJECT_TWO_YOUTUBE_URL }}
+            VITE_PROJECT_ONE_FACEBOOK_URL=${{ secrets.VITE_PROJECT_ONE_FACEBOOK_URL }}
+            VITE_PROJECT_THREE_FACEBOOK_URL=${{ secrets.VITE_PROJECT_THREE_FACEBOOK_URL }}
 
       - name: Deploy via SSH
-        uses: appleboy/ssh-action@v0.1.6
+        uses: appleboy/ssh-action@v1.2.2
+        env:
+          DEPLOY_IMAGE: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
+          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
+          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+          envs: DEPLOY_IMAGE,GHCR_USERNAME,GHCR_TOKEN
           script: |
+            set -euo pipefail
             echo "🚀 Starting deployment of Portfolio..."
 
             echo "📥 Pulling latest changes..."
@@ -43,9 +90,16 @@ jobs:
             # Return to deployment root
             cd ~/mabdoc-deploy
 
-            # Rebuild the portfolio Docker image
-            echo "🔨 Building Docker image (this may take 2-5 minutes)..."
-            docker compose build portfolio
+            if [ -n "${GHCR_USERNAME}" ] && [ -n "${GHCR_TOKEN}" ]; then
+              echo "🔐 Logging in to GHCR..."
+              echo "${GHCR_TOKEN}" | docker login ghcr.io -u "${GHCR_USERNAME}" --password-stdin
+            else
+              echo "ℹ️ GHCR_USERNAME/GHCR_TOKEN not provided; attempting pull without registry login."
+            fi
+
+            echo "📦 Pulling image ${DEPLOY_IMAGE}..."
+            docker pull "${DEPLOY_IMAGE}"
+            docker tag "${DEPLOY_IMAGE}" portfolio-app:local
 
             # Restart the service with zero downtime
             echo "♻️  Restarting service..."
