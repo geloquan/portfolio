@@ -161,7 +161,7 @@ function App() {
             loading="lazy"
           />
           <div>
-            <p className="pill">Marco Angelo Quanico · Frontend Engineer · Product Builder</p>
+            <p className="pill">Frontend Engineer · Product Builder</p>
             <h1>Building expressive, high-performance digital experiences.</h1>
             <p>
               I design and ship modern portfolio and product experiences that blend performance, storytelling, and

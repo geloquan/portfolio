@@ -1,3 +1,5 @@
+# Compatibility alias for environments expecting dockerCompose.yml.
+# Keep in sync with compose.yaml (source of truth).
 services:
   portfolio:
     build:
