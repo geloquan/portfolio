@@ -61,7 +61,7 @@ docker build -t portfolio .
 docker run --rm -p 80:80 -p 443:443 --cpus=0.5 --memory=200m portfolio
 ```
 
-Or use Compose (`compose.yaml` or `dockerCompose.yml`) with the same limits:
+Or use Compose (`compose.yaml` or `dockerCompose.yml`) with the same limits. `dockerCompose.yml` is intentionally kept as a compatibility alias for environments that expect that filename:
 
 ```bash
 docker compose up --build
