@@ -95,7 +95,7 @@ section {
   border-radius: 16px;
   border: 2px solid var(--primary);
   object-fit: cover;
-  aspect-ratio: 1080 / 1920;
+  aspect-ratio: 9 / 16;
 }
 
 .pill {

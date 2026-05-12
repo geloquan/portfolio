@@ -223,7 +223,7 @@ function App() {
       </main>
 
       <footer id="contact" className="footer">
-        <p>Let&apos;s collaborate on modern web experiences.</p>
+        <p>Let's collaborate on modern web experiences.</p>
         <div className="social-links">
           <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">
             GitHub
