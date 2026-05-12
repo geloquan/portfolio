@@ -67,10 +67,6 @@ jobs:
             # Return to deployment root
             cd ~/mabdoc-deploy
 
-            echo "📦 Pulling image ${DEPLOY_IMAGE}..."
-            docker pull "${DEPLOY_IMAGE}"
-            docker tag "${DEPLOY_IMAGE}" "${DEPLOY_LOCAL_TAG}"
-
             # Restart the service with zero downtime
             echo "♻️  Restarting service..."
             docker compose up -d portfolio
