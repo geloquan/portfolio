@@ -63,11 +63,6 @@ jobs:
 
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.2.2
-        env:
-          DEPLOY_IMAGE: ${{ env.IMAGE_NAME }}@${{ steps.build.outputs.digest }}
-          DEPLOY_LOCAL_TAG: ${{ env.DEPLOY_LOCAL_TAG }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USER }}
