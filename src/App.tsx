@@ -97,7 +97,6 @@ function App() {
           'Doctor dynamic scheduling',
           'Doctor directory and notifications',
           'Clinic role management',
-          'Only project with Cloudflare R2-hosted video preview',
         ],
         mediaType: 'video',
         mediaUrl: import.meta.env.VITE_PROJECT_ONE_MEDIA_URL,
