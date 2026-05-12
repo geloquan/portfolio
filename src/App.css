@@ -39,7 +39,7 @@
 
 .top-nav.island {
   border-radius: 999px;
-  box-shadow: 0 14px 35px rgb(0 0 0 / 16%);
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.16);
   transform: translateY(0.1rem);
   background: color-mix(in srgb, var(--surface) 88%, var(--bg) 12%);
 }

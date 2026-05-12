@@ -1,4 +1,4 @@
-marcoangeloquanico.work, www.marcoangeloquanico.work, :80 {
+marcoangeloquanico.work, www.marcoangeloquanico.work {
 	root * /srv
 	encode gzip zstd
 	file_server
