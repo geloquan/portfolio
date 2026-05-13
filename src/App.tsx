@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useRef, useState} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
@@ -7,7 +7,7 @@ import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
 import resumePdf from './resume-ma-quanico.pdf'
-import {VideoOff} from "lucide-react";
+import {Pause, Play, VideoOff} from "lucide-react";
 
 type Project = {
   name: string
@@ -30,26 +30,62 @@ function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [reducedMotion, setReducedMotion] = useState(false)
   const [isNavIsland, setIsNavIsland] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
 
+  // Track which project index is currently playing (-1 = none)
+  const [playingIndex, setPlayingIndex] = useState<number>(-1)
+
+  // One ref per project slot; we'll populate them as videos mount
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
+
+  // Pause all videos except the one at `exceptIndex`
+  const pauseAllExcept = useCallback((exceptIndex: number) => {
+    videoRefs.current.forEach((vid, idx) => {
+      if (vid && idx !== exceptIndex) {
+        vid.pause()
+      }
+    })
+  }, [])
+
+  // Toggle play/pause for a given project index
+  const handleVideoClick = useCallback((projectIndex: number) => {
+    const vid = videoRefs.current[projectIndex]
+    if (!vid) return
+
+    if (vid.paused) {
+      // Pause every other video first
+      pauseAllExcept(projectIndex)
+      vid.play().catch(() => {
+      })
+      setPlayingIndex(projectIndex)
+    } else {
+      vid.pause()
+      setPlayingIndex(-1)
+    }
+  }, [pauseAllExcept])
+
+  // Intersection observer: auto-pause when a video scrolls out of view
   useEffect(() => {
-    const video = videoRef.current
-    if (!video) return
+    const observers: IntersectionObserver[] = []
 
-    const observer = new IntersectionObserver(
+    videoRefs.current.forEach((vid, idx) => {
+      if (!vid) return
+
+      const observer = new IntersectionObserver(
         ([entry]) => {
-          if (entry.isIntersecting) {
-            video.play().catch(() => {}) // catch needed — browser may block autoplay
-          } else {
-            video.pause()
+          if (!entry.isIntersecting) {
+            vid.pause()
+            setPlayingIndex((prev) => (prev === idx ? -1 : prev))
           }
         },
-        { threshold: 0.4 }, // plays when 40% of the video is visible
-    )
+        {threshold: 0.3},
+      )
 
-    observer.observe(video)
-    return () => observer.disconnect()
-  }, [])
+      observer.observe(vid)
+      observers.push(observer)
+    })
+
+    return () => observers.forEach((obs) => obs.disconnect())
+  }, []) // runs once after mount; refs are stable
 
   useEffect(() => {
     let scrollTimeout: ReturnType<typeof setTimeout>
@@ -62,12 +98,11 @@ function App() {
       }
 
       clearTimeout(scrollTimeout)
-
       scrollTimeout = setTimeout(() => {
       }, 300)
     }
 
-    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('scroll', onScroll, {passive: true})
 
     return () => {
       window.removeEventListener('scroll', onScroll)
@@ -87,8 +122,8 @@ function App() {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const isLowPowerDevice =
-        (navigator.hardwareConcurrency ?? 4) <= 2 ||
-        ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
+      (navigator.hardwareConcurrency ?? 4) <= 2 ||
+      ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
     setReducedMotion(mediaQuery.matches || isLowPowerDevice)
     const onPreferenceChange = (event: MediaQueryListEvent) => {
       setReducedMotion(event.matches || isLowPowerDevice)
@@ -100,7 +135,7 @@ function App() {
   useEffect(() => {
     const onScroll = () => setIsNavIsland(window.scrollY > 20)
     onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('scroll', onScroll, {passive: true})
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
@@ -159,16 +194,16 @@ function App() {
   )
 
   const sections = [
-    { id: 'about', label: 'About' },
-    { id: 'research', label: 'Research' },
-    { id: 'projects', label: 'Projects' },
-    { id: 'experience', label: 'Experience' },
-    { id: 'contact', label: 'Contact' },
+    {id: 'about', label: 'About'},
+    {id: 'research', label: 'Research'},
+    {id: 'projects', label: 'Projects'},
+    {id: 'experience', label: 'Experience'},
+    {id: 'contact', label: 'Contact'},
   ]
 
   return (
     <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
-      <div className="grain" aria-hidden="true" />
+      <div className="grain" aria-hidden="true"/>
 
       <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
         <a className="brand" href="#about">
@@ -183,9 +218,9 @@ function App() {
           aria-label="Toggle navigation"
           onClick={() => setMenuOpen((c) => !c)}
         >
-          <span />
-          <span />
-          <span />
+          <span/>
+          <span/>
+          <span/>
         </button>
 
         <nav className={`nav-links ${menuOpen ? 'open' : ''}`}>
@@ -215,10 +250,10 @@ function App() {
                 alt="Marco Angelo P. Quanico portrait"
                 loading="lazy"
               />
-              <div className="profile-glow" aria-hidden="true" />
+              <div className="profile-glow" aria-hidden="true"/>
             </div>
             <div className="hero-badge">
-              <span className="badge-dot" />
+              <span className="badge-dot"/>
               Open for client projects + free consultations
             </div>
           </div>
@@ -231,7 +266,7 @@ function App() {
             </div>
             <h1>
               Building systems that
-              <br />
+              <br/>
               create better
               <em> outcomes.</em>
             </h1>
@@ -301,7 +336,7 @@ function App() {
             <article className="thesis-preview-card">
               <div className="preview-title">Visual Thesis Preview</div>
               {thesisPaperUrl ? (
-                <iframe title="Research thesis visual preview" src={thesisPaperUrl} />
+                <iframe title="Research thesis visual preview" src={thesisPaperUrl}/>
               ) : (
                 <div className="preview-fallback">
                   <span>Thesis preview appears here when thesis URL is provided.</span>
@@ -320,15 +355,20 @@ function App() {
           <div className="bento-grid">
             {projects.map((project, i) => (
               <article key={project.name} className={`project-card span-${i === 0 ? 'full' : 'half'}`}>
-                <div className="card-stripe" aria-hidden="true" />
+                <div className="card-stripe" aria-hidden="true"/>
                 <div className="project-head">
                   <img
-                      src={project.avatarUrl}
-                      alt={`${project.name} logo`}
-                      width={48}
-                      height={48}
-                      loading="lazy"
-                      style={i === 2 ? { padding: '10px 0', objectFit: 'contain', width: '48px', height: '48px' } : undefined}
+                    src={project.avatarUrl}
+                    alt={`${project.name} logo`}
+                    width={48}
+                    height={48}
+                    loading="lazy"
+                    style={i === 2 ? {
+                      padding: '10px 0',
+                      objectFit: 'contain',
+                      width: '48px',
+                      height: '48px'
+                    } : undefined}
                   />
                   <div>
                     <p className="project-category">{project.category}</p>
@@ -349,21 +389,44 @@ function App() {
 
                 <div className="preview-box">
                   {project.mediaUrl ? (
-                      project.mediaType === 'video' ? (
-                          <video
-                              ref={i >= 1 ? videoRef : undefined}
-                              preload="metadata"
-                              src={project.mediaUrl}
-                              muted           // required by browsers for autoplay to work
-                              loop
-                              playsInline     // prevents iOS from going fullscreen
-                          />
-                      ) : (
-                          <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" />
-                      )
+                    project.mediaType === 'video' ? (
+                      <div
+                        className="video-wrapper"
+                        onClick={() => handleVideoClick(i)}
+                        role="button"
+                        aria-label={playingIndex === i ? `Pause ${project.name} video` : `Play ${project.name} video`}
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault()
+                            handleVideoClick(i)
+                          }
+                        }}
+                      >
+                        <video
+                          ref={(el) => {
+                            videoRefs.current[i] = el
+                          }}
+                          preload="metadata"
+                          src={project.mediaUrl}
+                          muted
+                          loop
+                          playsInline
+                        />
+                        {/* Play/Pause overlay icon */}
+                        <div className={`video-overlay-icon ${playingIndex === i ? 'playing' : 'paused'}`}>
+                          {playingIndex === i
+                            ? <Pause size={36} strokeWidth={2}/>
+                            : <Play size={36} strokeWidth={2}/>
+                          }
+                        </div>
+                      </div>
+                    ) : (
+                      <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy"/>
+                    )
                   ) : (
                     <div className="preview-fallback">
-                      <VideoOff size={48} strokeWidth={1.5} className="fallback-icon" />
+                      <VideoOff size={48} strokeWidth={1.5} className="fallback-icon"/>
                       <span className="fallback-label">Video unavailable</span>
                     </div>
                   )}
