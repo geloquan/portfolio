@@ -137,7 +137,8 @@ function App() {
           'Quantifies metadata from detection outputs',
           'Stores and logs counting records',
         ],
-        mediaType: 'image',
+        mediaType: 'video',
+        mediaUrl: import.meta.env.VITE_PROJECT_TWO_MEDIA_URL,
       },
       {
         name: 'Doctor Directory Information System',
