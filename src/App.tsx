@@ -351,7 +351,7 @@ function App() {
                   {project.mediaUrl ? (
                       project.mediaType === 'video' ? (
                           <video
-                              ref={i === 0 ? videoRef : undefined}
+                              ref={i >= 1 ? videoRef : undefined}
                               preload="metadata"
                               src={project.mediaUrl}
                               muted           // required by browsers for autoplay to work
