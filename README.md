@@ -4,10 +4,10 @@ A Vite + React single-page portfolio with light/dark mode, responsive navigation
 
 ## Features
 
-- Primary branding color: `#92DCE5`
-- Light/dark mode toggle
+- Organic Minimalism interface with accessible light/dark themes
+- Persistent light/dark mode toggle
 - Responsive navigation menu and mobile layout support
-- Scroll-aware floating “island” navigation style
+- Scroll-aware floating �island� navigation style
 - Smooth section transitions with reduced-motion support for low-power devices
 - Skill section highlighting three.js floater creation progress
 - Projects section with healthcare and research project showcases
@@ -25,17 +25,34 @@ cp .env.example .env.local
 cp .env.example .env.production
 ```
 
-Set Cloudflare R2 media URLs with the `CLOUDFLARE_R2_` prefix:
+Set Cloudflare R2 object keys and credentials through your deployment environment or secret store:
 
-- `CLOUDFLARE_R2_PROFILE_IMAGE_URL`
-- `CLOUDFLARE_R2_PROJECT_ONE_MEDIA_URL`
-- `CLOUDFLARE_R2_PROJECT_TWO_MEDIA_URL`
-- `CLOUDFLARE_R2_PROJECT_THREE_MEDIA_URL`
-- `CLOUDFLARE_R2_THESIS_PAPER_URL`
+- `CLOUDFLARE_R2_ACCESS_KEY_ID`
+- `CLOUDFLARE_R2_SECRET_ACCESS_KEY`
+- `CLOUDFLARE_R2_TOKEN_VALUE` (optional session token)
+- `CLOUDFLARE_R2_BUCKET_NAME`
+- `CLOUDFLARE_R2_S3_ENDPOINT`
+- `CLOUDFLARE_R2_PROFILE_IMAGE_OBJECT_KEY`
+- `CLOUDFLARE_R2_PROJECT_ONE_MEDIA_OBJECT_KEY` (AI legal system)
+- `CLOUDFLARE_R2_MEDICAL_ARTS_MEDIA_OBJECT_KEY`
+- `CLOUDFLARE_R2_PROJECT_TWO_MEDIA_OBJECT_KEY` (seashell research)
+- `CLOUDFLARE_R2_PROJECT_THREE_MEDIA_OBJECT_KEY` (doctor directory)
+- `CLOUDFLARE_R2_THESIS_PAPER_OBJECT_KEY`
 
-Optional thesis URL override:
+Optional build-time overrides:
 
 - `VITE_THESIS_PAPER_URL`
+- `VITE_PROFILE_IMAGE_URL` (optional public profile image URL)
+- `VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL`
+- `VITE_PROJECT_AI_LEGAL_MEDIA_URL`
+- `VITE_PROJECT_SEASHELL_MEDIA_URL`
+- `VITE_PROJECT_DOCTOR_DIRECTORY_MEDIA_URL`
+
+All `VITE_*` values are public build-time URLs. Do not put API credentials or private tokens in them. In Docker builds, configure R2 object keys and credentials through the deployment's secret mechanism; credentials must never be committed.
+
+## Portfolio content audit
+
+`cv.md` and `cv-quanico.pdf` are the source of truth for professional history and CV-reported outcomes. The public site clearly labels unverified claims rather than inventing details. Check `TODOs.md` for the remaining owner actions and `docs/portfolio-audit.md` for the skill-by-skill findings, CV coverage, and validation record. Run `npm run check:placeholders` to detect newly added, unreviewed owner markers in application code. Current, deliberately reviewed verification markers are allowlisted in the script; review the audit checklist before launch. These audit files describe decisions and gaps only; the owner remains responsible for verifying claims and approving public materials.
 
 ## Local development
 
@@ -54,8 +71,8 @@ npm run build
 
 Use Compose for the production stack. It runs two uniquely named services:
 
-- `portfolio` (`portfolio-app:local`) — builds the app with env vars and serves it on internal port `80`
-- `caddy` (`portfolio-caddy:local`) — handles TLS, redirects HTTP to HTTPS, and reverse proxies to `portfolio` on internal port `80`
+- `portfolio` (`portfolio-app:local`) � builds the app with env vars and serves it on internal port `80`
+- `caddy` (`portfolio-caddy:local`) � handles TLS, redirects HTTP to HTTPS, and reverse proxies to `portfolio` on internal port `80`
 
 Compose reads build-time variables from your shell or a local `.env` file in the repo root.
 

@@ -1,0 +1,164 @@
+/* Organic Minimalism: light + dark theme tokens.
+   Single source of truth for every color and shadow color in the app.
+   Source: .github/skills/tactile-theme-modes/assets/theme.css.
+   Components must only reference these variables, never hex values.
+
+   Resolution order:
+   1. Default (:root)                      = light values
+   2. OS prefers dark                       = dark values (unless the user forced light)
+   3. [data-theme="light" | "dark"]         = explicit user choice, set by ThemeProvider
+   Dark values appear twice (steps 2 and 3). Keep them identical;
+   `python scripts/theme_check.py contrast <this file>` fails on drift. */
+
+:root {
+  color-scheme: light dark; /* native controls, scrollbars, and form fields follow the active mode */
+
+  /* ---------- LIGHT (default) ---------- */
+  --color-hairline: color-mix(in srgb, var(--color-accent-earth) 35%, transparent);
+  --color-control-border: color-mix(in srgb, var(--color-accent-earth) 38%, var(--color-bg-surface));
+  --font-display: Georgia, 'Times New Roman', serif;
+  --font-body: Inter, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --radius-sm: 16px;
+  --radius-md: 24px;
+  --radius-lg: 32px;
+  --radius-xl: 32px;
+  --space-1: 0.5rem;
+  --space-2: 1rem;
+  --space-3: 1.5rem;
+  --space-4: 2rem;
+  --space-5: 3rem;
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --color-bg-base:      #efefea;
+  --color-bg-surface:   #e8e8e1;
+  --color-card-hover: color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-accent-warm) 8%);
+  --bg: var(--color-bg-base);
+  --surface: var(--color-bg-surface);
+  --card: var(--color-bg-surface);
+  --text: var(--color-text-primary);
+  --muted: var(--color-text-secondary);
+  --muted-light: var(--color-text-secondary);
+  --primary: var(--color-accent-warm);
+  --accent: var(--color-accent-earth);
+  --primary-dim: var(--color-accent-warm-dim);
+  --primary-glow: color-mix(in srgb, var(--color-accent-warm) 24%, transparent);
+  --border: var(--color-hairline);
+  --border-strong: var(--color-control-border);
+  --text-on-primary: var(--color-on-accent);
+  --text-on-accent: var(--color-on-earth);
+  --color-text-primary: #1c221f;
+  --color-text-muted:   #6b7470;
+  --color-accent-warm:  #9e7b3b;
+  --color-accent-earth: #5d6b63;
+  --shadow-light-source:#ffffff; /* tactile-ignore, theme-ignore: a white highlight is correct in light mode */
+  --shadow-dark-sink:   #d1d1c4;
+
+  /* Additions (not in the original palette): each fixes a measured contrast gap */
+  --color-text-secondary:   #5f6864; /* small readable text: >= 4.5:1 on base and surface */
+  --color-accent-warm-text: #7f6228; /* brass for small text: brass fill is only 3.2 to 3.4:1 in light */
+  --color-on-accent:        #0e1110; /* label on a brass fill */
+  --color-on-earth:         #efefea; /* label on a moss fill */
+  --color-danger:           #9a4a31; /* terracotta */
+  --color-success:          #4e6b3d; /* sage */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg-base:      #0e1110;
+    --color-bg-surface:   #1a1e1c;
+    --color-card-hover: color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-accent-warm) 8%);
+    --color-accent-warm-dim: color-mix(in srgb, var(--color-accent-warm) 14%, var(--color-bg-base));
+    --bg: var(--color-bg-base);
+    --surface: var(--color-bg-surface);
+    --card: var(--color-bg-surface);
+    --text: var(--color-text-primary);
+    --muted: var(--color-text-secondary);
+    --muted-light: var(--color-text-secondary);
+    --primary: var(--color-accent-warm);
+    --accent: var(--color-accent-earth);
+    --primary-dim: var(--color-accent-warm-dim);
+    --primary-glow: color-mix(in srgb, var(--color-accent-warm) 24%, transparent);
+    --border: var(--color-hairline);
+    --border-strong: var(--color-control-border);
+    --text-on-primary: var(--color-on-accent);
+    --text-on-accent: var(--color-on-earth);
+    --color-text-primary: #e3e8e5;
+    --color-text-muted:   #7d8581;
+    --color-accent-warm:  #c5a059;
+    --color-accent-earth: #3a4740;
+    --shadow-light-source:#242a27;
+    --shadow-dark-sink:   #060807;
+
+    --color-text-secondary:   #868e8a; /* muted is 4.45:1 on surface in dark, just under AA */
+    --color-accent-warm-text: #c5a059;
+    --color-on-accent:        #0e1110;
+    --color-on-earth:         #e3e8e5;
+    --color-danger:           #c8765a;
+    --color-success:          #86a378;
+  }
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg-base:      #0e1110;
+  --color-bg-surface:   #1a1e1c;
+  --color-card-hover: color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-accent-warm) 8%);
+  --color-accent-warm-dim: color-mix(in srgb, var(--color-accent-warm) 14%, var(--color-bg-base));
+  --bg: var(--color-bg-base);
+  --surface: var(--color-bg-surface);
+  --card: var(--color-bg-surface);
+  --text: var(--color-text-primary);
+  --muted: var(--color-text-secondary);
+  --muted-light: var(--color-text-secondary);
+  --primary: var(--color-accent-warm);
+  --accent: var(--color-accent-earth);
+  --primary-dim: var(--color-accent-warm-dim);
+  --primary-glow: color-mix(in srgb, var(--color-accent-warm) 24%, transparent);
+  --border: var(--color-hairline);
+  --border-strong: var(--color-control-border);
+  --text-on-primary: var(--color-on-accent);
+  --text-on-accent: var(--color-on-earth);
+  --color-text-primary: #e3e8e5;
+  --color-text-muted:   #7d8581;
+  --color-accent-warm:  #c5a059;
+  --color-accent-earth: #3a4740;
+  --shadow-light-source:#242a27;
+  --shadow-dark-sink:   #060807;
+
+  --color-text-secondary:   #868e8a;
+  --color-accent-warm-text: #c5a059;
+  --color-on-accent:        #0e1110;
+  --color-on-earth:         #e3e8e5;
+  --color-danger:           #c8765a;
+  --color-success:          #86a378;
+}
+
+/* ---------- Derived tokens: computed from the tokens above, so they are right in both modes ---------- */
+:root {
+  --color-bg-surface-hover: color-mix(in srgb, var(--color-bg-surface) 92%, var(--color-text-primary));
+  --color-accent-warm-dim:  color-mix(in srgb, var(--color-accent-warm) 70%, var(--color-bg-base));
+  --color-hairline:         color-mix(in srgb, var(--color-accent-earth) 35%, transparent);
+  --color-scrim:            color-mix(in srgb, var(--color-bg-base) 72%, transparent); /* modal backdrops; never rgba(0,0,0,.5) */
+  --color-focus-ring:       var(--color-accent-warm); /* 3.2:1 or better against base and surface in both modes */
+  --color-raised-shadow: 6px 6px 16px var(--shadow-dark-sink), -6px -6px 16px var(--shadow-light-source);
+  --color-pressed-shadow: inset 4px 4px 10px var(--shadow-dark-sink), inset -4px -4px 10px var(--shadow-light-source);
+  --color-flush-shadow: 0 1px 0 color-mix(in srgb, var(--color-text-primary) 4%, transparent);
+  --color-control-border: color-mix(in srgb, var(--color-accent-earth) 38%, var(--color-bg-surface));
+}
+
+/* ---------- Global application ---------- */
+html {
+  background: var(--color-bg-base);
+  color: var(--color-text-primary);
+  scrollbar-color: var(--color-accent-earth) transparent;
+}
+body { background: var(--color-bg-base); color: var(--color-text-primary); }
+::selection { background: color-mix(in srgb, var(--color-accent-warm) 35%, transparent); color: inherit; }
+::placeholder { color: var(--color-text-secondary); opacity: 1; }
+:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 3px; }
+
+@media (prefers-contrast: more) {
+  :root { --color-text-muted: var(--color-text-secondary); }
+}
