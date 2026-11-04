@@ -1,0 +1,21 @@
+<!-- Place in <head> of index.html AFTER the stylesheet link, so it runs before first paint.
+     Applies the saved choice (if any) and syncs the browser UI color. No flash of the wrong theme. -->
+<meta name="color-scheme" content="light dark" />
+<meta name="theme-color" content="#efefea" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0e1110" media="(prefers-color-scheme: dark)" />
+<script>
+  (function () {
+    try {
+      var c = localStorage.getItem("theme");
+      var r = document.documentElement;
+      if (c === "light" || c === "dark") {
+        r.setAttribute("data-theme", c);
+        var bg = getComputedStyle(r).getPropertyValue("--color-bg-base").trim();
+        document.querySelectorAll('meta[name="theme-color"]').forEach(function (m) {
+          m.setAttribute("content", bg);
+          m.removeAttribute("media");
+        });
+      }
+    } catch (e) {}
+  })();
+</script>
