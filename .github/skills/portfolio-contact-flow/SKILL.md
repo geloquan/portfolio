@@ -134,7 +134,7 @@ Use the host site's tokens when they exist. Otherwise:
 - [ ] No native select/checkbox/radio/date visible
 - [ ] Live validation works; first invalid field gets focus on failed submit
 - [ ] Toasts fire for success, error (with Retry), copy, and draft restore
-- [ ] All five states in the state machine are visually distinct
+  - [ ] All five states in the state machine are visually distinct
 - [ ] Draft persistence works and fails gracefully
 - [ ] Reduced-motion and keyboard-only use verified
 - [ ] Mobile viewport (≈375px) checked: modal becomes a bottom sheet or full-screen, tap targets ≥ 44px
