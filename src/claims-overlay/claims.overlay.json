@@ -33,8 +33,8 @@
         "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
         "fine_print": "The task sample and measurement method are not yet documented."
       },
-      "open_questions": ["What task sample, baseline, and measurement method support this CV-reported comparison?"],
-      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+      "open_questions": ["What task sample, baseline, and measurement method support this project-record comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected project outcomes']"}]
     },
     "daily-workload-reduction-80": {
       "text": "80% less repetitive daily workload",
@@ -46,8 +46,8 @@
         "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
         "fine_print": "The workload definition and measurement period are not yet documented."
       },
-      "open_questions": ["What workload, period, and measurement method support this CV-reported comparison?"],
-      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+      "open_questions": ["What workload, period, and measurement method support this project-record comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected project outcomes']"}]
     },
     "department-overhead-reduction-67": {
       "text": "67% lower department overhead",
@@ -59,15 +59,15 @@
         "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
         "fine_print": "The included costs, accounting period, and calculation method are not yet documented."
       },
-      "open_questions": ["Which overhead costs and accounting period support this CV-reported comparison?"],
-      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+      "open_questions": ["Which overhead costs and accounting period support this project-record comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected project outcomes']"}]
     },
     "task-time-reduction-70": {
       "text": "task time reduced by 70% (~20 to ~7 minutes)",
       "type": "performance",
       "status": "needs_explanation",
       "explanation": null,
-      "open_questions": ["What task sample and measurement method produced this CV-reported estimate?"],
+      "open_questions": ["What task sample and measurement method produced this project-record estimate?"],
       "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
     },
     "workload-reduction-80": {
@@ -75,7 +75,7 @@
       "type": "savings",
       "status": "needs_explanation",
       "explanation": null,
-      "open_questions": ["What workload and measurement period support this CV-reported estimate?"],
+      "open_questions": ["What workload and measurement period support this project-record estimate?"],
       "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
     },
     "overhead-reduction-67": {
@@ -83,7 +83,7 @@
       "type": "savings",
       "status": "needs_explanation",
       "explanation": null,
-      "open_questions": ["Which overhead costs and accounting records support these CV-reported figures?"],
+      "open_questions": ["Which overhead costs and accounting records support these project-record figures?"],
       "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
     },
     "backlog-cleared-60": {
