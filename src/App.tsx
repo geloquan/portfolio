@@ -1,4 +1,7 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import {gsap} from 'gsap'
+import {ScrollTrigger} from 'gsap/ScrollTrigger'
+import {ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Play, VideoOff, X} from 'lucide-react'
 import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
@@ -7,8 +10,9 @@ import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
 import resumePdf from './resume-ma-quanico.pdf'
-import {Pause, Play, VideoOff} from "lucide-react";
-import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js';
+import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
+
+gsap.registerPlugin(ScrollTrigger)
 
 type Project = {
   name: string
@@ -29,7 +33,7 @@ type Inquiry = { name: string; email: string; message: string }
 type FormState = 'idle' | 'validating' | 'submitting' | 'error'
 
 async function sendInquiry(_payload: Inquiry): Promise<void> {
-  // TODO(owner): Replace with a server-side contact endpoint; do not expose credentials in VITE_*.
+  // Replace with a server-side contact endpoint; do not expose credentials in VITE_*.
   await new Promise((resolve) => window.setTimeout(resolve, 150))
   throw new Error('The contact endpoint is not configured yet.')
 }
@@ -46,7 +50,7 @@ function App() {
     }
   })
   const [menuOpen, setMenuOpen] = useState(false)
-  const [reducedMotion, setReducedMotion] = useState(false)
+  const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [isNavIsland, setIsNavIsland] = useState(false)
   const [feedbackEnabled, setFeedbackEnabledState] = useState(isFeedbackEnabled)
   const [contactOpen, setContactOpen] = useState(false)
@@ -58,15 +62,34 @@ function App() {
   const [formError, setFormError] = useState('')
   const contactTriggerRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDialogElement>(null)
+  const closeContactRef = useRef<() => void>(() => undefined)
   const firstInvalidRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null)
   const toastId = useRef(0)
   const draftLoaded = useRef(false)
 
-  // Track which project index is currently playing (-1 = none)
   const [playingIndex, setPlayingIndex] = useState<number>(-1)
-
-  // One ref per project slot; we'll populate them as videos mount
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
+  const motionScopeRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!motionScopeRef.current) return
+    const context = gsap.context(() => {
+      gsap.utils.toArray<HTMLElement>('[data-reveal]').forEach((element) => {
+        if (reducedMotion) {
+          gsap.set(element, {autoAlpha: 1, clearProps: 'transform'})
+          return
+        }
+        gsap.fromTo(element, {autoAlpha: 0, y: 18}, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.65,
+          ease: 'power2.out',
+          scrollTrigger: {trigger: element, start: 'top 88%', once: true},
+        })
+      })
+    }, motionScopeRef)
+    return () => context.revert()
+  }, [reducedMotion])
 
   // Pause all videos except the one at `exceptIndex`
   const pauseAllExcept = useCallback((exceptIndex: number) => {
@@ -96,6 +119,7 @@ function App() {
 
   // Intersection observer: auto-pause when a video scrolls out of view
   useEffect(() => {
+    if (!('IntersectionObserver' in window)) return
     const observers: IntersectionObserver[] = []
 
     videoRefs.current.forEach((vid, idx) => {
@@ -119,30 +143,20 @@ function App() {
   }, []) // runs once after mount; refs are stable
 
   useEffect(() => {
-    let scrollTimeout: ReturnType<typeof setTimeout>
-
     const onScroll = () => {
       setIsNavIsland(window.scrollY > 20)
-
-      if (menuOpen) {
-        setMenuOpen(false)
-      }
-
-      clearTimeout(scrollTimeout)
-      scrollTimeout = setTimeout(() => {
-      }, 300)
+      setMenuOpen(false)
     }
 
     window.addEventListener('scroll', onScroll, {passive: true})
-
-    return () => {
-      window.removeEventListener('scroll', onScroll)
-      clearTimeout(scrollTimeout)
-    }
-  }, [menuOpen])
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
+    const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+    const themeColor = getComputedStyle(document.documentElement).getPropertyValue('--color-bg-base').trim()
+    if (themeMeta && themeColor) themeMeta.setAttribute('content', themeColor)
     try {
       localStorage.setItem('theme', theme)
     } catch {
@@ -158,7 +172,9 @@ function App() {
         const restored = {name: parsed.name ?? '', email: parsed.email ?? '', message: parsed.message ?? ''}
         setInquiry(restored)
         if (restored.name || restored.email || restored.message) {
-          setToasts((current) => [...current, {id: ++toastId.current, kind: 'info', message: 'Welcome back, your draft was restored.'}])
+          const id = ++toastId.current
+          setToasts((current) => [...current, {id, kind: 'info', message: 'Welcome back, your draft was restored.'}])
+          window.setTimeout(() => setToasts((current) => current.filter((item) => item.id !== id)), 4000)
         }
       }
     } catch {
@@ -184,23 +200,33 @@ function App() {
     const dialog = dialogRef.current
     if (!dialog) return
     if (!dialog.open) dialog.showModal()
+    dialog.querySelector<HTMLElement>('input:not([tabindex="-1"]), textarea')?.focus()
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape' && formState !== 'submitting') { event.preventDefault(); setContactOpen(false); window.setTimeout(() => contactTriggerRef.current?.focus(), 0); return }
       if ((event.metaKey || event.ctrlKey) && event.key === 'Enter' && formState !== 'submitting') {
         event.preventDefault()
         dialog.querySelector('form')?.requestSubmit()
+      }
+      if (event.key === 'Escape' && formState !== 'submitting') {
+        event.preventDefault()
+        closeContactRef.current()
+        return
       }
       if (event.key === 'Tab') {
         const focusable = Array.from(dialog.querySelectorAll<HTMLElement>('button:not(:disabled), input:not(:disabled), textarea:not(:disabled), a[href]'))
         if (!focusable.length) return
         const first = focusable[0]
         const last = focusable[focusable.length - 1]
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus() }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus() }
+        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) { event.preventDefault(); last.focus() }
+        else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) { event.preventDefault(); first.focus() }
       }
     }
     dialog.addEventListener('keydown', onKeyDown)
-    return () => dialog.removeEventListener('keydown', onKeyDown)
+    return () => {
+      dialog.removeEventListener('keydown', onKeyDown)
+      document.body.style.overflow = previousOverflow
+    }
   }, [contactOpen, formState])
 
   const pushToast = useCallback((toast: Omit<Toast, 'id'>) => {
@@ -253,11 +279,13 @@ function App() {
   }, [pushToast])
 
   const closeContact = useCallback(() => {
+    if (formState === 'submitting') return
     const dirty = Boolean(inquiry.name || inquiry.email || inquiry.message)
     setContactOpen(false)
     if (dirty) pushToast({kind: 'info', message: 'Draft saved. Reopen the form to continue.', retry: () => setContactOpen(true)})
     window.setTimeout(() => contactTriggerRef.current?.focus(), 0)
-  }, [inquiry, pushToast])
+  }, [formState, inquiry, pushToast])
+  closeContactRef.current = closeContact
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -266,17 +294,10 @@ function App() {
       ((navigator as Navigator & { deviceMemory?: number }).deviceMemory ?? 4) <= 2
     setReducedMotion(mediaQuery.matches || isLowPowerDevice)
     const onPreferenceChange = (event: MediaQueryListEvent) => {
-      setReducedMotion(event.matches || isLowPowerDevice)
+      setReducedMotion(event.matches)
     }
     mediaQuery.addEventListener('change', onPreferenceChange)
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
-  }, [])
-
-  useEffect(() => {
-    const onScroll = () => setIsNavIsland(window.scrollY > 20)
-    onScroll()
-    window.addEventListener('scroll', onScroll, {passive: true})
-    return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
   const profileImageUrl = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
@@ -307,14 +328,14 @@ function App() {
       {
         name: 'Medical Arts Platform',
         category: 'Core · Healthcare product engineering',
-        summary: 'A healthcare-management application developed for a medical center. TODO(owner): Confirm the platform scope and your specific contribution against project records.',
+        summary: 'Healthcare-management work is listed on the CV; platform scope and personal contribution are not yet confirmed.',
         avatarUrl: projectOneLogo,
-        techstack: 'TODO(owner): Confirm exact stack from project source.',
-        highlights: ['TODO(owner): Add a verified feature or outcome.'],
+        techstack: 'Stack not published pending project-source verification.',
+        highlights: ['Feature-level details and outcomes are not published until verified.'],
         mediaType: 'image',
         mediaUrl: projectMedia.medicalArts,
-        role: 'TODO(owner): Confirm personal role and dates.',
-        year: 'TODO(owner): Confirm year.',
+        role: 'Role and dates not published pending verification.',
+        year: 'Unverified',
         classification: 'Core',
         evidence: 'CV: cv.md and cv-quanico.pdf; feature-level details require project-source verification.',
       },
@@ -324,7 +345,7 @@ function App() {
         summary: 'A computer-vision research project for seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental.',
         avatarUrl: projectTwoLogo,
         techstack: 'YOLOv11 instance segmentation · Kotlin · Python inference pipeline · JSON logging',
-        highlights: ['AI-driven object segmentation and classification', 'Android application records inference-derived counts', 'Co-author research; TODO(owner): Verify publication status/date and add a public source link.'],
+        highlights: ['AI-driven object segmentation and classification', 'Android application records inference-derived counts', 'Co-author research; publication status and date need a verified public source.'],
         mediaType: 'video',
         mediaUrl: projectMedia.seashell,
         role: 'Co-author · Computer vision research',
@@ -354,12 +375,12 @@ function App() {
     {id: 'about', label: 'About'},
     {id: 'projects', label: 'Projects'},
     {id: 'experience', label: 'Experience'},
-    {id: 'contributions', label: 'Research & contributions'},
+    {id: 'contributions', label: 'Research'},
     {id: 'contact', label: 'Contact'},
   ]
 
   return (
-    <div className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
+    <div ref={motionScopeRef} className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
       <div className="grain" aria-hidden="true"/>
 
       <header className={`top-nav ${isNavIsland ? 'island' : ''}`}>
@@ -414,264 +435,72 @@ function App() {
       </header>
 
       <main>
-        <section className="hero" id="about">
-          <div className="hero-visual">
-            <div className="profile-wrap">
-              <img
-                className="profile-photo"
-                src={profileImageUrl}
-                alt="Marco Angelo P. Quanico portrait"
-                loading="lazy"
-              />
-              <div className="profile-glow" aria-hidden="true"/>
-            </div>
-            <div className="hero-badge">
-              <span className="badge-dot"/>
-              Open for client projects + free consultations
-            </div>
-          </div>
-
-          <div className="hero-text">
-            <div className="hero-roles">
-              <span>AI/ML &amp; Full-Stack Software Engineer</span>
-              <span>·</span>
-              <span>AI-integrated products for real operations</span>
-            </div>
-            <h1>
-              I build software
-              <br/>
-              with AI at its
-              <em> core.</em>
-            </h1>
-            <p className="hero-desc">
-              I deliver AI-integrated business systems, from offline local-LLM workflows to computer-vision products. At Rosian Liaison Services, my workflow work cut task time by 70% and repetitive daily workload by 80%.
-            </p>
-            <div className="hero-actions">
-              <a href="#projects" className="btn-primary">Explore AI work</a>
-              <a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">Download current CV</a>
-              <button ref={contactTriggerRef} type="button" className="btn-ghost" onClick={() => setContactOpen(true)}>Building something with AI? Let&apos;s talk</button>
-            </div>
-            <div className="hero-signals">
-              <span>5 specialized agent skills · RAG · local LLMs</span>
-              <span>AI cost: about ₱1.11 per completed task (CV-reported)</span>
-              <span>Best Thesis, 19th ICT EXPO 2025</span>
-            </div>
-          </div>
-        </section>
-
-        <section id="research" className="research-section">
-          <div className="section-label-row">
-            <span className="section-index">02</span>
-            <h2>Academic Research Spotlight</h2>
-          </div>
-          <div className="research-grid">
-            <article className="research-card">
-              <p className="project-category">Core · Computer-vision research · publication status to verify</p>
-              <h3>AI-Driven YOLOv11 Seashell Instance Segmentation</h3>
-              <p>
-                Co-authored research on automated seashell detection, classification, and harvest assessment for coastal communities of Negros Occidental.
-              </p>
-              <div className="research-points">
-                <span>YOLOv11 instance segmentation</span>
-                <span>Android and Python inference workflow</span>
-                <span>Best Thesis, 19th ICT EXPO 2025</span>
+        <section className="hero" id="about" data-reveal>
+          <div className="hero-index"><span className="eyebrow">Independent engineer · Bacolod, Philippines</span><span className="hero-index-number">Portfolio / 2026</span></div>
+          <div className="hero-grid">
+            <div className="hero-copy hero-text">
+              <p className="hero-kicker">AI / systems / product engineering</p>
+              <div className="hero-roles">
+                <span>AI/ML &amp; Full-Stack Software Engineer</span>
+                <span>·</span>
+                <span>AI-integrated products for real operations</span>
               </div>
-              <div className="research-actions">
-                {thesisPaperUrl ? (
-                  <>
-                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">
-                      Open Thesis
-                    </a>
-                    <a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-ghost">
-                      Download Thesis
-                    </a>
-                  </>
-                ) : (
-                  <div className="preview-fallback">
-                    <span>TODO(owner): Add the public thesis link or confirm the bundled research PDF can be shared.</span>
-                  </div>
-                )}
+              <h1>Useful AI,<br /><em>built to work.</em></h1>
+              <p className="hero-desc">I’m Marco, an AI/ML and full-stack software engineer. I build business systems that fit real operations, from offline document workflows to computer-vision products.</p>
+              <div className="hero-actions"><a href="#projects" className="btn-primary">Explore selected work <ArrowDown size={17} aria-hidden="true" /></a><a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">Download current CV <ArrowUpRight size={16} aria-hidden="true" /></a></div>
+              <p className="hero-location">Based in Bacolod City, Negros Occidental · Philippines</p>
+            </div>
+            <div className="hero-visual">
+              <div className="profile-wrap">
+                <img
+                  className="profile-photo"
+                  src={profileImageUrl}
+                  alt="Marco Angelo P. Quanico portrait"
+                  width="720"
+                  height="1280"
+                  fetchPriority="high"
+                />
+                <div className="profile-glow" aria-hidden="true"/>
               </div>
-            </article>
-
-            <article className="thesis-preview-card">
-              <div className="preview-title">Visual Thesis Preview</div>
-              {thesisPaperUrl ? (
-                <iframe title="Research thesis visual preview" src={thesisPaperUrl}/>
-              ) : (
-                <div className="preview-fallback">
-                  <span>Thesis preview appears here when thesis URL is provided.</span>
-                </div>
-              )}
-            </article>
+            </div>
           </div>
+
+          <div className="hero-proof" aria-label="Selected CV-reported outcomes"><div><strong>70%</strong><span>faster task execution</span></div><div><strong>80%</strong><span>less repetitive daily workload</span></div><div><strong>67%</strong><span>lower department overhead</span></div><p>Reported for the offline legal-document workflow at Rosian Liaison Services.</p></div>
+
         </section>
 
-        <section id="projects">
+        <section id="projects" data-reveal>
           <div className="section-label-row">
-            <span className="section-index">03</span>
-            <h2>Selected Projects</h2>
+            <span className="section-index">01 / FIELD NOTES</span>
+            <h2>Selected work</h2>
           </div>
 
-          <div className="bento-grid">
-            {projects.map((project, i) => (
-              <article key={project.name} className={`project-card span-${i === 0 ? 'full' : 'half'}`}>
-                <div className="card-stripe" aria-hidden="true"/>
-                <div className="project-head">
-                  <img
-                    src={project.avatarUrl}
-                    alt={`${project.name} logo`}
-                    width={48}
-                    height={48}
-                    loading="lazy"
-                    style={i === 2 ? {
-                      padding: '10px 0',
-                      objectFit: 'contain',
-                      width: '48px',
-                      height: '48px'
-                    } : undefined}
-                  />
-                  <div>
-                    <p className="project-category">{project.category} · {project.year}</p>
-                    <h3>{project.name}</h3>
-                    <p>{project.summary}</p>
-                  </div>
-                  <span className="card-index">{String(i + 1).padStart(2, '0')}</span>
-                </div>
-
-                <p className="project-role">{project.role}</p>
-                <p className="project-proof"><strong>Evidence:</strong> {project.evidence}</p>
-                <p className="techstack-text">
-                  <strong>AI / delivery stack:</strong> {project.techstack}
-                </p>
-                <ul className="project-highlights">
-                  {project.highlights.map((highlight) => (
-                    <li key={highlight}>{highlight}</li>
-                  ))}
-                </ul>
-
-                <div className="preview-box">
-                  {project.mediaUrl ? (
-                    project.mediaType === 'video' ? (
-                      <div className="video-frame">
-                        <video
-                          ref={(el) => { videoRefs.current[i] = el }}
-                          preload="metadata"
-                          src={project.mediaUrl}
-                          muted
-                          loop
-                          playsInline
-                          onPlay={() => { pauseAllExcept(i); setPlayingIndex(i) }}
-                          onPause={() => setPlayingIndex((current) => current === i ? -1 : current)}
-                          onError={() => setPlayingIndex((current) => current === i ? -1 : current)}
-                        />
-                        <button
-                          type="button"
-                          className="video-control"
-                          onClick={() => { handleVideoClick(i); tactileFeedback() }}
-                          aria-label={playingIndex === i ? `Pause ${project.name} video` : `Play ${project.name} video`}
-                          aria-pressed={playingIndex === i}
-                        >
-                        {playingIndex === i ? <Pause size={26} strokeWidth={2} aria-hidden="true"/> : <Play size={26} strokeWidth={2} aria-hidden="true"/>}
-                      </button>
-                    </div>
-                    ) : (
-                      <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy"/>
-                    )
-                  ) : (
-                    <div className="preview-fallback project-media-placeholder">
-                      <VideoOff size={40} strokeWidth={1.5} className="fallback-icon" aria-hidden="true"/>
-                      <span className="fallback-label">{project.name === 'Medical Arts Platform' ? 'Project details need owner confirmation' : 'Media slot · Add a real project demo'}</span>
-                      <small>TODO(owner): Configure a public screenshot/video URL in the matching VITE_PROJECT_*_MEDIA_URL variable. Do not use portrait video for the seashell project.</small>
-                    </div>
-                  )}
-                </div>
-              </article>
-            ))}
-          </div>
+          <article className="project-featured" aria-labelledby="project-title-1"><div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div><div className="project-featured-body"><div className="project-featured-copy"><p className="project-role">AI Systems Engineer · Rosian Liaison Services</p><h3 id="project-title-1">Offline AI Legal Document System</h3><p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working without cloud model dependence.</p><div className="project-outcomes"><div><strong>70%</strong><span>faster task execution</span></div><div><strong>80%</strong><span>less repetitive daily workload</span></div><div><strong>67%</strong><span>lower department overhead</span></div></div>          <p className="project-proof">CV-reported outcomes: task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. AI cost was about ₱1.11 per completed task.</p><ul className="project-highlights">{projects[0].highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul><p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p><p className="project-evidence">Evidence: cv.md and cv-quanico.pdf · Jan–Oct 2026</p></div><div className="preview-box featured-preview">{projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_AI_LEGAL_MEDIA_URL.</small></div>}</div></div></article>
+          <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="project-proof"><strong>Evidence:</strong> {project.evidence}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><ul className="project-highlights">{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
         </section>
 
-        <section id="experience">
-          <div className="section-label-row">
-            <span className="section-index">04</span>
-            <h2>AI delivery & engineering experience</h2>
-          </div>
-          <div className="experience-grid">
-            <article className="experience-card experience-featured experience-card-featured">
-              <p className="project-category">AI Systems Engineer · Jan–Oct 2026</p>
-              <h3>Rosian Liaison Services</h3>
-              <p>Built an offline AI legal-document workflow using local LLMs, five specialized agent skills, RAG, and a PostgreSQL knowledge base. Reported outcomes: task time reduced 70% (~20 min to ~7 min), repetitive daily workload reduced 80% (~5 hrs to ~1 hr), and department overhead reduced 67% (₱15k to ₱5k), without headcount replacement.</p>
-              <p className="techstack-text"><strong>Delivery layers:</strong> Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL · Ollama · RAG/pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p>
-              <p className="project-proof">Local processing avoids cloud model dependence; reported AI cost was about ₱1.11 per completed task.</p>
-            </article>
-            <article className="experience-card">
-              <p className="project-category">System Developer · Jun 2025–Jan 2026</p>
-              <h3>Adventist Medical Center Bacolod</h3>
-              <p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60% of the outstanding fix backlog. Built an MSSQL-backed shift scheduling workflow with swaps and approvals.</p>
-            </article>
-            <article className="experience-card">
-              <p className="project-category">Software Developer · Mar–Jun 2025</p>
-              <h3>Riverside Medical Center Inc.</h3>
-              <p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management. The CV reports 85% UX satisfaction after stakeholder feedback.</p>
-            </article>
-            <article className="experience-card">
-              <p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p>
-              <h3>Business software</h3>
-              <p>Built MERN applications and a multi-business financial management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p>
-            </article>
-            <article className="experience-card">
-              <p className="project-category">Product engineering · Adjacent</p>
-              <h3>Skills by AI delivery layer</h3>
-              <dl className="skill-layers">
-                <div><dt>Models & APIs</dt><dd>Llama 3.1 · Qwen2.5-Coder/VL · CodeGemma · Ollama</dd></div>
-                <div><dt>Orchestration & retrieval</dt><dd>Multi-agent orchestration · tool calling · RAG · pgvector</dd></div>
-                <div><dt>Computer vision</dt><dd>YOLOv8 · YOLOv11 · VLM-based OCR · Re-ID tracking</dd></div>
-                <div><dt>Data & serving</dt><dd>PostgreSQL · MSSQL · Redis · Docker · GitHub Actions</dd></div>
-                <div><dt>Product engineering</dt><dd>Python · PHP/Laravel · React/TypeScript · Node.js · C#/ASP.NET</dd></div>
-              </dl>
-            </article>
-            <article className="experience-card">
-              <p className="project-category">Education & recognition</p>
-              <h3>Research, learning & community</h3>
-              <p>MS Computer Science, Recoletos de Bacolod Graduate School (2025–present; 9 units completed). BS Computer Science, STI West Negros University (2021–2025). Champion, Best Thesis, 19th ICT EXPO 2025; Champion, ICT Olympics 2024 (Web Design and Development); invited CS industry panelist.</p>
-              <a href={thesisPaperUrl || undefined} target="_blank" rel="noreferrer" className={thesisPaperUrl ? 'btn-ghost' : 'text-link-disabled'} aria-disabled={!thesisPaperUrl}>Research paper (bundled thesis PDF; public citation TODO)</a>
-            </article>
-          </div>
+        <section id="experience" data-reveal>
+          <header className="section-heading"><div><span className="section-index">02 / PRACTICE</span><h2>Work behind the work</h2></div><p>Production systems, healthcare IT, and independent product engineering: each shaped by a different operating context.</p></header>
+          <article className="experience-feature"><div className="experience-feature-label"><span>01</span><span>AI systems engineering</span><span>Jan–Oct 2026</span></div><div><h3>Rosian Liaison Services</h3><p>Built an offline AI legal-document workflow using local LLMs, five specialized agent skills, RAG, and a PostgreSQL knowledge base. The CV reports task time reduced by 70% (~20 to ~7 minutes), repetitive daily workload by 80% (~5 to ~1 hour), and department overhead by 67% (₱15k to ₱5k), without headcount replacement.</p><p className="project-proof">Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL · Ollama · pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p><p className="project-proof">AI cost reported at about ₱1.11 per completed task.</p></div></article>
+          <div className="experience-list"><article><span>02</span><div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60% of the outstanding fix backlog. Built an MSSQL-backed shift-scheduling workflow with swaps and approvals.</p></div></article><article><span>03</span><div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management. The CV reports 85% UX satisfaction following stakeholder feedback.</p></div></article><article><span>04</span><div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent business software</h3><p>Built MERN applications and a multi-business financial-management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div></article></div>
+          <div className="skills-strip"><span>TOOLS / SYSTEMS</span><p>Local LLMs · Multi-agent orchestration · RAG · pgvector · YOLOv8/YOLOv11 · VLM-based OCR · Python · Laravel · React/TypeScript · C#/ASP.NET · PostgreSQL · MSSQL · Redis · Docker · GitHub Actions</p></div>
+
         </section>
 
-        <section id="contributions">
-          <div className="section-label-row">
-            <span className="section-index">05</span>
-            <h2>Research & contributions</h2>
-          </div>
-          <article className="research-card contribution-item">
-            <p className="project-category">Computer-vision research · Co-author · publication status to verify</p>
-            <h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3>
-            <p>Computer-vision research on instance segmentation and harvest assessment.</p>
-            <a href={thesisPaperUrl || undefined} target="_blank" rel="noreferrer" className={thesisPaperUrl ? 'btn-primary' : 'text-link-disabled'} aria-disabled={!thesisPaperUrl}>Open publication · TODO(owner): add verified public paper URL</a>
-          </article>
+        <section id="contributions" data-reveal>
+          <header className="section-heading"><div><span className="section-index">03 / RESEARCH & LEARNING</span><h2>Research, study,<br />and recognition</h2></div><p>Computer vision in a local context, graduate study in progress, and work recognized by the academic community.</p></header>
+          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">CV<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. The CV lists publication in September 2026; publication status and citation are presented as CV-reported pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span>Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a><span>Local thesis copy · confirm public distribution rights before sharing.</span></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" /></div></article>
+          <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; Champion, ICT Olympics 2024 (Web Design and Development); invited CS industry panelist.</p></article></div>
         </section>
       </main>
 
-      <footer id="contact" className="footer">
-        <div className="footer-inner">
-          <div className="footer-left">
-            <span className="section-index">06</span>
-            <p className="footer-tagline">Building something with AI? Let&apos;s talk about a reliable, useful product.</p>
-          </div>
-          <div className="social-links">
-            <button type="button" className="footer-action" onClick={() => setContactOpen(true)}>Start an AI project conversation</button>
-            <button type="button" className="footer-action" onClick={() => void copyEmail()}>Copy email</button>
-            <a href="mailto:marcoangelo.quanico@gmail.com">Email</a>
-            <a href="https://github.com/geloquan" target="_blank" rel="noreferrer">GitHub ↗</a>
-            <a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
-          </div>
+      <section id="contact" className="contact-section" data-reveal>
+        <div className="contact-inner">
+          <div><span className="section-index">04 / CONTACT</span><h2>Build something<br /><em>useful.</em></h2><p>For work around AI systems, product engineering, and practical automation, start a conversation by email.</p></div>
+          <div className="contact-actions"><button ref={contactTriggerRef} type="button" className="btn-primary" onClick={() => setContactOpen(true)}>Open inquiry form <ArrowUpRight size={16} aria-hidden="true" /></button><a href="mailto:marcoangelo.quanico@gmail.com" className="btn-ghost"><Mail size={16} aria-hidden="true" /> Email directly</a><button type="button" className="text-action" onClick={() => void copyEmail()}>Copy email address</button><p>The inquiry form is not connected to a delivery service yet. Use the email link for a message that needs to reach me.</p></div>
         </div>
-        <div className="footer-bottom">
-          <span>© 2026 Marco Angelo P. Quanico</span>
-          <span>Bacolod City, Philippines</span>
-        </div>
-      </footer>
+      </section>
+      <footer className="footer"><div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML + full-stack engineer · Bacolod City, Philippines</p><div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} aria-hidden="true" /></a><a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true" /></a><a href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true" /></a></div></div><div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span><a href={resumePdf} target="_blank" rel="noreferrer">Current CV <ArrowUpRight size={14} aria-hidden="true" /></a></div></footer>
 
       <dialog
         className="contact-dialog"
@@ -684,7 +513,7 @@ function App() {
         <div className="contact-modal">
           <div className="contact-modal-header">
             <div><p className="project-category">AI product inquiry</p><h2 id="contact-title">Let&apos;s build something useful.</h2>            <p>Share a little context. Messages are not currently delivered; use the email link while the contact service is configured.</p></div>
-            <button type="button" className="modal-close" onClick={closeContact} disabled={formState === 'submitting'} aria-label="Close contact form">×</button>
+            <button type="button" className="modal-close" onClick={closeContact} disabled={formState === 'submitting'} aria-label="Close contact form"><X size={18} aria-hidden="true" /></button>
           </div>
             <form className="contact-form" noValidate onSubmit={(event) => { event.preventDefault(); void submitInquiry() }}>
               <div className="honeypot" aria-hidden="true"><label htmlFor="company-website">Leave this field empty</label><input id="company-website" name="company-website" tabIndex={-1} autoComplete="off" /></div>
@@ -706,7 +535,7 @@ function App() {
               </div>
               {formError && <p className="form-status-error" role="alert">{formError}</p>}
               <div className="modal-footer"><p>Esc to close · Ctrl/⌘ + Enter to submit</p><div className="modal-actions"><button type="button" className="btn-ghost" onClick={closeContact} disabled={formState === 'submitting'}>Cancel</button><button type="submit" className="btn-primary" disabled={formState === 'submitting'}>{formState === 'validating' ? 'Checking…' : formState === 'submitting' ? 'Sending…' : formState === 'error' ? 'Retry sending' : 'Send inquiry'}</button></div></div>
-              <p className="backend-note">Demo mode: messages are not sent. TODO(owner): configure a trusted contact-service endpoint before accepting inquiries.</p>
+              <p className="backend-note">Demo mode: messages are not sent. A trusted contact-service endpoint must be configured before accepting inquiries.</p>
             </form>
         </div>
       </dialog>
