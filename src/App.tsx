@@ -11,8 +11,8 @@ import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import resumePdf from './resume-ma-quanico.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
-import ClaimLayer from './claims-overlay/ClaimLayer'
 import {resolveAssetUrl} from './assetUrl'
+import ClaimLayer from './claims-overlay/ClaimLayer'
 
 gsap.registerPlugin(ScrollTrigger)
 
