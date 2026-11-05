@@ -11,6 +11,14 @@ import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
 import projectOneLogo from './assets/project-1-logo.svg'
 import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
+import homeDoodles from './assets/home-doodles.svg'
+import homeDoodleWork from './assets/home-doodle-work.svg'
+import homeDoodleApproach from './assets/home-doodle-approach.svg'
+import homeDoodleContact from './assets/home-doodle-contact.svg'
+import homeDoodleMarks from './assets/home-doodle-marks.svg'
+import homeDoodleSwirl from './assets/home-doodle-swirl.svg'
+import homeDoodleMountains from './assets/home-doodle-mountains.svg'
+import homeDoodleSunrise from './assets/home-doodle-sunrise.svg'
 import resumePdf from './resume-ma-quanico.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
 import ClaimLayer from './claims-overlay/ClaimLayer'
@@ -93,6 +101,7 @@ function HomePage() {
 
   return (
     <div className="home-page">
+      <img className="home-doodle-layer" src={homeDoodles} alt="" aria-hidden="true" />
       <header className="home-nav">
         <a className="home-brand" href="#top" aria-label="Marco Angelo Quanico home">
           <img
@@ -120,6 +129,7 @@ function HomePage() {
 
       <main id="top">
         <section className="home-hero" aria-labelledby="home-title">
+          <img className="home-reference-doodle home-marks-doodle" src={homeDoodleMarks} alt="" aria-hidden="true" width="400" height="400" />
           <div className="home-hero-copy">
             <p className="home-overline">AI systems and product engineering</p>
             <h1 id="home-title">Useful software for work that matters.</h1>
@@ -132,18 +142,20 @@ function HomePage() {
             </div>
           </div>
           <figure className="home-portrait">
-            <img
-              src={import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto}
-              alt="Marco Angelo P. Quanico"
-              width="720"
-              height="1280"
-              fetchPriority="high"
-            />
+            {/*<img*/}
+            {/*  src={import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto}*/}
+            {/*  alt="Marco Angelo P. Quanico"*/}
+            {/*  width="720"*/}
+            {/*  height="1280"*/}
+            {/*  fetchPriority="high"*/}
+            {/*/>*/}
             <figcaption>Bacolod City, Philippines</figcaption>
           </figure>
         </section>
 
         <section className="home-section home-work" id="work" aria-labelledby="work-title">
+          <img className="home-section-doodle home-work-doodle" src={homeDoodleWork} alt="" aria-hidden="true" />
+          <img className="home-reference-doodle home-swirl-doodle" src={homeDoodleSwirl} alt="" aria-hidden="true" width="400" height="400" />
           <div className="home-section-intro">
             <p className="home-overline">Selected work</p>
             <h2 id="work-title">A short view of the practice.</h2>
@@ -177,6 +189,8 @@ function HomePage() {
         </section>
 
         <section className="home-section home-approach" id="approach" aria-labelledby="approach-title">
+          <img className="home-section-doodle home-approach-doodle" src={homeDoodleApproach} alt="" aria-hidden="true" />
+          <img className="home-reference-doodle home-mountains-doodle" src={homeDoodleMountains} alt="" aria-hidden="true" width="400" height="400" />
           <div>
             <p className="home-overline">Working approach</p>
             <h2 id="approach-title">Clarity before complexity.</h2>
@@ -193,6 +207,8 @@ function HomePage() {
       </main>
 
       <footer className="home-footer" id="contact">
+        <img className="home-section-doodle home-contact-doodle" src={homeDoodleContact} alt="" aria-hidden="true" />
+        <img className="home-reference-doodle home-sunrise-doodle" src={homeDoodleSunrise} alt="" aria-hidden="true" width="400" height="400" />
         <div>
           <p className="home-overline">Start a conversation</p>
           <h2>Have a real process to improve?</h2>
