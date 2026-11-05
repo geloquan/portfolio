@@ -1,4 +1,5 @@
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
+import type {ReactNode} from 'react'
 import {gsap} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
 import {ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Play, VideoOff, X} from 'lucide-react'
@@ -39,6 +40,37 @@ async function sendInquiry(_payload: Inquiry): Promise<void> {
 }
 
 type Toast = { id: number; message: string; kind: 'success' | 'error' | 'info'; retry?: () => void }
+type SectionHeadingProps = {
+  id: string
+  index: string
+  title: ReactNode
+  description: string
+  isVisible: boolean
+  onToggle: () => void
+}
+
+function SectionHeading({id, index, title, description, isVisible, onToggle}: SectionHeadingProps) {
+  return (
+    <header className="section-heading">
+      <div>
+        <span className="section-index">{index}</span>
+        <h2>{title}</h2>
+      </div>
+      <div className="section-heading-context">
+        <button
+          className="section-description-toggle"
+          type="button"
+          aria-expanded={isVisible}
+          aria-controls={id}
+          onClick={onToggle}
+        >
+          {isVisible ? 'Hide context' : 'Show context'}
+        </button>
+        <p id={id} hidden={!isVisible}>{description}</p>
+      </div>
+    </header>
+  )
+}
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -53,6 +85,8 @@ function App() {
   const [reducedMotion, setReducedMotion] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches)
   const [isNavIsland, setIsNavIsland] = useState(false)
   const [feedbackEnabled, setFeedbackEnabledState] = useState(isFeedbackEnabled)
+  const [showSectionDescriptions, setShowSectionDescriptions] = useState(false)
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Record<string, boolean>>({})
   const [contactOpen, setContactOpen] = useState(false)
   const [inquiry, setInquiry] = useState<Inquiry>({name: '', email: '', message: ''})
   const [touched, setTouched] = useState<Record<keyof Inquiry, boolean>>({name: false, email: false, message: false})
@@ -379,6 +413,12 @@ function App() {
     {id: 'contact', label: 'Contact'},
   ]
 
+  const toggleSectionDescription = (sectionId: string) => {
+    setExpandedDescriptions((current) => ({...current, [sectionId]: !current[sectionId]}))
+  }
+
+  const isDescriptionVisible = (sectionId: string) => showSectionDescriptions || Boolean(expandedDescriptions[sectionId])
+
   return (
     <div ref={motionScopeRef} className={`app-shell ${reducedMotion ? 'reduce-motion' : ''}`}>
       <div className="grain" aria-hidden="true"/>
@@ -433,6 +473,16 @@ function App() {
           >
             {feedbackEnabled ? 'Sound on' : 'Sound off'}
           </button>
+          <button
+            className="theme-toggle context-toggle"
+            type="button"
+            role="switch"
+            aria-checked={showSectionDescriptions}
+            aria-label="Show section context"
+            onClick={() => setShowSectionDescriptions((current) => !current)}
+          >
+            {showSectionDescriptions ? 'Context on' : 'Context off'}
+          </button>
         </nav>
       </header>
 
@@ -482,7 +532,14 @@ function App() {
         </section>
 
         <section id="experience" data-reveal>
-          <header className="section-heading"><div><span className="section-index">02 / PRACTICE</span><h2>Work behind the work</h2></div><p>Production systems, healthcare IT, and independent product engineering: each shaped by a different operating context.</p></header>
+          <SectionHeading
+            id="experience-context"
+            index="02 / PRACTICE"
+            title="Work behind the work"
+            description="Production systems, healthcare IT, and independent product engineering: each shaped by a different operating context."
+            isVisible={isDescriptionVisible('experience')}
+            onToggle={() => toggleSectionDescription('experience')}
+          />
           <article className="experience-feature"><div className="experience-feature-label"><span>01</span><span>AI systems engineering</span><span>Jan–Oct 2026</span></div><div><h3>Rosian Liaison Services</h3><p>Built an offline AI legal-document workflow using local LLMs, five specialized agent skills, RAG, and a PostgreSQL knowledge base. The project record reports task time reduced by 70% (~20 to ~7 minutes), repetitive daily workload by 80% (~5 to ~1 hour), and department overhead by 67% (₱15k to ₱5k), without headcount replacement.</p><p className="project-proof">Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL · Ollama · pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p><p className="project-proof">AI cost reported at about ₱1.11 per completed task.</p></div></article>
           <div className="experience-list"><article><span>02</span><div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60% of the outstanding fix backlog. Built an MSSQL-backed shift-scheduling workflow with swaps and approvals.</p></div></article><article><span>03</span><div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management. The project record reports 85% UX satisfaction following stakeholder feedback.</p></div></article><article><span>04</span><div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent business software</h3><p>Built MERN applications and a multi-business financial-management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div></article></div>
           <div className="skills-strip"><span>TOOLS / SYSTEMS</span><p>Local LLMs · Multi-agent orchestration · RAG · pgvector · YOLOv8/YOLOv11 · VLM-based OCR · Python · Laravel · React/TypeScript · C#/ASP.NET · PostgreSQL · MSSQL · Redis · Docker · GitHub Actions</p></div>
@@ -490,7 +547,14 @@ function App() {
         </section>
 
         <section id="contributions" data-reveal>
-          <header className="section-heading"><div><span className="section-index">03 / RESEARCH & LEARNING</span><h2>Research, study,<br />and recognition</h2></div><p>Computer vision in a local context, graduate study in progress, and work recognized by the academic community.</p></header>
+          <SectionHeading
+            id="research-context"
+            index="03 / RESEARCH & LEARNING"
+            title={<>Research, study,<br />and recognition</>}
+            description="Computer vision in a local context, graduate study in progress, and work recognized by the academic community."
+            isVisible={isDescriptionVisible('research')}
+            onToggle={() => toggleSectionDescription('research')}
+          />
           <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">RESEARCH<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. Publication is listed for September 2026; publication status and citation are pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span data-claim-id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a><span>Local thesis copy · confirm public distribution rights before sharing.</span></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" /></div></article>
           <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; <span data-claim-id="web-design-champion-ict-olympics">Champion, ICT Olympics 2024 (Web Design and Development)</span>; invited CS industry panelist.</p></article></div>
         </section>
