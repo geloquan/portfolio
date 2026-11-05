@@ -28,30 +28,28 @@ cp .env.example .env.local
 cp .env.example .env.production
 ```
 
-Set Cloudflare R2 object keys and credentials through your deployment environment or secret store:
+Project media is stored in the repository under `public/assets/media/`. The
+flagship software uses its own directory at
+`public/assets/media/projects/flagship/`; copy its Bento/project media there,
+then use the paths shown in `.env.example`.
 
-- `CLOUDFLARE_R2_ACCESS_KEY_ID`
-- `CLOUDFLARE_R2_SECRET_ACCESS_KEY`
-- `CLOUDFLARE_R2_TOKEN_VALUE` (optional session token)
-- `CLOUDFLARE_R2_BUCKET_NAME`
-- `CLOUDFLARE_R2_S3_ENDPOINT`
-- `CLOUDFLARE_R2_PROFILE_IMAGE_OBJECT_KEY`
-- `CLOUDFLARE_R2_PROJECT_ONE_MEDIA_OBJECT_KEY` (AI legal system)
-- `CLOUDFLARE_R2_MEDICAL_ARTS_MEDIA_OBJECT_KEY`
-- `CLOUDFLARE_R2_PROJECT_TWO_MEDIA_OBJECT_KEY` (seashell research)
-- `CLOUDFLARE_R2_PROJECT_THREE_MEDIA_OBJECT_KEY` (doctor directory)
-- `CLOUDFLARE_R2_THESIS_PAPER_OBJECT_KEY`
-
-Optional build-time overrides:
+The flagship Bento has eight items, each with its own environment path:
+`VITE_PROJECT_FLAGSHIP_BENTO_ITEM_01_URL` through
+`VITE_PROJECT_FLAGSHIP_BENTO_ITEM_08_URL`. Place one image/video for each item
+in `public/assets/media/projects/flagship/bento/` and keep each variable aligned
+with its public browser path.
 
 - `VITE_THESIS_PAPER_URL`
-- `VITE_PROFILE_IMAGE_URL` (optional public profile image URL)
+- `VITE_PROFILE_IMAGE_URL`
+- `VITE_CALENDLY_URL` (optional scheduling link)
 - `VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL`
-- `VITE_PROJECT_AI_LEGAL_MEDIA_URL`
+- `VITE_PROJECT_FLAGSHIP_MEDIA_URL`
 - `VITE_PROJECT_SEASHELL_MEDIA_URL`
 - `VITE_PROJECT_DOCTOR_DIRECTORY_MEDIA_URL`
 
-All `VITE_*` values are public build-time URLs. Do not put API credentials or private tokens in them. In Docker builds, configure R2 object keys and credentials through the deployment's secret mechanism; credentials must never be committed.
+All `VITE_*` values are public build-time paths or URLs. Docker copies the
+repository's local media into the final image; no external storage credentials
+or upload step is required.
 
 ## Portfolio content audit
 

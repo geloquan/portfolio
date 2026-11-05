@@ -152,7 +152,7 @@ Neutral card, one level of elevation, 8 px radius, 14 px text, the four parts of
 An explanation may link to evidence (an image, a video, a document) through an `assets` array of `{ type, label, key | env, alt?, width?, height?, format?, duration? }`.
 
 - This applies only to **new references introduced by this feature**. Existing images, videos, and documents on the page are not touched, rerouted, or re-sourced.
-- Assets live in Cloudflare R2. Resolve them through the project's existing asset resolver or helper, using the variable names in `.env.example`. If there is none, add the smallest possible helper in the overlay's own folder. A `key` joins the public base URL variable; an `env` names a variable that already holds a full URL.
+- Assets live in the repository under `public/assets/media/`. Resolve them through the project's local `VITE_*` paths in `.env.example`; do not add external storage credentials or remote asset resolvers.
 - Never write a resolved URL, secret, account id, or bucket hostname into code or JSON. Never read `.env`.
 - Only attach an asset whose key or variable name the user gave or the repo already references. Never guess one.
 - Images: thumbnail with `alt`, `width`, `height`, `loading="lazy"`. Video and documents: labeled links opening in a new tab with `rel="noopener"`. Load only on first open.

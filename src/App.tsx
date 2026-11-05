@@ -8,7 +8,7 @@ import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
 import fallbackProfilePhoto from './assets/me_speeching_9x16.jpg'
-import projectOneLogo from './assets/project-1-logo.svg'
+import projectOneLogo from './assets/projects/flagship/project-1-logo.svg'
 import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import homeDoodles from './assets/home-doodles.svg'
@@ -83,14 +83,14 @@ function SectionHeading({id, index, title, description, isVisible, onToggle}: Se
 
 function HomePage() {
   const homeSnapshots = [
-    {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.'},
-    {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.'},
-    {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.'},
-    {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.'},
-    {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.'},
-    {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.'},
-    {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.'},
-    {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.'},
+    {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_01_URL},
+    {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_02_URL},
+    {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_03_URL},
+    {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_04_URL},
+    {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_05_URL},
+    {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_06_URL},
+    {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_07_URL},
+    {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_08_URL},
   ]
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
@@ -177,6 +177,7 @@ function HomePage() {
             {homeSnapshots.map((snapshot, index) => (
               <figure className={`home-snapshot home-snapshot-${index + 1}`} key={snapshot.name}>
                 <div className="home-snapshot-media" tabIndex={0} aria-label={`${snapshot.name}: ${snapshot.phrase}`}>
+                  {snapshot.mediaUrl && <img src={snapshot.mediaUrl} alt="" aria-hidden="true" loading="lazy" />}
                   <span className="home-snapshot-number">{String(index + 1).padStart(2, '0')}</span>
                   <div className="home-snapshot-reveal">
                     <strong>{snapshot.name}</strong>
@@ -491,7 +492,7 @@ function DetailedHome() {
   const calendlyUrl = import.meta.env.VITE_CALENDLY_URL || 'https://calendly.com/marco-angelo-quanico'
   const projectMedia = {
     medicalArts: import.meta.env.VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL,
-    aiLegal: import.meta.env.VITE_PROJECT_AI_LEGAL_MEDIA_URL || import.meta.env.VITE_PROJECT_ONE_MEDIA_URL,
+    aiLegal: import.meta.env.VITE_PROJECT_FLAGSHIP_MEDIA_URL,
     seashell: import.meta.env.VITE_PROJECT_SEASHELL_MEDIA_URL,
     doctorDirectory: import.meta.env.VITE_PROJECT_DOCTOR_DIRECTORY_MEDIA_URL,
   }
@@ -705,7 +706,7 @@ function DetailedHome() {
                 <p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p>
               </div>
               <div className="preview-box featured-preview">
-                {projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_ONE_MEDIA_URL.</small></div>}
+                {projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo under public/assets/media/projects/flagship and configure VITE_PROJECT_FLAGSHIP_MEDIA_URL.</small></div>}
               </div>
             </div>
           </article>
