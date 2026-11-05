@@ -1,263 +1,184 @@
 ---
 name: claim-explanations
-description: Finds measurable, comparative, or superlative claims in an HTML section (e.g. "70% faster task execution", "99.9% uptime", "trusted by 500+ teams", "#1 rated"), catalogs them in a JSON dictionary, flags the ones that still lack an explanation, and attaches the explanation in the UI as a hover/focus tooltip on desktop and an (i) tap-to-open popover on mobile. Use this skill whenever the user hands over an HTML/Blade/JSX section, landing page, hero, pricing block, or feature list and mentions claims, statistics, metrics, proof points, "needs explanation", tooltips, info icons, or substantiation, even if they never say "claim".
+description: Adds an explanation layer on top of an existing UI without changing how it looks. Finds measurable, comparative, or superlative claims in a section (e.g. "70% faster task execution", "Best Thesis 2025", "5 years of experience", "trusted by 500+ teams"), catalogs them in a JSON dictionary, writes a plain-language explanation that makes each claim fully understood, and shows it on hover (desktop) or through an (i) icon (mobile) as an overlay. Use this skill whenever the user asks for tooltips, hover explanations, info icons, claim substantiation, or "explain these numbers/achievements" on an HTML, Blade, or React section, even if they never say "claim". The existing display must stay untouched: the skill only adds, it never restyles, restructures, or rewires what is already on the page.
 ---
 
 # Claim Explanations
 
-Every number or superlative in the UI is a promise. This skill makes each promise traceable: it lives in a JSON dictionary, it is either explained or visibly flagged as unexplained, and once explained it is delivered to the reader through hover (desktop) or an (i) icon (mobile).
+Two promises this skill must keep, in this order of importance:
+
+1. **The existing display is untouched.** Same pixels, same layout, same markup, same behavior. The feature sits on top of the page, it does not rebuild it.
+2. **Hovering a claim (or tapping its (i) icon) explains it well enough that the reader fully understands the claim**: what it means, what it was measured against, and where it comes from.
+
+If a change risks either promise, do not make it; report it instead.
 
 ## Hard rules
 
-1. **Never invent an explanation.** Do not make up a methodology, sample size, source, date, or benchmark. An explanation may only contain facts that come from (a) the user's message, (b) files in this repository (benchmark results, docs, changelogs, tests), or (c) an existing entry in the dictionary. If the evidence is not there, the claim stays `needs_explanation`.
-2. **Never change the claim text** shown to the reader. This skill documents claims, it does not rewrite marketing copy. If a claim looks unsupportable, say so in the report and leave the wording to the human.
-3. **Never show "TODO", "needs explanation", or placeholder text to end users.** Unexplained claims get a marker in the JSON and a dev-only marker in the DOM, nothing public.
-4. **Do not re-explain what is already explained.** If a claim already has an `explained` entry, only wire the UI to it.
-5. **Do not add dependencies** for tooltips. Use plain HTML, CSS, and a few lines of JS (or the project's existing popover primitive if it has one).
+### Additive only
 
-## Inputs
+The only changes allowed to existing code are:
 
-- An HTML section (a file path, a selector, or a pasted snippet). Blade, JSX/TSX, and Vue templates count as HTML here.
-- Optionally the dictionary path. Default: `resources/data/claims.json` in Laravel projects, `src/data/claims.json` elsewhere. If a dictionary already exists anywhere in the repo, use it and do not create a second one.
+- **(a)** Adding a `data-claim-id="..."` attribute to the element that already contains the claim.
+- **(b)** When the claim is only a fragment of a larger text node (for example `Boost your workflow, 70% faster task execution, today.`), wrapping that fragment in a bare `<span data-claim-id="...">` with **no class, no style, no other attributes**. An unstyled inline span is visually inert.
+- **(c)** Mounting the overlay once near the app root (one import and one line).
 
-## Step 1: Detect claims
+Everything else is forbidden: changing classes or styles, moving or reordering elements, wrapping blocks, adding inline buttons or icons into the flow, adding underlines or other visual hints to existing text, editing copy, changing media sources, upgrading or adding dependencies, editing global CSS or Tailwind config.
 
-Scan the section's visible text (including `alt`, `title`, and `aria-label`) for statements the reader could ask "says who?" about. A claim is any of:
+All new styles live inside the overlay's own scope (prefix every class `cx-` or use a CSS module or Shadow DOM), so they cannot leak into the page.
+
+### No fabrication
+
+An explanation may only contain facts from (1) the user's message, (2) files in the repo (READMEs, other sections, project descriptions, benchmark docs, the dictionary), or (3) an existing dictionary entry. Never invent a method, number, baseline, event name, date, or source.
+
+When the claim is ambiguous, do not pick an interpretation. "70% faster" could mean 70% less time or 70% more throughput; if the evidence does not say which, write the open question into the report, and leave that part of the explanation out.
+
+### Do not touch what is not a claim
+
+Plain features, prices, dates, addresses, and labels are not claims. When unsure, include it in the report as "possible claim" and leave the page alone.
+
+## Workflow
+
+1. **Detect** claims in the target section only.
+2. **Catalog** them in the dictionary and tag each with `data-claim-id` (rule (a) or (b) above, nothing more).
+3. **Draft** explanations from evidence (see "Writing the explanation"). List every open question.
+4. **Build the overlay** (see "Overlay behavior").
+5. **Verify additivity** (see "Verification").
+
+## What counts as a claim
 
 | Type | Examples |
 |---|---|
-| `performance` | "70% faster task execution", "10x throughput", "loads in under 1s" |
-| `savings` | "save 5 hours a week", "cut costs by 40%" |
-| `accuracy` | "95% detection accuracy", "zero false positives" |
-| `reliability` | "99.9% uptime", "never loses data" |
-| `social_proof` | "trusted by 500+ teams", "10,000 active users" |
-| `ranking` | "#1 rated", "best-in-class", "industry-leading" |
-| `compliance` | "HIPAA compliant", "ISO 27001 certified" |
-| `comparison` | "faster than X", "2x cheaper than the alternative" |
+| `performance` | "70% faster task execution", "loads in under 1s" |
+| `savings` | "save 5 hours a week" |
+| `accuracy` | "95% detection accuracy" |
+| `reliability` | "99.9% uptime" |
+| `social_proof` | "trusted by 500+ teams", "10,000 users" |
+| `ranking` | "#1 rated", "Best Thesis", "Champion", "best-in-class" |
+| `credential` | "5 years of experience", "certified", "published" |
+| `compliance` | "HIPAA compliant" |
+| `comparison` | "2x cheaper than X" |
 
-Not claims: plain feature descriptions ("Export to CSV"), prices, dates, addresses, and numbers that are only labels (step numbers, list counts).
+## Writing the explanation
 
-When unsure, treat it as a claim and let the report show the doubt. A false positive costs one line in the report; a false negative ships an unsupported promise.
+The reader should finish the popover knowing exactly what the claim means, without prior context. Use this structure; **omit any part the evidence cannot support** (never pad it):
 
-## Step 2: Catalog in the JSON dictionary
+| Part | Answers | Example (illustrative) |
+|---|---|---|
+| `meaning` (required) | "What does this actually say?" in one plain sentence, jargon defined | "A typical onboarding task now takes about 3 minutes instead of 9." |
+| `basis` | "Compared to what, measured how?" Baseline, scope, sample | "Median of 40 runs per version on the same hardware." |
+| `context` | "Where does it come from?" Event, organization, project, period | "Measured on the onboarding flow, September 2026." |
+| `fine_print` | "What does it not cover?" Limits, exclusions | "Other tasks may differ." |
 
-Create or update the dictionary. One entry per distinct claim, keyed by a stable kebab-case `id` derived from the claim (`faster-task-execution-70`). If the same claim appears in several places, it is one entry with several `occurrences`.
+Writing rules:
 
-Schema:
+- Plain words, short sentences, about 40 to 70 words in total. No marketing language ("amazing", "powerful").
+- Say the number with its baseline ("from 9 to 3 minutes"), not just the percentage.
+- Define abbreviations and event names on first use.
+- Do not repeat the claim text as the explanation ("70% faster means it is 70% faster" is a failure).
+- Keep it true to the evidence even if it sounds less impressive.
+
+## Dictionary
+
+Use an existing dictionary if the repo has one; otherwise `src/data/claims.json` (React) or `resources/data/claims.json` (Laravel). One entry per distinct claim, stable kebab-case ids, keys sorted, 2-space indentation.
 
 ```json
 {
-  "version": 1,
+  "version": 2,
   "claims": {
     "faster-task-execution-70": {
       "text": "70% faster task execution",
       "type": "performance",
       "status": "explained",
       "explanation": {
-        "summary": "Median time to complete the standard 12-step onboarding task dropped from 9.2 to 2.8 minutes.",
-        "basis": "Internal benchmark, 40 task runs per version, same hardware.",
-        "source": "docs/benchmarks/2026-09-task-execution.md",
-        "as_of": "2026-09-14",
-        "caveats": "Measured on the onboarding flow only; other tasks may differ."
+        "meaning": "A typical onboarding task now takes about 3 minutes instead of 9.",
+        "basis": "Median of 40 runs per version on the same hardware.",
+        "context": "Onboarding flow, September 2026.",
+        "fine_print": "Other tasks may differ.",
+        "source": "docs/benchmarks/2026-09-task-execution.md"
       },
-      "occurrences": [
-        { "file": "resources/views/landing/hero.blade.php", "selector": "[data-claim-id='faster-task-execution-70']" }
-      ]
-    },
-    "trusted-by-500-teams": {
-      "text": "Trusted by 500+ teams",
-      "type": "social_proof",
-      "status": "needs_explanation",
-      "explanation": null,
-      "occurrences": [
-        { "file": "resources/views/landing/hero.blade.php", "selector": "[data-claim-id='trusted-by-500-teams']" }
-      ]
+      "open_questions": [],
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='faster-task-execution-70']" }]
     }
   }
 }
 ```
 
-Field rules:
+Status values:
 
-- `status` is one of:
-  - `needs_explanation`: no evidence available. `explanation` is `null`.
-  - `draft`: an explanation was assembled from repo evidence but a human has not confirmed it. The UI treats `draft` like `needs_explanation` (nothing public) until it is promoted.
-  - `explained`: a human supplied or confirmed the explanation.
-- Only a human (the user saying so in the conversation, or an existing `explained` entry) can move an entry to `explained`. Copilot may move entries up to `draft`.
-- `explanation.summary` is required for `draft` and `explained`. It must be one or two plain sentences a visitor can read in under ten seconds. `basis`, `source`, `as_of`, `caveats` are optional but include whichever the evidence supports.
-- Keep `text` identical to what the page displays, so the dictionary and the UI can be checked against each other.
-- Keep keys sorted alphabetically and the file pretty-printed with 2 spaces so diffs stay readable.
+- `needs_explanation`: no usable evidence. `explanation` is `null` and `open_questions` lists exactly what is missing.
+- `draft`: written by Copilot from repo or user-provided evidence, awaiting the owner's approval.
+- `explained`: the owner confirmed it.
 
-## Step 3: Mark the HTML
+Only the owner (the user, in the conversation) can promote `draft` to `explained`.
 
-Wrap each claim in a span carrying its id and status. The status attribute is the "needs to be explained" marker in the DOM.
+Visibility: `explained` always shows. `draft` shows only in development builds (`import.meta.env.DEV`, `process.env.NODE_ENV !== 'production'`, or a `?claims=draft` URL parameter), so the owner can review it on the real page before approving. `needs_explanation` never shows anything to visitors.
 
-```html
-<span class="claim" data-claim-id="faster-task-execution-70" data-claim-status="explained">
-  70% faster task execution
-</span>
-```
+## Overlay behavior
 
-- `data-claim-status="needs-explanation"` for `needs_explanation` and `draft`.
-- `data-claim-status="explained"` for `explained`.
-- Do not wrap more text than the claim itself.
-- Do not nest claims inside links or buttons; if the claim is inside one, put the (i) button right after the interactive element instead, not inside it.
+One overlay component, mounted once. It finds claims at runtime through `[data-claim-id]`, so the page's own components stay as they are.
 
-## Step 4: Deliver explained claims in the UI
+### Desktop (hover-capable pointer)
 
-Only `explained` claims get a visible affordance. The explanation text comes from the dictionary (inline it at build or render time, or fetch it once); never hard-code it into the template as a second copy.
+- Hovering a claim opens the explanation after about 150 ms. It closes when the pointer leaves both the claim and the popover (so the reader can move onto the popover to read or click a link), or on Escape.
+- **No visual change to the claim itself**: no underline, no icon, no color. At most `cursor: help`, applied only while hovering.
+- Keyboard users get the explanation through the (i) button described below, which is hidden visually until it receives focus.
 
-### Behavior
+### Touch (`(hover: none), (pointer: coarse)`)
 
-- **Desktop (hover-capable pointer):** hovering or keyboard-focusing the claim shows the explanation in a tooltip. No icon is required visually, but the claim gets a subtle dotted underline so people discover it.
-- **Mobile / touch:** an **(i)** icon button sits right after the claim. Tapping it opens the explanation as a popover; tapping outside or pressing Escape closes it.
-- **Keyboard and screen readers:** the (i) button exists in the DOM on every device and is focusable. On desktop it is visually hidden until focused, so keyboard users reach the same content as touch users.
-- Distinguish devices with CSS (`@media (hover: hover) and (pointer: fine)`), not user-agent sniffing.
+- A small (i) icon appears at the trailing edge of each claim that has an explanation, positioned by the overlay, **not inserted into the page flow**. Tapping it toggles the popover; tapping outside or pressing Escape closes it.
+- Touch target at least 24 by 24 px, offset so it does not cover the claim's text. If it would collide with neighboring elements, nudge it outward; if the entry has an `anchor` field (`"top-right"`, `"bottom-right"`), honor it.
 
-### Markup
+### Positioning (this is what keeps the layout untouched)
 
-```html
-<span class="claim" data-claim-id="faster-task-execution-70" data-claim-status="explained">
-  70% faster task execution
-  <button type="button" class="claim-info"
-          aria-label="How we measured: 70% faster task execution"
-          aria-expanded="false"
-          aria-controls="claim-pop-faster-task-execution-70">
-    <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16">
-      <circle cx="8" cy="8" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/>
-      <rect x="7.25" y="7" width="1.5" height="5" fill="currentColor"/>
-      <circle cx="8" cy="4.75" r="1" fill="currentColor"/>
-    </svg>
-  </button>
-  <span role="tooltip" id="claim-pop-faster-task-execution-70" class="claim-pop" hidden>
-    <span class="claim-pop__summary">Median time to complete the standard 12-step onboarding task dropped from 9.2 to 2.8 minutes.</span>
-    <span class="claim-pop__meta">Internal benchmark, 40 task runs per version. As of Sep 2026.</span>
-  </span>
-</span>
-```
+- Render the popover and the icons in a layer attached to `document.body` (a portal in React), `position: absolute` in document coordinates or `position: fixed` with viewport coordinates, computed from `getBoundingClientRect()` of the claim element.
+- Nothing is added inside the claim's parent, so nothing can shift, wrap, or reflow.
+- Recompute on `resize`, `scroll` (for fixed positioning), window `load`, and with a `ResizeObserver` on the claim elements.
+- Keep the popover inside the viewport: flip above/below and clamp horizontally. Maximum width `min(320px, 90vw)`.
+- Use a high but bounded `z-index` and `pointer-events: none` on the layer itself, `auto` only on the popover and icons.
 
-### CSS (adapt tokens to the project; Tailwind equivalents are fine)
+### Accessibility
 
-```css
-.claim { position: relative; }
-.claim[data-claim-status="explained"] {
-  text-decoration: underline dotted;
-  text-underline-offset: 3px;
-}
-.claim-info {
-  display: inline-grid; place-items: center;
-  min-width: 24px; min-height: 24px;      /* comfortable touch target */
-  margin-left: .25em; padding: 0;
-  border: 0; background: none; color: inherit; cursor: pointer;
-  vertical-align: middle;
-}
-.claim-pop {
-  position: absolute; z-index: 20; left: 0; top: calc(100% + 8px);
-  width: max-content; max-width: min(320px, 90vw);
-  padding: .75rem .875rem; border-radius: .5rem;
-  background: var(--surface-raised, #fff); color: var(--text, #111);
-  box-shadow: 0 6px 24px rgb(0 0 0 / .18);
-  font-size: .875rem; line-height: 1.45; text-decoration: none;
-}
-.claim-pop[hidden] { display: none; }
-.claim-pop__meta { display: block; margin-top: .375rem; opacity: .7; font-size: .8125rem; }
+- The (i) button exists in the DOM for every device; it is the keyboard path to the explanation. It has an accessible name (`"Explain: <claim text>"`) and `aria-expanded`.
+- The popover is `role="dialog"` with `aria-modal="false"` and a label; it does not trap focus. Escape closes it and returns focus to the (i) button.
+- Respect `prefers-reduced-motion` (no animation) and keep text contrast at WCAG AA against both light and dark backgrounds (read colors from existing CSS variables when present, otherwise use a neutral surface with its own text color).
+- Known trade-off: because the (i) buttons live in the overlay layer, their Tab order follows the layer, not the claim's position on the page. Do not fix this by inserting buttons into the page, which would break the additive rule.
 
-/* Desktop: icon hidden until keyboard focus; hover/focus on the claim opens the tooltip */
-@media (hover: hover) and (pointer: fine) {
-  .claim-info:not(:focus-visible) { position: absolute; width: 1px; height: 1px; min-width: 0; min-height: 0; overflow: hidden; clip-path: inset(50%); }
-}
-/* Touch: icon always visible, no underline needed */
-@media (hover: none), (pointer: coarse) {
-  .claim[data-claim-status="explained"] { text-decoration: none; }
-}
-/* Dev-only flag for unexplained claims; enable with <html data-debug-claims> */
-html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
-  outline: 2px dashed #d97706; outline-offset: 2px;
-}
-```
+### Visual style of the popover
 
-### JS (one small module, no dependencies)
+Neutral card, one level of elevation, 8 px radius, 14 px text, the four parts of the explanation as short lines (the `meaning` line slightly stronger, the rest at normal weight with a small label). Styles stay inside the overlay scope.
 
-```js
-const canHover = matchMedia('(hover: hover) and (pointer: fine)');
+## Optional evidence assets
 
-function setOpen(claim, open) {
-  const btn = claim.querySelector('.claim-info');
-  const pop = claim.querySelector('.claim-pop');
-  if (!btn || !pop) return;
-  pop.hidden = !open;
-  btn.setAttribute('aria-expanded', String(open));
-}
+An explanation may link to evidence (an image, a video, a document) through an `assets` array of `{ type, label, key | env, alt?, width?, height?, format?, duration? }`.
 
-document.querySelectorAll('.claim[data-claim-status="explained"]').forEach((claim) => {
-  const btn = claim.querySelector('.claim-info');
+- This applies only to **new references introduced by this feature**. Existing images, videos, and documents on the page are not touched, rerouted, or re-sourced.
+- Assets live in Cloudflare R2. Resolve them through the project's existing asset resolver or helper, using the variable names in `.env.example`. If there is none, add the smallest possible helper in the overlay's own folder. A `key` joins the public base URL variable; an `env` names a variable that already holds a full URL.
+- Never write a resolved URL, secret, account id, or bucket hostname into code or JSON. Never read `.env`.
+- Only attach an asset whose key or variable name the user gave or the repo already references. Never guess one.
+- Images: thumbnail with `alt`, `width`, `height`, `loading="lazy"`. Video and documents: labeled links opening in a new tab with `rel="noopener"`. Load only on first open.
+- If there are no confirmed assets, skip all of this and do not create a resolver.
 
-  // Desktop: hover and focus
-  claim.addEventListener('mouseenter', () => canHover.matches && setOpen(claim, true));
-  claim.addEventListener('mouseleave', () => canHover.matches && setOpen(claim, false));
-  claim.addEventListener('focusin',   () => canHover.matches && setOpen(claim, true));
-  claim.addEventListener('focusout',  () => canHover.matches && setOpen(claim, false));
+## Verification (required)
 
-  // Touch (and keyboard Enter/Space on the button): toggle
-  btn?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    setOpen(claim, btn.getAttribute('aria-expanded') !== 'true');
-  });
-});
+Before reporting, prove the page was not changed:
 
-// Close on outside tap / Escape
-document.addEventListener('click', () =>
-  document.querySelectorAll('.claim-info[aria-expanded="true"]').forEach((b) => setOpen(b.closest('.claim'), false)));
-document.addEventListener('keydown', (e) => {
-  if (e.key !== 'Escape') return;
-  document.querySelectorAll('.claim-info[aria-expanded="true"]').forEach((b) => {
-    setOpen(b.closest('.claim'), false);
-    b.focus();
-  });
-});
-```
+1. Run `git diff -U0` and list **every removed line** (`-` lines). Each one must be a line that is re-added unchanged except for a new `data-claim-id` attribute or the bare wrapper span. Revert any hunk that does more.
+2. Confirm no class, style, copy, import of existing media, global CSS, Tailwind config, or dependency changed. List the files changed; new files should be limited to the overlay component, its styles, and the dictionary (plus the optional asset helper).
+3. Run the project's own checks from `package.json`: type check, lint, production build. Include the final lines of each output.
+4. If a dev server and headless browser are available, capture before and after screenshots of the target section at 390 px and 1280 px with the overlay idle and confirm they are identical. If not possible, say so.
+5. Never say the work is complete without these results.
 
-If the project is React/TypeScript, port this into a single `<Claim id="..." >` component that reads from the dictionary by id and renders the markup above. If it is Laravel Blade, make it a `<x-claim id="...">` component for the same reason. In both cases the component, not each call site, owns the markup, so the section's HTML stays readable.
-
-Popover hygiene: keep the popover inside the viewport (flip to `right: 0` if it would overflow), never let it cover the (i) button, and do not trap focus; it is a non-modal disclosure.
-
-## Step 5: Report back
-
-End with a short report in this exact shape so the human can act on it:
+## Report format
 
 ```
 Claims found: N
-Explained (wired to UI): X
-  - faster-task-execution-70: "70% faster task execution"
-Needs explanation (flagged, nothing public): Y
-  - trusted-by-500-teams: "Trusted by 500+ teams"
-    Missing: basis for the number, source, as-of date
-Draft (needs human confirmation): Z
-  - ...
-Possible unsupportable wording: (list anything absolute like "never", "zero", "best", or "guaranteed")
-Files changed: ...
+Explained / Draft / Needs explanation: X / Y / Z
+For each draft: claim -> explanation text, plus its evidence (file or user message)
+Open questions for the owner: <per claim, exactly what is missing or ambiguous>
+Possible claims left alone: <list>
+Existing code changes: <number of lines; each is data-claim-id or bare span>
+Removed lines in git diff: <list, each justified>
+Files added / changed: <list>
+Verification: <command: pass/fail, final output lines>
+Visual check: <done at widths / not possible>
 ```
-
-For each unexplained claim, say exactly what information would unlock it (for example "the user count and where it was measured", "the benchmark run behind the 70%"). Do not ask for all of them at once if there are many; list them and let the human answer in any order.
-
-## Re-running on the same section
-
-Running the skill again must be idempotent:
-
-- Existing `explained` entries and their text are untouched.
-- Claims already in the dictionary are matched by `id` first, then by normalized `text` (lowercased, whitespace collapsed), so renaming a span never creates a duplicate.
-- An entry whose claim no longer appears anywhere gets `"status": "orphaned"` in the report (do not delete it automatically).
-- If displayed text changed but the `id` is the same, flag it as "claim text changed, explanation may be stale" and leave the entry as it was.
-
-## Checklist before finishing
-
-- [ ] Every claim in the section has a dictionary entry and a `data-claim-id`.
-- [ ] No explanation contains a fact that did not come from the user or the repo.
-- [ ] Unexplained claims show nothing to end users.
-- [ ] Explained claims work with hover, keyboard focus, and tap on the (i) icon.
-- [ ] The (i) button has an accessible name and `aria-expanded`; Escape closes the popover.
-- [ ] The report lists what is still missing for each unexplained claim.
-
-## Assets
-
-Keep section media references in arrays and pass each configured environment reference or object key through the shared `resolveAssetUrl` helper in `src/assetUrl.ts`. The helper returns `null` for missing or unapproved external references; render no media element when it returns `null`. Claim explanation assets use the same resolver and load only when a visitor opens the explanation.
