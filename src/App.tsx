@@ -5,6 +5,7 @@ import {ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Play, VideoOff, X} from
 import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
+import profileFallback from './assets/me_speeching_9x16.jpg'
 import projectOneLogo from './assets/project-1-logo.svg'
 import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
@@ -34,7 +35,8 @@ type Project = {
 type Inquiry = { name: string; email: string; message: string }
 type FormState = 'idle' | 'validating' | 'submitting' | 'error'
 type ClaimId = keyof typeof claimsDictionary.claims
-type ClaimExplanation = {summary: string; assets?: Array<{src: string; type: string; alt?: string; width?: number; height?: number; label: string}>}
+type ClaimAsset = {type: 'image' | 'video' | 'document'; key?: string; env?: string; label: string; alt?: string; width?: number; height?: number; format?: string; duration?: string; poster_key?: string}
+type ClaimExplanation = {summary: string; basis?: string; source?: string; as_of?: string; caveats?: string; assets?: ClaimAsset[]}
 
 function Claim({id, children}: {id: ClaimId; children: string}) {
   const claim = claimsDictionary.claims[id]
@@ -57,18 +59,20 @@ function Claim({id, children}: {id: ClaimId; children: string}) {
       }
     }
     const closeOnOutsideClick = (event: MouseEvent) => {
-        if (event.target instanceof Node && !buttonRef.current?.parentElement?.contains(event.target)) {
-          setOpen(false)
+      if (event.target instanceof Node && !event.target.parentElement?.closest(`[data-claim-id="${id}"]`)) {
+        setOpen(false)
+        if (event.target instanceof Element && !event.target.closest('button, a, input, select, textarea, [tabindex]')) {
           buttonRef.current?.focus()
         }
       }
+    }
     document.addEventListener('keydown', closeOnEscape)
     document.addEventListener('click', closeOnOutsideClick)
     return () => {
       document.removeEventListener('keydown', closeOnEscape)
       document.removeEventListener('click', closeOnOutsideClick)
     }
-  }, [open])
+  }, [id, open])
 
   useEffect(() => {
     if (!open || !popoverRef.current || !buttonRef.current) return
@@ -83,19 +87,30 @@ function Claim({id, children}: {id: ClaimId; children: string}) {
     setPopoverStyle({left: left - buttonBounds.left, top: top - buttonBounds.top})
   }, [open])
 
-  return <span className="claim" data-claim-id={id} data-claim-status={claimStatus} onMouseEnter={() => { if (canHover && isExplained) setOpen(true) }} onMouseLeave={() => { if (canHover && isExplained) setOpen(false) }} onFocus={() => { if (canHover && isExplained) setOpen(true) }} onBlur={(event) => { if (canHover && isExplained && !event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false) }}>
+  const assetUrlFor = (asset: ClaimAsset) => {
+    const reference = asset.env ? import.meta.env[asset.env as keyof ImportMetaEnv] : asset.key
+    return typeof reference === 'string' ? resolveAssetUrl(reference) : null
+  }
+
+  return <span className="claim" data-claim-id={id} data-claim-status={claimStatus} onMouseEnter={() => { if (canHover && isExplained) setOpen(true) }} onMouseLeave={(event) => { if (canHover && isExplained && !event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false) }} onFocus={() => { if (canHover && isExplained) setOpen(true) }} onBlur={(event) => { if (canHover && isExplained && !event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false) }}>
     {children}
     {isExplained && explanation && <>
       <button ref={buttonRef} type="button" className="claim-info" aria-label={`How we measured: ${children}`} aria-expanded={open} aria-controls={popoverId} onClick={(event) => { event.stopPropagation(); setOpen((value) => !value) }}>i</button>
       <span ref={popoverRef} id={popoverId} className="claim-pop" role="tooltip" hidden={!open} style={popoverStyle}>
-        {explanation.summary}
-        {open && explanation.assets?.map((asset) => {
-          const url = resolveAssetUrl(asset.src)
-          if (!url) return null
-          return asset.type === 'image'
-            ? <img key={asset.src} src={url} alt={asset.alt} width={asset.width} height={asset.height} loading="lazy" />
-            : <a key={asset.src} href={url} target="_blank" rel="noopener">{asset.label}</a>
-        })}
+        {open && <>
+          <span className="claim-pop__summary">{explanation.summary}</span>
+          {(explanation.basis || explanation.as_of) && <span className="claim-pop__meta">{[explanation.basis, explanation.as_of ? `As of ${explanation.as_of}` : undefined].filter(Boolean).join('. ')}</span>}
+          {explanation.assets?.map((asset) => {
+            const url = assetUrlFor(asset)
+            if (!url) return null
+            if (asset.type === 'image') return asset.alt && asset.width && asset.height ? <img key={asset.key || asset.env} src={url} alt={asset.alt} width={asset.width} height={asset.height} loading="lazy" decoding="async" /> : null
+            if (asset.type === 'video') {
+              const poster = asset.poster_key ? resolveAssetUrl(asset.poster_key) : null
+              return <a key={asset.key || asset.env} href={url} target="_blank" rel="noopener">{poster && <img src={poster} alt="" width="320" height="180" loading="lazy" decoding="async" />}Watch: {asset.label}{asset.duration ? ` (${asset.duration})` : ''}</a>
+            }
+            return <a key={asset.key || asset.env} href={url} target="_blank" rel="noopener">{asset.label}{asset.format ? ` (${asset.format})` : ''}</a>
+          })}
+        </>}
       </span>
     </>}
   </span>
@@ -369,15 +384,14 @@ function App() {
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
   }, [])
 
-  const profileImageUrl = resolveAssetUrl(import.meta.env.VITE_PROFILE_IMAGE_URL)
+  const profileImageUrl = import.meta.env.VITE_PROFILE_IMAGE_URL ? resolveAssetUrl(import.meta.env.VITE_PROFILE_IMAGE_URL) : profileFallback
   const thesisPaperUrl = resolveAssetUrl(import.meta.env.VITE_THESIS_PAPER_URL) || '/assets/research/seashell-computer-vision-thesis.pdf'
-  const thesisPaperAsset = thesisPaperUrl.startsWith('/') ? null : thesisPaperUrl
-  const thesisPaperUrlForView = thesisPaperAsset ? resolveAssetUrl(thesisPaperAsset) : null
+  const thesisPaperIsLocal = thesisPaperUrl.startsWith('/')
   const projectMedia = [
     resolveAssetUrl(import.meta.env.VITE_PROJECT_ONE_MEDIA_URL),
     resolveAssetUrl(import.meta.env.VITE_PROJECT_TWO_MEDIA_URL),
-    resolveAssetUrl(import.meta.env.VITE_PROJECT_THREE_MEDIA_URL),
     resolveAssetUrl(import.meta.env.VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL),
+    resolveAssetUrl(import.meta.env.VITE_PROJECT_THREE_MEDIA_URL),
   ]
 
   const projects: Project[] = useMemo(
@@ -388,7 +402,7 @@ function App() {
         summary: 'An offline legal-document workflow that generates Deeds of Absolute Sale as DOCX and PDF using local language models.',
         avatarUrl: projectOneLogo,
         techstack: 'Local LLMs (Llama 3.1 8B, CodeGemma, Qwen2.5-Coder) · 5 agent skills · RAG · PostgreSQL/pgvector · Laravel · React/TypeScript · Redis · RTX 3060',
-        highlights: ['Runs on local hardware without cloud model dependence', 'RAG knowledge base with PostgreSQL embeddings and agent logs', 'Document generation and structured record extraction with Qwen2.5-VL'],
+        highlights: ['Runs on local hardware without cloud model dependence', 'RAG knowledge base with PostgreSQL embeddings and 5 agent skills', 'Document generation and structured record extraction with Qwen2.5-VL'],
         mediaType: 'video',
         mediaUrl: projectMedia[0],
         role: 'AI Systems Engineer · Jan–Oct 2026',
@@ -404,7 +418,7 @@ function App() {
         techstack: 'Stack not published pending project-source verification.',
         highlights: ['Feature-level details and outcomes are not published until verified.'],
         mediaType: 'image',
-        mediaUrl: projectMedia[3],
+        mediaUrl: null,
         role: 'Role and dates not published pending verification.',
         year: 'Unverified',
         classification: 'Core',
@@ -529,8 +543,8 @@ function App() {
                   className="profile-photo"
                   src={profileImageUrl}
                   alt="Marco Angelo P. Quanico portrait"
-                  width="720"
-                  height="1280"
+                  width={3456}
+                  height={5184}
                   fetchPriority="high"
                 />}
                 <div className="profile-glow" aria-hidden="true"/>
@@ -548,21 +562,21 @@ function App() {
             <h2>Selected work</h2>
           </div>
 
-          <article className="project-featured" aria-labelledby="project-title-1"><div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div><div className="project-featured-body"><div className="project-featured-copy"><p className="project-role">AI Systems Engineer · Rosian Liaison Services</p><h3 id="project-title-1">Offline AI Legal Document System</h3><p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working without cloud model dependence.</p><div className="project-outcomes"><div><strong><Claim id="task-execution-improvement-70">70% faster task execution</Claim></strong><span>faster task execution</span></div><div><strong><Claim id="daily-workload-reduction-80">80% less repetitive daily workload</Claim></strong></div><div><strong><Claim id="department-overhead-reduction-67">67% lower department overhead</Claim></strong></div></div>          <p className="project-proof">CV-reported outcomes: task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. <Claim id="ai-cost-per-task-1-11">AI cost was about ₱1.11 per completed task</Claim>.</p><ul className="project-highlights">{projects[0].highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul><p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p><p className="project-evidence">Evidence: cv.md and cv-quanico.pdf · Jan–Oct 2026</p></div><div className="preview-box featured-preview">{projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_AI_LEGAL_MEDIA_URL.</small></div>}</div></div></article>
+          <article className="project-featured" aria-labelledby="project-title-1"><div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div><div className="project-featured-body"><div className="project-featured-copy"><p className="project-role">AI Systems Engineer · Rosian Liaison Services</p><h3 id="project-title-1">Offline AI Legal Document System</h3><p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working <Claim id="local-first-workflow">without cloud model dependence</Claim>.</p><div className="project-outcomes"><div><strong><Claim id="task-execution-improvement-70">70% faster task execution</Claim></strong><span>faster task execution</span></div><div><strong><Claim id="daily-workload-reduction-80">80% less repetitive daily workload</Claim></strong></div><div><strong><Claim id="department-overhead-reduction-67">67% lower department overhead</Claim></strong></div></div>          <p className="project-proof">CV-reported outcomes: task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. <Claim id="ai-cost-per-task-1-11">AI cost was about ₱1.11 per completed task</Claim>.</p><ul className="project-highlights">{projects[0].highlights.map((highlight, index) => <li key={highlight}>{index === 1 ? <>RAG knowledge base with PostgreSQL embeddings and <Claim id="agent-skills-count-5">5 agent skills</Claim></> : highlight}</li>)}</ul><p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p><p className="project-evidence">Evidence: cv.md and cv-quanico.pdf · Jan–Oct 2026</p></div><div className="preview-box featured-preview">{projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_ONE_MEDIA_URL.</small></div>}</div></div></article>
           <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="project-proof"><strong>Evidence:</strong> {project.evidence}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><ul className="project-highlights">{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
         </section>
 
         <section id="experience" data-reveal>
           <header className="section-heading"><div><span className="section-index">02 / PRACTICE</span><h2>Work behind the work</h2></div><p>Production systems, healthcare IT, and independent product engineering: each shaped by a different operating context.</p></header>
           <article className="experience-feature"><div className="experience-feature-label"><span>01</span><span>AI systems engineering</span><span>Jan–Oct 2026</span></div><div><h3>Rosian Liaison Services</h3><p>Built an offline AI legal-document workflow using local LLMs, five specialized agent skills, RAG, and a PostgreSQL knowledge base. The CV reports task time reduced by 70% (~20 to ~7 minutes), repetitive daily workload by 80% (~5 to ~1 hour), and department overhead by 67% (₱15k to ₱5k), without headcount replacement.</p><p className="project-proof">Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL · Ollama · pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p><p className="project-proof">AI cost reported at about ₱1.11 per completed task.</p></div></article>
-          <div className="experience-list"><article><span>02</span><div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and <Claim id="department-fix-backlog-reduction-60">cleared 60% of the outstanding fix backlog</Claim>. Built an MSSQL-backed shift-scheduling workflow with swaps and approvals.</p></div></article><article><span>03</span><div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management. The CV reports <Claim id="doctor-directory-ux-satisfaction-85">85% UX satisfaction</Claim> following stakeholder feedback.</p></div></article><article><span>04</span><div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent business software</h3><p>Built MERN applications and a multi-business financial-management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div></article></div>
+          <div className="experience-list"><article><span>02</span><div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60% of the outstanding fix backlog. Built an MSSQL-backed shift-scheduling workflow with swaps and approvals.</p></div></article><article><span>03</span><div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management. The CV reports 85% UX satisfaction following stakeholder feedback.</p></div></article><article><span>04</span><div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent business software</h3><p>Built MERN applications and a multi-business financial-management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div></article></div>
           <div className="skills-strip"><span>TOOLS / SYSTEMS</span><p>Local LLMs · Multi-agent orchestration · RAG · pgvector · YOLOv8/YOLOv11 · VLM-based OCR · Python · Laravel · React/TypeScript · C#/ASP.NET · PostgreSQL · MSSQL · Redis · Docker · GitHub Actions</p></div>
 
         </section>
 
         <section id="contributions" data-reveal>
           <header className="section-heading"><div><span className="section-index">03 / RESEARCH & LEARNING</span><h2>Research, study,<br />and recognition</h2></div><p>Computer vision in a local context, graduate study in progress, and work recognized by the academic community.</p></header>
-          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">CV<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. The CV lists publication in September 2026; publication status and citation are presented as CV-reported pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span><Claim id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</Claim></span></div><div className="research-actions"><a href={thesisPaperUrlForView || thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a><span>Local thesis copy · confirm public distribution rights before sharing.</span></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrlForView || undefined} loading="lazy" width="560" height="720" /></div></article>
+          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">CV<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. The CV lists publication in September 2026; publication status and citation are presented as CV-reported pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span><Claim id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</Claim></span></div><div className="research-actions">{thesisPaperUrl && <a href={thesisPaperUrl} target="_blank" rel="noopener" className="btn-primary">{thesisPaperIsLocal ? 'View bundled thesis PDF' : 'View thesis PDF'} <ArrowUpRight size={16} aria-hidden="true" /></a>}{thesisPaperIsLocal && <span>Local thesis copy · confirm public distribution rights before sharing.</span>}</div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div>{thesisPaperUrl && <iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" width="560" height="720" />}</div></article>
           <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; Champion, ICT Olympics 2024 (Web Design and Development); invited CS industry panelist.</p></article></div>
         </section>
       </main>
