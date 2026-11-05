@@ -11,9 +11,8 @@ import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import resumePdf from './resume-ma-quanico.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
-import claimsDictionary from './data/claims.json'
 import {resolveAssetUrl} from './assetUrl'
-import type {CSSProperties} from 'react'
+import ClaimLayer from './claims-overlay/ClaimLayer'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -34,88 +33,6 @@ type Project = {
 
 type Inquiry = { name: string; email: string; message: string }
 type FormState = 'idle' | 'validating' | 'submitting' | 'error'
-type ClaimId = keyof typeof claimsDictionary.claims
-type ClaimAsset = {type: 'image' | 'video' | 'document'; key?: string; env?: string; label: string; alt?: string; width?: number; height?: number; format?: string; duration?: string; poster_key?: string}
-type ClaimExplanation = {summary: string; basis?: string; source?: string; as_of?: string; caveats?: string; assets?: ClaimAsset[]}
-
-function Claim({id, children}: {id: ClaimId; children: string}) {
-  const claim = claimsDictionary.claims[id]
-  const buttonRef = useRef<HTMLButtonElement>(null)
-  const popoverRef = useRef<HTMLSpanElement>(null)
-  const [open, setOpen] = useState(false)
-  const [popoverStyle, setPopoverStyle] = useState<CSSProperties>({})
-  const popoverId = `claim-pop-${id}`
-  const explanation = claim.status === 'explained' ? claim.explanation as ClaimExplanation | null : null
-  const isExplained = Boolean(explanation)
-  const claimStatus = claim.status === 'draft' || claim.status === 'needs_explanation' ? 'needs-explanation' : claim.status
-  const canHover = typeof window !== 'undefined' && window.matchMedia('(hover: hover) and (pointer: fine)').matches
-
-  useEffect(() => {
-    if (!open) return
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setOpen(false)
-        buttonRef.current?.focus()
-      }
-    }
-    const closeOnOutsideClick = (event: MouseEvent) => {
-      if (event.target instanceof Node && !event.target.parentElement?.closest(`[data-claim-id="${id}"]`)) {
-        setOpen(false)
-        if (event.target instanceof Element && !event.target.closest('button, a, input, select, textarea, [tabindex]')) {
-          buttonRef.current?.focus()
-        }
-      }
-    }
-    document.addEventListener('keydown', closeOnEscape)
-    document.addEventListener('click', closeOnOutsideClick)
-    return () => {
-      document.removeEventListener('keydown', closeOnEscape)
-      document.removeEventListener('click', closeOnOutsideClick)
-    }
-  }, [id, open])
-
-  useEffect(() => {
-    if (!open || !popoverRef.current || !buttonRef.current) return
-    const popover = popoverRef.current
-    const button = buttonRef.current
-    const bounds = popover.getBoundingClientRect()
-    const buttonBounds = button.getBoundingClientRect()
-    const left = Math.max(8, Math.min(buttonBounds.left, window.innerWidth - bounds.width - 8))
-    const aboveTop = buttonBounds.top - bounds.height - 8
-    const belowTop = buttonBounds.bottom + 8
-    const top = belowTop + bounds.height <= window.innerHeight - 8 ? belowTop : Math.max(8, aboveTop)
-    setPopoverStyle({left: left - buttonBounds.left, top: top - buttonBounds.top})
-  }, [open])
-
-  const assetUrlFor = (asset: ClaimAsset) => {
-    const reference = asset.env ? import.meta.env[asset.env as keyof ImportMetaEnv] : asset.key
-    return typeof reference === 'string' ? resolveAssetUrl(reference) : null
-  }
-
-  return <span className="claim" data-claim-id={id} data-claim-status={claimStatus} onMouseEnter={() => { if (canHover && isExplained) setOpen(true) }} onMouseLeave={(event) => { if (canHover && isExplained && !event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false) }} onFocus={() => { if (canHover && isExplained) setOpen(true) }} onBlur={(event) => { if (canHover && isExplained && !event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false) }}>
-    {children}
-    {isExplained && explanation && <>
-      <button ref={buttonRef} type="button" className="claim-info" aria-label={`How we measured: ${children}`} aria-expanded={open} aria-controls={popoverId} onClick={(event) => { event.stopPropagation(); setOpen((value) => !value) }}>i</button>
-      <span ref={popoverRef} id={popoverId} className="claim-pop" role="tooltip" hidden={!open} style={popoverStyle}>
-        {open && <>
-          <span className="claim-pop__summary">{explanation.summary}</span>
-          {(explanation.basis || explanation.as_of) && <span className="claim-pop__meta">{[explanation.basis, explanation.as_of ? `As of ${explanation.as_of}` : undefined].filter(Boolean).join('. ')}</span>}
-          {explanation.assets?.map((asset) => {
-            const url = assetUrlFor(asset)
-            if (!url) return null
-            if (asset.type === 'image') return asset.alt && asset.width && asset.height ? <img key={asset.key || asset.env} src={url} alt={asset.alt} width={asset.width} height={asset.height} loading="lazy" decoding="async" /> : null
-            if (asset.type === 'video') {
-              const poster = asset.poster_key ? resolveAssetUrl(asset.poster_key) : null
-              return <a key={asset.key || asset.env} href={url} target="_blank" rel="noopener">{poster && <img src={poster} alt="" width="320" height="180" loading="lazy" decoding="async" />}Watch: {asset.label}{asset.duration ? ` (${asset.duration})` : ''}</a>
-            }
-            return <a key={asset.key || asset.env} href={url} target="_blank" rel="noopener">{asset.label}{asset.format ? ` (${asset.format})` : ''}</a>
-          })}
-        </>}
-      </span>
-    </>}
-  </span>
-}
-
 async function sendInquiry(_payload: Inquiry): Promise<void> {
   // Replace with a server-side contact endpoint; do not expose credentials in VITE_*.
   await new Promise((resolve) => window.setTimeout(resolve, 150))
@@ -552,7 +469,7 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-proof" aria-label="Selected CV-reported outcomes"><div><strong><Claim id="task-execution-improvement-70">70% faster task execution</Claim></strong></div><div><strong><Claim id="daily-workload-reduction-80">80% less repetitive daily workload</Claim></strong></div><div><strong><Claim id="department-overhead-reduction-67">67% lower department overhead</Claim></strong></div><p>Reported for the offline legal-document workflow at Rosian Liaison Services.</p></div>
+          <div className="hero-proof" aria-label="Selected CV-reported outcomes"><div><strong data-claim-id="task-execution-improvement-70">70%</strong><span>faster task execution</span></div><div><strong data-claim-id="daily-workload-reduction-80">80%</strong><span>less repetitive daily workload</span></div><div><strong data-claim-id="department-overhead-reduction-67">67%</strong><span>lower department overhead</span></div><p>Reported for the offline legal-document workflow at Rosian Liaison Services.</p></div>
 
         </section>
 
@@ -562,7 +479,7 @@ function App() {
             <h2>Selected work</h2>
           </div>
 
-          <article className="project-featured" aria-labelledby="project-title-1"><div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div><div className="project-featured-body"><div className="project-featured-copy"><p className="project-role">AI Systems Engineer · Rosian Liaison Services</p><h3 id="project-title-1">Offline AI Legal Document System</h3><p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working <Claim id="local-first-workflow">without cloud model dependence</Claim>.</p><div className="project-outcomes"><div><strong><Claim id="task-execution-improvement-70">70% faster task execution</Claim></strong><span>faster task execution</span></div><div><strong><Claim id="daily-workload-reduction-80">80% less repetitive daily workload</Claim></strong></div><div><strong><Claim id="department-overhead-reduction-67">67% lower department overhead</Claim></strong></div></div>          <p className="project-proof">CV-reported outcomes: task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. <Claim id="ai-cost-per-task-1-11">AI cost was about ₱1.11 per completed task</Claim>.</p><ul className="project-highlights">{projects[0].highlights.map((highlight, index) => <li key={highlight}>{index === 1 ? <>RAG knowledge base with PostgreSQL embeddings and <Claim id="agent-skills-count-5">5 agent skills</Claim></> : highlight}</li>)}</ul><p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p><p className="project-evidence">Evidence: cv.md and cv-quanico.pdf · Jan–Oct 2026</p></div><div className="preview-box featured-preview">{projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_ONE_MEDIA_URL.</small></div>}</div></div></article>
+          <article className="project-featured" aria-labelledby="project-title-1"><div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div><div className="project-featured-body"><div className="project-featured-copy"><p className="project-role">AI Systems Engineer · Rosian Liaison Services</p><h3 id="project-title-1">Offline AI Legal Document System</h3><p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working without cloud model dependence.</p><div className="project-outcomes"><div><strong data-claim-id="task-execution-improvement-70">70%</strong><span>faster task execution</span></div><div><strong data-claim-id="daily-workload-reduction-80">80%</strong><span>less repetitive daily workload</span></div><div><strong data-claim-id="department-overhead-reduction-67">67%</strong><span>lower department overhead</span></div></div>          <p className="project-proof">CV-reported outcomes: task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. AI cost was about ₱1.11 per completed task.</p><ul className="project-highlights">{projects[0].highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul><p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p><p className="project-evidence">Evidence: cv.md and cv-quanico.pdf · Jan–Oct 2026</p></div><div className="preview-box featured-preview">{projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo using VITE_PROJECT_ONE_MEDIA_URL.</small></div>}</div></div></article>
           <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="project-proof"><strong>Evidence:</strong> {project.evidence}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><ul className="project-highlights">{project.highlights.map((highlight) => <li key={highlight}>{highlight}</li>)}</ul></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
         </section>
 
@@ -576,7 +493,7 @@ function App() {
 
         <section id="contributions" data-reveal>
           <header className="section-heading"><div><span className="section-index">03 / RESEARCH & LEARNING</span><h2>Research, study,<br />and recognition</h2></div><p>Computer vision in a local context, graduate study in progress, and work recognized by the academic community.</p></header>
-          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">CV<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. The CV lists publication in September 2026; publication status and citation are presented as CV-reported pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span><Claim id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</Claim></span></div><div className="research-actions">{thesisPaperUrl && <a href={thesisPaperUrl} target="_blank" rel="noopener" className="btn-primary">{thesisPaperIsLocal ? 'View bundled thesis PDF' : 'View thesis PDF'} <ArrowUpRight size={16} aria-hidden="true" /></a>}{thesisPaperIsLocal && <span>Local thesis copy · confirm public distribution rights before sharing.</span>}</div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div>{thesisPaperUrl && <iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" width="560" height="720" />}</div></article>
+          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">CV<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental. The CV lists publication in September 2026; publication status and citation are presented as CV-reported pending a verified public source.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span data-claim-id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions">{thesisPaperUrl && <a href={thesisPaperUrl} target="_blank" rel="noopener" className="btn-primary">{thesisPaperIsLocal ? 'View bundled thesis PDF' : 'View thesis PDF'} <ArrowUpRight size={16} aria-hidden="true" /></a>}{thesisPaperIsLocal && <span>Local thesis copy · confirm public distribution rights before sharing.</span>}</div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div>{thesisPaperUrl && <iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" width="560" height="720" />}</div></article>
           <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; Champion, ICT Olympics 2024 (Web Design and Development); invited CS industry panelist.</p></article></div>
         </section>
       </main>
@@ -589,6 +506,7 @@ function App() {
       </section>
       <footer className="footer"><div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML + full-stack engineer · Bacolod City, Philippines</p><div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} aria-hidden="true" /></a><a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true" /></a><a href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true" /></a></div></div><div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span><a href={resumePdf} target="_blank" rel="noreferrer">Current CV <ArrowUpRight size={14} aria-hidden="true" /></a></div></footer>
 
+      <ClaimLayer />
       <dialog
         className="contact-dialog"
         ref={dialogRef}
