@@ -13,6 +13,7 @@ import projectTwoLogo from './assets/project-2-logo.png'
 import projectThreeLogo from './assets/project-3-logo.svg'
 import resumePdf from './resume-ma-quanico.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
+import ClaimLayer from './claims-overlay/ClaimLayer'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -506,7 +507,8 @@ function App() {
                 <span>AI-integrated products for real operations</span>
               </div>
               <h1>Useful AI,<br /><em>built to work.</em></h1>
-              <p className="hero-desc">I’m Marco, an AI/ML and full-stack software engineer. I build business systems that fit real operations, from offline document workflows to computer-vision products.</p>
+              <p className="hero-desc">I’m Marco Angelo P. Quanico, an AI/ML and full-stack software engineer. I build business systems that fit real operations, from offline document workflows to computer-vision products.</p>
+              <p className="hero-acknowledgement">This portfolio reflects my work, with direct and indirect help from the developer and engineer community. I acknowledge that support as part of my practice; it does not mean those contributors co-authored every project.</p>
               <div className="hero-actions"><a href="#projects" className="btn-primary">Explore selected work <ArrowDown size={17} aria-hidden="true" /></a><a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">Download profile PDF <ArrowUpRight size={16} aria-hidden="true" /></a></div>
               <p className="hero-location">Based in Bacolod City, Negros Occidental · Philippines</p>
             </div>
@@ -584,8 +586,8 @@ function App() {
             isVisible={isDescriptionVisible('research')}
             onToggle={() => toggleSectionDescription('research')}
           />
-          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">RESEARCH<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3>          <p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span>Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" /></div></article>
-          <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; Champion, ICT Olympics 2024 (Web Design and Development); invited CS industry panelist.</p></article></div>
+          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">RESEARCH<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3>          <p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span data-claim-id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" /></div></article>
+          <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; <span data-claim-id="web-design-champion-ict-olympics">Champion, ICT Olympics 2024 (Web Design and Development)</span>; invited CS industry panelist.</p></article></div>
         </section>
       </main>
 
@@ -605,6 +607,7 @@ function App() {
       </section>
       <footer className="footer"><div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML + full-stack engineer · Bacolod City, Philippines</p><div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} aria-hidden="true" /></a><a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true" /></a><a href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true" /></a></div></div><div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span><a href={resumePdf} target="_blank" rel="noreferrer">Profile PDF <ArrowUpRight size={14} aria-hidden="true" /></a></div></footer>
 
+      <ClaimLayer />
       <dialog
         className="contact-dialog"
         ref={dialogRef}
