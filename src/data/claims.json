@@ -1,0 +1,64 @@
+{
+  "version": 1,
+  "claims": {
+    "ai-cost-per-task-1-11": {
+      "text": "AI cost was about ₱1.11 per completed task",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='ai-cost-per-task-1-11']" }]
+    },
+    "best-thesis-ict-expo-2025": {
+      "text": "Best Thesis · 19th ICT EXPO 2025",
+      "type": "ranking",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='best-thesis-ict-expo-2025']" }]
+    },
+    "daily-workload-reduction-80": {
+      "text": "80% less repetitive daily workload",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [
+        { "file": "src/App.tsx", "selector": "[data-claim-id='daily-workload-reduction-80']" },
+        { "file": "src/App.tsx", "selector": "[data-claim-id='daily-workload-reduction-80']" }
+      ]
+    },
+
+    "department-fix-backlog-reduction-60": {
+      "text": "cleared 60% of the outstanding fix backlog",
+      "type": "performance",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='department-fix-backlog-reduction-60']" }]
+    },
+    "department-overhead-reduction-67": {
+      "text": "67% lower department overhead",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [
+        { "file": "src/App.tsx", "selector": "[data-claim-id='department-overhead-reduction-67']" },
+        { "file": "src/App.tsx", "selector": "[data-claim-id='department-overhead-reduction-67']" }
+      ]
+    },
+    "doctor-directory-ux-satisfaction-85": {
+      "text": "85% UX satisfaction",
+      "type": "accuracy",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='doctor-directory-ux-satisfaction-85']" }]
+    },
+    "task-execution-improvement-70": {
+      "text": "70% faster task execution",
+      "type": "performance",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [
+        { "file": "src/App.tsx", "selector": "[data-claim-id='task-execution-improvement-70']" },
+        { "file": "src/App.tsx", "selector": "[data-claim-id='task-execution-improvement-70']" }
+      ]
+    }
+  }
+}

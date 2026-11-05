@@ -257,3 +257,7 @@ Running the skill again must be idempotent:
 - [ ] Explained claims work with hover, keyboard focus, and tap on the (i) icon.
 - [ ] The (i) button has an accessible name and `aria-expanded`; Escape closes the popover.
 - [ ] The report lists what is still missing for each unexplained claim.
+
+## Assets
+
+Keep section media references in arrays and pass each configured environment reference or object key through the shared `resolveAssetUrl` helper in `src/assetUrl.ts`. The helper returns `null` for missing or unapproved external references; render no media element when it returns `null`. Claim explanation assets use the same resolver and load only when a visitor opens the explanation.
