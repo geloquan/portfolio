@@ -26,24 +26,39 @@
     "task-execution-improvement-70": {
       "text": "70% faster task execution",
       "type": "performance",
-      "status": "needs_explanation",
-      "explanation": null,
+      "status": "draft",
+      "explanation": {
+        "meaning": "Placeholder: this compares the time needed to complete the same task before and after the offline legal-document workflow; faster means less elapsed time.",
+        "basis": "The page reports a 70% reduction, with an example of about 20 minutes falling to about 7 minutes.",
+        "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
+        "fine_print": "The task sample and measurement method are not yet documented."
+      },
       "open_questions": ["What task sample, baseline, and measurement method support this CV-reported comparison?"],
       "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
     },
     "daily-workload-reduction-80": {
       "text": "80% less repetitive daily workload",
       "type": "savings",
-      "status": "needs_explanation",
-      "explanation": null,
+      "status": "draft",
+      "explanation": {
+        "meaning": "Placeholder: this compares the amount of repetitive work needed each day before and after the offline legal-document workflow; less means fewer hours of that work.",
+        "basis": "The page reports an 80% reduction, with an example of about 5 hours falling to about 1 hour.",
+        "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
+        "fine_print": "The workload definition and measurement period are not yet documented."
+      },
       "open_questions": ["What workload, period, and measurement method support this CV-reported comparison?"],
       "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
     },
     "department-overhead-reduction-67": {
       "text": "67% lower department overhead",
       "type": "savings",
-      "status": "needs_explanation",
-      "explanation": null,
+      "status": "draft",
+      "explanation": {
+        "meaning": "Placeholder: this compares department overhead before and after the offline legal-document workflow; lower means less reported overhead cost.",
+        "basis": "The page reports a 67% reduction, with an example of about ₱15,000 falling to about ₱5,000.",
+        "context": "The figure is reported for Rosian Liaison Services' offline legal-document workflow.",
+        "fine_print": "The included costs, accounting period, and calculation method are not yet documented."
+      },
       "open_questions": ["Which overhead costs and accounting period support this CV-reported comparison?"],
       "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
     },
