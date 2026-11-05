@@ -106,7 +106,7 @@ function HomePage() {
           <a href="#work">Work</a>
           <a href="#approach">Approach</a>
           <a href="#contact">Contact</a>
-          <a href="/archive">Archive</a>
+          <a href="/details">Detailed work</a>
           <button
             className="home-theme-toggle"
             type="button"
@@ -199,14 +199,14 @@ function HomePage() {
         </div>
         <div className="home-footer-actions">
           <a className="home-button home-button-primary" href="mailto:marcoangelo.quanico@gmail.com">Send an email</a>
-          <a className="home-text-link" href="/archive">Read the full archive</a>
+          <a className="home-text-link" href="/details">Read the detailed view</a>
         </div>
       </footer>
     </div>
   )
 }
 
-function LegacyHome() {
+function DetailedHome() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       const savedTheme = localStorage.getItem('theme')
@@ -788,7 +788,8 @@ function LegacyHome() {
 }
 
 function App() {
-  return window.location.pathname === '/archive' ? <LegacyHome /> : <HomePage />
+  const isDetailedView = window.location.pathname === '/details' || window.location.pathname === '/archive'
+  return isDetailedView ? <DetailedHome /> : <HomePage />
 }
 
 export default App

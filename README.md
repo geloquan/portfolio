@@ -2,6 +2,9 @@
 
 A Vite + React single-page portfolio with light/dark mode, responsive navigation, project previews, and Cloudflare-configurable media.
 
+The root route (`/`) is the concise home view. The detailed portfolio is available at
+`/details`; `/archive` remains as a backwards-compatible alias for existing links.
+
 ## Features
 
 - Organic Minimalism interface with accessible light/dark themes
