@@ -19,6 +19,7 @@ import homeDoodleMarks from './assets/home-doodle-marks.svg'
 import homeDoodleSwirl from './assets/home-doodle-swirl.svg'
 import homeDoodleMountains from './assets/home-doodle-mountains.svg'
 import homeDoodleSunrise from './assets/home-doodle-sunrise.svg'
+import homeDoodleChopsticks from './assets/home-doodle-chopsticks.svg'
 import resumePdf from './resume-ma-quanico.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
 import ClaimLayer from './claims-overlay/ClaimLayer'
@@ -81,6 +82,16 @@ function SectionHeading({id, index, title, description, isVisible, onToggle}: Se
 }
 
 function HomePage() {
+  const homeSnapshots = [
+    {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.'},
+    {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.'},
+    {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.'},
+    {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.'},
+    {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.'},
+    {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.'},
+    {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.'},
+    {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.'},
+  ]
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       const savedTheme = localStorage.getItem('theme')
@@ -157,35 +168,26 @@ function HomePage() {
           <img className="home-section-doodle home-work-doodle" src={homeDoodleWork} alt="" aria-hidden="true" />
           <img className="home-reference-doodle home-swirl-doodle" src={homeDoodleSwirl} alt="" aria-hidden="true" width="400" height="400" />
           <div className="home-section-intro">
-            <p className="home-overline">Selected work</p>
-            <h2 id="work-title">A short view of the practice.</h2>
+            <p className="home-overline">Flagship software</p>
+            <h2 id="work-title">A local workbench for work that moves.</h2>
+            <p className="home-section-lead">A private, low-cost software system for small and medium businesses, virtual assistants, and anyone who wants to turn a messy workflow into a dependable one.</p>
           </div>
-          <div className="home-work-list">
-            <article className="home-work-item">
-              <span className="home-item-number">01</span>
-              <div>
-                <h3>Offline AI legal documents</h3>
-                <p>Local language models and retrieval support a document workflow that keeps sensitive work on local hardware.</p>
-              </div>
-              <span className="home-item-type">AI systems</span>
-            </article>
-            <article className="home-work-item">
-              <span className="home-item-number">02</span>
-              <div>
-                <h3>Seashell computer vision</h3>
-                <p>YOLOv11 segmentation and an Android workflow turn coastal research into usable field records.</p>
-              </div>
-              <span className="home-item-type">Research</span>
-            </article>
-            <article className="home-work-item">
-              <span className="home-item-number">03</span>
-              <div>
-                <h3>Healthcare information systems</h3>
-                <p>Search, scheduling, and record tools shaped by the needs of medical-center teams.</p>
-              </div>
-              <span className="home-item-type">Product engineering</span>
-            </article>
+          <img className="home-chopsticks-doodle" src={homeDoodleChopsticks} alt="" aria-hidden="true" width="400" height="400" />
+          <div className="home-snapshot-grid" aria-label="Flagship software capabilities">
+            {homeSnapshots.map((snapshot, index) => (
+              <figure className={`home-snapshot home-snapshot-${index + 1}`} key={snapshot.name}>
+                <div className="home-snapshot-media" tabIndex={0} aria-label={`${snapshot.name}: ${snapshot.phrase}`}>
+                  <span className="home-snapshot-number">{String(index + 1).padStart(2, '0')}</span>
+                  <div className="home-snapshot-reveal">
+                    <strong>{snapshot.name}</strong>
+                    <span>{snapshot.phrase}</span>
+                  </div>
+                </div>
+                <figcaption><strong>{snapshot.name}</strong></figcaption>
+              </figure>
+            ))}
           </div>
+          <p className="home-privacy-note">Designed to keep sensitive work local and leave a minimal digital footprint. <button type="button" onClick={() => window.location.href = 'mailto:marcoangelo.quanico@gmail.com?subject=Flagship%20software%20demo'}>Ask for a demo</button></p>
         </section>
 
         <section className="home-section home-approach" id="approach" aria-labelledby="approach-title">
@@ -686,7 +688,6 @@ function DetailedHome() {
             <span className="section-index">01 / FIELD NOTES</span>
             <h2>Selected work</h2>
           </div>
-
           <article className="project-featured" aria-labelledby="project-title-1">
             <div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div>
             <div className="project-featured-body">
