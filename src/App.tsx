@@ -2,7 +2,8 @@ import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import type {ReactNode} from 'react'
 import {gsap} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
-import {ArrowDown, ArrowUpRight, Github, Linkedin, Mail, Play, VideoOff, X} from 'lucide-react'
+import {ArrowDown, ArrowUpRight, BrainCircuit, Database, FileQuestion, FileText, Github, Linkedin, Mail, Play, ScanSearch, ServerCog, Smartphone, UsersRound, VideoOff, Workflow, X} from 'lucide-react'
+import type {LucideIcon} from 'lucide-react'
 import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
@@ -21,7 +22,7 @@ type Project = {
   avatarUrl: string
   category: string
   techstack: string
-  highlights: string[]
+  highlights: Array<{text: string; icon: LucideIcon}>
   mediaType: 'image' | 'video'
   mediaUrl?: string
   role: string
@@ -350,7 +351,11 @@ function App() {
         summary: 'An offline legal-document workflow that generates Deeds of Absolute Sale as DOCX and PDF using local language models.',
         avatarUrl: projectOneLogo,
         techstack: 'Local LLMs (Llama 3.1 8B, CodeGemma, Qwen2.5-Coder) · 5 agent skills · RAG · PostgreSQL/pgvector · Laravel · React/TypeScript · Redis · RTX 3060',
-        highlights: ['Runs on local hardware without cloud model dependence', 'RAG knowledge base with PostgreSQL embeddings and agent logs', 'Document generation and structured record extraction with Qwen2.5-VL'],
+        highlights: [
+          {text: 'Runs on local hardware without cloud model dependence', icon: ServerCog},
+          {text: 'RAG knowledge base with PostgreSQL embeddings and agent logs', icon: Database},
+          {text: 'Document generation and structured record extraction with Qwen2.5-VL', icon: FileText},
+        ],
         mediaType: 'video',
         mediaUrl: projectMedia.aiLegal,
         role: 'AI Systems Engineer · Jan–Oct 2026',
@@ -363,7 +368,7 @@ function App() {
         summary: 'Healthcare-management work is part of the project record; platform scope and personal contribution are not yet confirmed.',
         avatarUrl: projectOneLogo,
         techstack: 'Stack details are not published.',
-        highlights: ['Feature-level details and outcomes are not published until verified.'],
+        highlights: [{text: 'Feature-level details are not published yet', icon: FileQuestion}],
         mediaType: 'image',
         mediaUrl: projectMedia.medicalArts,
         role: 'Role and dates not published pending verification.',
@@ -376,7 +381,11 @@ function App() {
         summary: 'A computer-vision research project for seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental.',
         avatarUrl: projectTwoLogo,
         techstack: 'YOLOv11 instance segmentation · Kotlin · Python inference pipeline · JSON logging',
-        highlights: ['AI-driven object segmentation and classification', 'Android application records inference-derived counts', 'Co-author research project.'],
+        highlights: [
+          {text: 'AI-driven object segmentation and classification', icon: ScanSearch},
+          {text: 'Android application records inference-derived counts', icon: Smartphone},
+          {text: 'Co-author research project', icon: BrainCircuit},
+        ],
         mediaType: 'video',
         mediaUrl: projectMedia.seashell,
         role: 'Co-author · Computer vision research',
@@ -389,7 +398,11 @@ function App() {
         summary: 'A doctor-directory web application for search, filtering, and record management, developed during a medical-center practicum.',
         avatarUrl: projectThreeLogo,
         techstack: 'PHP · Laravel · Livewire · PostgreSQL',
-        highlights: ['Designed the application and supporting schema', 'Iterated with the institution engineering team', '85% UX satisfaction following stakeholder feedback'],
+        highlights: [
+          {text: 'Designed the application and supporting schema', icon: Workflow},
+          {text: 'Iterated with the institution engineering team', icon: UsersRound},
+          {text: '85% UX satisfaction following stakeholder feedback', icon: Database},
+        ],
         mediaType: 'video',
         mediaUrl: projectMedia.doctorDirectory,
         role: 'Software Developer · Mar–Jun 2025',
@@ -535,7 +548,7 @@ function App() {
                   <div><span><strong>67%</strong><span>lower department overhead</span></span></div>
                 </div>
                 <p className="project-proof">Task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. AI cost was about ₱1.11 per completed task.</p>
-                <div className="skill-list" aria-label="Capabilities">{projects[0].highlights.map((highlight, index) => <span key={highlight}><small>0{index + 1}</small>{highlight}</span>)}</div>
+                <div className="skill-list" aria-label="Capabilities">{projects[0].highlights.map((highlight, index) => { const Icon = highlight.icon; return <span key={highlight.text}><small>0{index + 1}</small><Icon size={16} strokeWidth={1.7} aria-hidden="true" />{highlight.text}</span> })}</div>
                 <p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p>
               </div>
               <div className="preview-box featured-preview">
@@ -544,7 +557,7 @@ function App() {
             </div>
           </article>
 
-          <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><div className="skill-list" aria-label={`${project.name} capabilities`}>{project.highlights.map((highlight, highlightIndex) => <span key={highlight}><small>0{highlightIndex + 1}</small>{highlight}</span>)}</div></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
+          <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><div className="skill-list" aria-label={`${project.name} capabilities`}>{project.highlights.map((highlight, highlightIndex) => { const Icon = highlight.icon; return <span key={highlight.text}><small>0{highlightIndex + 1}</small><Icon size={16} strokeWidth={1.7} aria-hidden="true" />{highlight.text}</span> })}</div></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
         </section>
 
         <section id="experience" data-reveal>
