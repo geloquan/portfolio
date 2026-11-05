@@ -72,7 +72,141 @@ function SectionHeading({id, index, title, description, isVisible, onToggle}: Se
   )
 }
 
-function App() {
+function HomePage() {
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const savedTheme = localStorage.getItem('theme')
+      return savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'dark'
+    } catch {
+      return 'dark'
+    }
+  })
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme)
+    try {
+      localStorage.setItem('theme', theme)
+    } catch {
+      // The page remains usable when storage is unavailable.
+    }
+  }, [theme])
+
+  return (
+    <div className="home-page">
+      <header className="home-nav">
+        <a className="home-brand" href="#top" aria-label="Marco Angelo Quanico home">
+          <img
+            src={theme === 'dark' ? portfolioLogoDark : portfolioLogo}
+            alt="Marco Angelo Quanico"
+            width="180"
+            height="36"
+          />
+        </a>
+        <nav className="home-nav-links" aria-label="Primary navigation">
+          <a href="#work">Work</a>
+          <a href="#approach">Approach</a>
+          <a href="#contact">Contact</a>
+          <a href="/archive">Archive</a>
+          <button
+            className="home-theme-toggle"
+            type="button"
+            onClick={() => setTheme((current) => current === 'dark' ? 'light' : 'dark')}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
+          >
+            {theme === 'dark' ? 'Light' : 'Dark'}
+          </button>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section className="home-hero" aria-labelledby="home-title">
+          <div className="home-hero-copy">
+            <p className="home-overline">AI systems and product engineering</p>
+            <h1 id="home-title">Useful software for work that matters.</h1>
+            <p className="home-lead">
+              I am Marco, an AI and full-stack engineer in Bacolod. I build practical systems for teams with real processes, constraints, and people.
+            </p>
+            <div className="home-actions">
+              <a className="home-button home-button-primary" href="#work">See selected work</a>
+              <a className="home-button home-button-secondary" href="mailto:marcoangelo.quanico@gmail.com">Email Marco</a>
+            </div>
+          </div>
+          <figure className="home-portrait">
+            <img
+              src={import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto}
+              alt="Marco Angelo P. Quanico"
+              width="720"
+              height="1280"
+              fetchPriority="high"
+            />
+            <figcaption>Bacolod City, Philippines</figcaption>
+          </figure>
+        </section>
+
+        <section className="home-section home-work" id="work" aria-labelledby="work-title">
+          <div className="home-section-intro">
+            <p className="home-overline">Selected work</p>
+            <h2 id="work-title">A short view of the practice.</h2>
+          </div>
+          <div className="home-work-list">
+            <article className="home-work-item">
+              <span className="home-item-number">01</span>
+              <div>
+                <h3>Offline AI legal documents</h3>
+                <p>Local language models and retrieval support a document workflow that keeps sensitive work on local hardware.</p>
+              </div>
+              <span className="home-item-type">AI systems</span>
+            </article>
+            <article className="home-work-item">
+              <span className="home-item-number">02</span>
+              <div>
+                <h3>Seashell computer vision</h3>
+                <p>YOLOv11 segmentation and an Android workflow turn coastal research into usable field records.</p>
+              </div>
+              <span className="home-item-type">Research</span>
+            </article>
+            <article className="home-work-item">
+              <span className="home-item-number">03</span>
+              <div>
+                <h3>Healthcare information systems</h3>
+                <p>Search, scheduling, and record tools shaped by the needs of medical-center teams.</p>
+              </div>
+              <span className="home-item-type">Product engineering</span>
+            </article>
+          </div>
+        </section>
+
+        <section className="home-section home-approach" id="approach" aria-labelledby="approach-title">
+          <div>
+            <p className="home-overline">Working approach</p>
+            <h2 id="approach-title">Clarity before complexity.</h2>
+          </div>
+          <div className="home-approach-copy">
+            <p>I start with the operating context, then choose the smallest system that can support it well.</p>
+            <ul>
+              <li>Understand the real workflow before choosing tools.</li>
+              <li>Make the useful path clear for the people using it.</li>
+              <li>Leave behind systems that can be maintained.</li>
+            </ul>
+          </div>
+        </section>
+      </main>
+
+      <footer className="home-footer" id="contact">
+        <div>
+          <p className="home-overline">Start a conversation</p>
+          <h2>Have a real process to improve?</h2>
+        </div>
+        <div className="home-footer-actions">
+          <a className="home-button home-button-primary" href="mailto:marcoangelo.quanico@gmail.com">Send an email</a>
+          <a className="home-text-link" href="/archive">Read the full archive</a>
+        </div>
+      </footer>
+    </div>
+  )
+}
+
+function LegacyHome() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       const savedTheme = localStorage.getItem('theme')
@@ -651,6 +785,10 @@ function App() {
       </div>
     </div>
   )
+}
+
+function App() {
+  return window.location.pathname === '/archive' ? <LegacyHome /> : <HomePage />
 }
 
 export default App
