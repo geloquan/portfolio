@@ -334,6 +334,7 @@ function App() {
 
   const profileImageUrl = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
   const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL || '/assets/research/seashell-computer-vision-thesis.pdf'
+  const calendlyUrl = import.meta.env.VITE_CALENDLY_URL || 'https://calendly.com/marco-angelo-quanico'
   const projectMedia = {
     medicalArts: import.meta.env.VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL,
     aiLegal: import.meta.env.VITE_PROJECT_AI_LEGAL_MEDIA_URL || import.meta.env.VITE_PROJECT_ONE_MEDIA_URL,
@@ -577,8 +578,16 @@ function App() {
 
       <section id="contact" className="contact-section" data-reveal>
         <div className="contact-inner">
-          <div><span className="section-index">04 / CONTACT</span><h2>Build something<br /><em>useful.</em></h2><p>For work around AI systems, product engineering, and practical automation, start a conversation by email.</p></div>
+          <div><span className="section-index">04 / CONTACT</span><h2>Build something<br /><em>useful.</em></h2><p>For work around AI systems, product engineering, and practical automation, start a conversation by email or book a free call.</p></div>
           <div className="contact-actions"><button ref={contactTriggerRef} type="button" className="btn-primary" onClick={() => setContactOpen(true)}>Open inquiry form <ArrowUpRight size={16} aria-hidden="true" /></button><a href="mailto:marcoangelo.quanico@gmail.com" className="btn-ghost"><Mail size={16} aria-hidden="true" /> Email directly</a><button type="button" className="text-action" onClick={() => void copyEmail()}>Copy email address</button><p>The inquiry form is not connected to a delivery service yet. Use the email link for a message that needs to reach me.</p></div>
+          <aside className="booking-card" aria-labelledby="booking-title">
+            <p className="section-index">OPEN INVITATION</p>
+            <h3 id="booking-title">Book a free call</h3>
+            <p>Everyone is welcome. You will leave with practical insights on possible solutions and a clear quotation for the work we discuss.</p>
+            <p className="booking-prep"><strong>Come prepared:</strong> bring your goals, current process, constraints, and any examples that help explain the problem.</p>
+            <a className="btn-ghost booking-link" href={calendlyUrl} target="_blank" rel="noreferrer">Choose a time on Calendly <ArrowUpRight size={16} aria-hidden="true" /></a>
+            <p className="booking-note">If we lock in a project, everything will be documented and transparent from scope through delivery. A support bot assistant will also help once the project is underway.</p>
+          </aside>
         </div>
       </section>
       <footer className="footer"><div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML + full-stack engineer · Bacolod City, Philippines</p><div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} aria-hidden="true" /></a><a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true" /></a><a href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true" /></a></div></div><div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span><a href={resumePdf} target="_blank" rel="noreferrer">Profile PDF <ArrowUpRight size={14} aria-hidden="true" /></a></div></footer>
