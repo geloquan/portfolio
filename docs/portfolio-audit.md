@@ -1,58 +1,57 @@
-# Portfolio skill and content audit
+﻿# Portfolio skill and content audit
 
 ## Scope and evidence
 
-This audit covers the portfolio UI against the repository skills `organic-tactile-ui`, `portfolio-contact-flow`, `portfolio-project-showcase`, and `tactile-theme-modes`. Public professional claims should be checked against `cv.md` and `cv-quanico.pdf`; those sources report facts but do not independently establish that every detail is current or cleared for publication. Items not established by the available CV or project files remain clearly marked for owner verification in the UI and are listed in [`TODOs.md`](../TODOs.md). No private contact data or credentials belong in public metadata.
+This audit covers the portfolio UI against `docs/skill-map.md` and `docs/page-outline.md`, including organic tactile UI, contact flow, project showcase, theme modes, and motion. Public professional claims are grounded in `cv.md` and `cv-quanico.pdf`; these sources do not independently establish that every detail is current or cleared for publication. Items not established by available CV/project files remain marked for owner verification in `TODOs.md`. No private contact data or credentials belong in public metadata.
+
+## Outline coverage
+
+The implementation contains all five outline entries in order: Opening / profile, Selected work, Experience, Research & learning, and Contact. Shared navigation, scroll island treatment, mobile menu, theme and feedback toggles, notification toasts, contact dialog, thesis preview, project media, and footer are explicitly mapped to their owning section or shared chrome in `page-outline.md`.
 
 ## Skill findings
 
 ### Organic tactile UI
-
-- Theme tokens and raised/sunken surfaces are centralized in `src/theme.css`; components use shared surface, text, accent, focus, and shadow tokens.
-- Project surfaces and preview frames have tactile treatments. Motion and interaction feedback are implemented with reduced-motion considerations and optional haptic/sound feedback.
-- Keyboard focus, contrast, and narrow layouts should be checked in a real browser at launch; the automated contrast check is not a substitute for visual/accessibility review.
+- Theme tokens and raised/sunken surfaces are centralized in `src/theme.css`; app components use shared tokens.
+- Motion and optional haptic/sound feedback are implemented. This record does not claim visual or assistive-technology verification.
 
 ### Portfolio contact flow
-
-- The primary contact action opens a native dialog. The form is not embedded as a bare inline section.
-- Custom-styled, labeled fields, inline validation, a submission state model, toast feedback, draft persistence, keyboard handling, and a backend swap point are present.
-- **Important limitation:** `sendInquiry` intentionally rejects because no endpoint is configured. The form clearly warns that messages are not delivered; do not advertise it as working until the owner configures and tests a trusted server-side endpoint.
-- A launch review must exercise focus entry/trapping/return, dirty-close and undo, storage-denied behavior, live validation, reduced motion, all toast outcomes, and mobile viewport behavior. Do not treat static code inspection as proof of these interactions.
+- The contact action opens a dialog with labeled fields, inline validation, draft persistence, toast feedback, and a backend swap point.
+- **Limitation:** `sendInquiry` intentionally rejects because no endpoint is configured. The UI warns that messages are not delivered; direct email is the working route.
+- Real-browser focus, dirty-close/undo, storage-denied, validation, toast, and mobile interaction behavior were not verified in this run.
 
 ### Portfolio project showcase
-
-- Project entries communicate category, role, evidence, and technology context and use project media when configured.
-- Medical Arts details and some media are intentionally not asserted without source evidence. Configure authorized media and verify the content using [`TODOs.md`](../TODOs.md).
-- The research spotlight includes the bundled thesis PDF. Confirm publication status/date and public distribution rights before promoting it as a publication.
+- Entries provide summary, evidence/limitations, role, stack, and available media state.
+- Medical Arts details and project media remain subject to owner verification; see `TODOs.md`.
+- Research publication status/date and public distribution rights need verification before representing the thesis as a public publication.
 
 ### Tactile theme modes
-
-- Light and dark theme tokens are provided in `src/theme.css`; theme aliases are defined for both modes.
-- Automated token contrast verification is recorded below. The broad scanner can also inspect immutable skill-reference examples, so its repository-wide duplicate/color warnings must not be mistaken for app-source violations.
-- Theme-color metadata and the pre-paint theme behavior should be visually tested in both modes and in browser chrome.
+- Light and dark tokens are centralized in `src/theme.css`; contrast check passed below.
+- App-source theme scan reports no errors or warnings. Visual appearance in both themes was not browser-verified.
 
 ## CV coverage and claim handling
 
 | CV evidence | Portfolio treatment |
 |---|---|
-| Rosian Liaison Services, Jan–Oct 2026, with CV-reported task/workload/overhead metrics | Work-history content uses CV-reported experience; retain the source context and verify dates/metrics are still intended for public display. |
-| Adventist Medical Center Bacolod, Jun 2025–Jan 2026 | Work-history entry; avoid adding unverified project details. |
-| Riverside, Mar–Jun 2025 | Work-history entry; avoid adding unverified project details. |
-| Best Thesis, 19th ICT EXPO 2025 | Research distinction is attributed as CV-reported. |
-| ICT Olympics 2024 Champion | Achievement is represented using the CV entry. |
-| Seashell computer-vision paper; CV lists publication in Sep 2026 | Publication date/status is explicitly marked for owner verification because it is future-relative and needs a confirmed public source. |
+| Rosian Liaison Services, Jan–Oct 2026, with reported task/workload/overhead metrics | CV-reported experience and outcomes; verify public-display intent and current dates/metrics. |
+| Adventist Medical Center Bacolod, Jun 2025–Jan 2026 | Work-history entry; no additional unverified project details. |
+| Riverside, Mar–Jun 2025 | Work-history entry; no additional unverified project details. |
+| Best Thesis, 19th ICT EXPO 2025 | Research distinction attributed as CV-reported. |
+| ICT Olympics 2024 Champion | Achievement represented using the CV entry. |
+| Seashell computer-vision paper; CV lists publication in Sep 2026 | Marked CV-reported pending a verified public source. |
 | Private phone/contact information | Excluded from public structured metadata. |
-
-Descriptions of specific project roles, exact stacks, features, dates, performance results, media, and publication links must not be inferred from a title alone. See [`TODOs.md`](../TODOs.md).
 
 ## Validation record
 
-Run these checks after making changes:
+- `git status` and `git branch --show-current` — branch `feat/skill-driven-rewrite`; user changes retained.
+- `npm run build` — passed; `tsc -b` and Vite production build succeeded (1714 modules transformed).
+- `npm run lint` — failed with ESLint 9.39.1: existing config has a `plugins` array incompatible with flat config. See `blockers.md`.
+- `npx tsc -b --pretty false` — passed with no diagnostics.
+- `npm run check:placeholders` — passed: `No TODO(owner) placeholders found.`
+- `py -3 .github\skills\tactile-theme-modes\scripts\theme_check.py contrast src\theme.css` — passed; final result `PASS` for light and dark tokens.
+- `py -3 .github\skills\tactile-theme-modes\scripts\theme_check.py scan src` — passed: 6 files, 0 errors, 0 warnings, 0 info.
+- `git diff --check` — passed for current unstaged changes.
+- Browser appearance, keyboard/screen-reader behavior, and contact delivery were not verified. Contact delivery remains intentionally unavailable.
 
-- `npm run build` — passed; TypeScript and Vite production build completed.
-- `npm run check:placeholders` — passed; reviewed existing verification markers are allowlisted, and new markers fail the check.
-- `py -3 .github\\skills\\tactile-theme-modes\\scripts\\theme_check.py contrast src\\theme.css` — passed for light and dark tokens.
-- `git diff --check` — passed; only Git's LF-to-CRLF working-copy notices were emitted.
-- `npm run lint` — blocked by the repository's ESLint 9 flat-config incompatibility (`plugins` is an array of strings); this is not a passing lint result.
+## Skill gaps and blockers
 
-Automated checks do not replace owner verification, screen-reader/keyboard checks, or testing at mobile and desktop sizes. Update this record with actual final run results before treating the audit as release sign-off.
+See `skill-gaps.md` for incomplete storytelling references, failed anti-slop skill loading, tactile asset naming mismatch, and checker policy discrepancy. See `blockers.md` for the existing ESLint configuration incompatibility.
