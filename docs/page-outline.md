@@ -12,11 +12,14 @@
 
 ## Reading order
 
+### Shared chrome and interaction support
+The page includes persistent top navigation, a compact island treatment after scrolling, mobile menu toggle, theme switch, feedback toggle, and notification toasts. They support navigation/preferences across the outlined sections, not additional narrative sections. The inquiry dialog belongs to Contact; thesis PDF preview to Research & learning; project media controls to Selected work. Scroll reveals belong to Motion below. References: `portfolio-contact-flow` (dialog/toasts), `tactile-theme-modes` (theme), `organic-tactile-ui` (feedback), `portfolio-project-showcase` (media), `antislop-layoutmobile` (responsive navigation).
+
 1. **Opening / profile** (`#about`): name, role, location, concise positioning, source-backed evidence, CV link, contact action. Focal point: the work and its real-world operating constraint, not decorative portrait art.
 2. **Selected work** (`#projects`): editorial index plus detail for four projects, led by the offline AI legal workflow. Each entry states what it does, the evidence or limitation, role/stack, and whether visual proof is available. Medical Arts remains explicitly unverified rather than presented as fact.
 3. **Experience** (`#experience`): chronological evidence from AI systems, healthcare IT, and freelance product engineering. The strongest operational case leads; earlier roles establish the breadth behind it.
 4. **Research & learning** (`#contributions`): seashell computer-vision research, thesis distinction, education, and community recognition. Publication status and distribution are qualified where verification is pending.
-5. **Contact** (`#contact`): truthful contact options and a modal-based inquiry flow. The UI clearly says the form is not connected to a delivery endpoint; direct email remains available.
+5. **Contact** (`#contact`): truthful contact options and a modal-based inquiry flow. The UI clearly says the form is not connected to a delivery endpoint; direct email remains available. Includes shared notification toasts and the footer with social/email links and current CV link. References: `portfolio-contact-flow`, `antislop-copywriting`.
 
 ## Signature and composition
 
