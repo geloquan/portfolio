@@ -1,6 +1,13 @@
 {
   "version": 1,
   "claims": {
+    "agent-skills-count-5": {
+      "text": "5 agent skills",
+      "type": "comparison",
+      "status": "needs_explanation",
+      "explanation": null,
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='agent-skills-count-5']" }]
+    },
     "ai-cost-per-task-1-11": {
       "text": "AI cost was about ₱1.11 per completed task",
       "type": "savings",
@@ -26,13 +33,6 @@
       ]
     },
 
-    "department-fix-backlog-reduction-60": {
-      "text": "cleared 60% of the outstanding fix backlog",
-      "type": "performance",
-      "status": "needs_explanation",
-      "explanation": null,
-      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='department-fix-backlog-reduction-60']" }]
-    },
     "department-overhead-reduction-67": {
       "text": "67% lower department overhead",
       "type": "savings",
@@ -43,12 +43,12 @@
         { "file": "src/App.tsx", "selector": "[data-claim-id='department-overhead-reduction-67']" }
       ]
     },
-    "doctor-directory-ux-satisfaction-85": {
-      "text": "85% UX satisfaction",
-      "type": "accuracy",
+    "local-first-workflow": {
+      "text": "without cloud model dependence",
+      "type": "reliability",
       "status": "needs_explanation",
       "explanation": null,
-      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='doctor-directory-ux-satisfaction-85']" }]
+      "occurrences": [{ "file": "src/App.tsx", "selector": "[data-claim-id='local-first-workflow']" }]
     },
     "task-execution-improvement-70": {
       "text": "70% faster task execution",
