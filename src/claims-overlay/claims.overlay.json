@@ -1,198 +1,115 @@
 {
-  "best-thesis-ict-expo-2025": {
-    "text": "Best Thesis · 19th ICT EXPO 2025",
-    "type": "award",
-    "status": "explained",
-    "explanation": {
-      "meaning": "The award recognized a thesis study about identifying different seashell types.",
-      "context": "The study used YOLOv8 and received the award at the 19th ICT EXPO 2025."
+  "version": 1,
+  "claims": {
+    "best-thesis-ict-expo-2025": {
+      "text": "Best Thesis · 19th ICT EXPO 2025",
+      "type": "ranking",
+      "status": "explained",
+      "explanation": {
+        "meaning": "Best Thesis is the award this research received at the 19th ICT EXPO 2025.",
+        "context": "The study used YOLOv8, an object-detection model, to recognize seashell diversity."
+      },
+      "open_questions": [],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[data-claim-id='best-thesis-ict-expo-2025']"}]
     },
-    "open_questions": [],
-    "occurrences": [
-      "Research"
-    ]
-  },
-  "cv-70-percent-task-time-reduction": {
-    "text": "70% reduced task time (~20 to ~7 minutes)",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What task sample and measurement method produced these CV-reported estimates?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "cv-80-percent-workload-reduction": {
-    "text": "80% reduced repetitive daily workload (~5 to ~1 hour)",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What workload and measurement period support these CV-reported estimates?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "cv-67-percent-overhead-reduction": {
-    "text": "67% lower department overhead (₱15k to ₱5k)",
-    "type": "cost",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "Which overhead costs and accounting records support these CV-reported figures?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "cv-60-percent-backlog-cleared": {
-    "text": "60% of outstanding fix backlog cleared",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What was counted as the outstanding backlog and over what period?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "cv-85-percent-ux-satisfaction": {
-    "text": "85% UX satisfaction following stakeholder feedback",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "How was user experience satisfaction surveyed and calculated?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "reported-publication-status": {
-    "text": "Publication in September 2026",
-    "type": "publication-status",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What public publication source or status confirms this date?"
-    ],
-    "occurrences": [
-      "Research"
-    ]
-  },
-  "web-design-champion-ict-olympics": {
-    "text": "Champion, Web Design and Development category, ICT Olympics",
-    "type": "award",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "Which edition and year of the ICT Olympics is meant?"
-    ],
-    "occurrences": [
-      "Education and recognition, outside requested target sections"
-    ]
-  },
-  "software-development-experience": {
-    "text": "5 years of software development experience as a freelancer before current work",
-    "type": "experience",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "The claim occurs outside the target sections and is not tagged."
-    ],
-    "occurrences": [
-      "Experience, outside requested target sections"
-    ]
-  },
-  "healthcare-it-experience": {
-    "text": "About 10 months of professional experience building healthcare IT systems",
-    "type": "experience",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "The claim occurs outside the target sections and is not tagged."
-    ],
-    "occurrences": [
-      "Experience, outside requested target sections"
-    ]
-  },
-  "task-execution-improvement-70": {
-    "text": "70% faster task execution",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What was the task-time baseline and how was the comparison measured?"
-    ],
-    "occurrences": [
-      "Hero",
-      "Work"
-    ]
-  },
-  "daily-workload-reduction-80": {
-    "text": "80% less repetitive daily workload",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What workload baseline and measurement method support this comparison?"
-    ],
-    "occurrences": [
-      "Hero",
-      "Work"
-    ]
-  },
-  "department-overhead-reduction-67": {
-    "text": "67% lower department overhead",
-    "type": "performance",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "Which overhead costs and time period were compared, and how were they measured?"
-    ],
-    "occurrences": [
-      "Hero",
-      "Work"
-    ]
-  },
-  "local-first-workflow": {
-    "text": "without cloud model dependence",
-    "type": "product-capability",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "What evidence establishes that the workflow functions without a cloud model?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "ai-cost-per-task-1-11": {
-    "text": "AI cost was about ₱1.11 per completed task",
-    "type": "cost",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "Which costs are included and how was the per-task figure calculated?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
-  },
-  "agent-skills-count-5": {
-    "text": "5 agent skills",
-    "type": "count",
-    "status": "needs_explanation",
-    "explanation": null,
-    "open_questions": [
-      "Which five skills are counted and what establishes the count?"
-    ],
-    "occurrences": [
-      "Work"
-    ]
+    "web-design-champion-ict-olympics": {
+      "text": "Champion, ICT Olympics 2024 (Web Design and Development)",
+      "type": "ranking",
+      "status": "explained",
+      "explanation": {
+        "meaning": "Champion means first place in the Web Design and Development category of the ICT Olympics.",
+        "context": "The page identifies this result as the 2024 ICT Olympics."
+      },
+      "open_questions": [],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[data-claim-id='web-design-champion-ict-olympics']"}]
+    },
+    "task-execution-improvement-70": {
+      "text": "70% faster task execution",
+      "type": "performance",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What task sample, baseline, and measurement method support this CV-reported comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+    },
+    "daily-workload-reduction-80": {
+      "text": "80% less repetitive daily workload",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What workload, period, and measurement method support this CV-reported comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+    },
+    "department-overhead-reduction-67": {
+      "text": "67% lower department overhead",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["Which overhead costs and accounting period support this CV-reported comparison?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": "[aria-label='Selected CV-reported outcomes']"}]
+    },
+    "task-time-reduction-70": {
+      "text": "task time reduced by 70% (~20 to ~7 minutes)",
+      "type": "performance",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What task sample and measurement method produced this CV-reported estimate?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
+    },
+    "workload-reduction-80": {
+      "text": "repetitive daily workload by 80% (~5 to ~1 hour)",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What workload and measurement period support this CV-reported estimate?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
+    },
+    "overhead-reduction-67": {
+      "text": "department overhead by 67% (₱15k to ₱5k)",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["Which overhead costs and accounting records support these CV-reported figures?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
+    },
+    "backlog-cleared-60": {
+      "text": "cleared 60% of the outstanding fix backlog",
+      "type": "performance",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What counted as the outstanding backlog and over what period?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-list"}]
+    },
+    "ux-satisfaction-85": {
+      "text": "85% UX satisfaction following stakeholder feedback",
+      "type": "accuracy",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["How was user-experience satisfaction surveyed and calculated?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-list"}]
+    },
+    "agent-skills-count-5": {
+      "text": "five specialized agent skills",
+      "type": "credential",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["Which five skills are counted and what establishes the count?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
+    },
+    "ai-cost-per-task-1-11": {
+      "text": "AI cost reported at about ₱1.11 per completed task",
+      "type": "savings",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["Which costs are included and how was the per-task figure calculated?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".experience-feature"}]
+    },
+    "publication-september-2026": {
+      "text": "publication in September 2026",
+      "type": "credential",
+      "status": "needs_explanation",
+      "explanation": null,
+      "open_questions": ["What public publication source or status confirms this date?"],
+      "occurrences": [{"file": "src/App.tsx", "selector": ".research-spread"}]
+    }
   }
 }
