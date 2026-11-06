@@ -68,6 +68,7 @@ const randomizedProfileDeck = [...profileDeckImages].sort(() => Math.random() - 
 
 function ProfileDeck() {
   const [cards, setCards] = useState(randomizedProfileDeck)
+  const [draggedSrc, setDraggedSrc] = useState<string | null>(null)
 
   const bringToFront = (src: string) => {
     setCards((current) => {
@@ -77,15 +78,45 @@ function ProfileDeck() {
     })
   }
 
+  const moveCard = (sourceSrc: string, targetSrc: string) => {
+    setCards((current) => {
+      const sourceIndex = current.findIndex((card) => card.src === sourceSrc)
+      const targetIndex = current.findIndex((card) => card.src === targetSrc)
+      if (sourceIndex < 0 || targetIndex < 0 || sourceIndex === targetIndex) return current
+
+      const next = [...current]
+      const [movedCard] = next.splice(sourceIndex, 1)
+      next.splice(targetIndex, 0, movedCard)
+      return next
+    })
+  }
+
   return (
-    <div className="profile-deck" aria-label="A small fan of profile portraits">
+    <div className="profile-deck" aria-label="A small fan of profile portraits. Drag cards to reorder the deck.">
       {cards.map((image, index) => (
         <button
-          className={`profile-card profile-card-${index + 1} ${index === cards.length - 1 ? 'is-front' : ''}`}
+          className={`profile-card profile-card-${index + 1} ${index === cards.length - 1 ? 'is-front' : ''} ${draggedSrc === image.src ? 'is-dragging' : ''}`}
           key={image.src}
           type="button"
-          aria-label={`Show portrait ${index + 1} in front`}
+          draggable
+          aria-label={`Show portrait ${index + 1} in front. Drag to reorder.`}
           onClick={() => bringToFront(image.src)}
+          onDragStart={(event) => {
+            event.dataTransfer.effectAllowed = 'move'
+            event.dataTransfer.setData('text/plain', image.src)
+            setDraggedSrc(image.src)
+          }}
+          onDragOver={(event) => {
+            event.preventDefault()
+            event.dataTransfer.dropEffect = 'move'
+          }}
+          onDrop={(event) => {
+            event.preventDefault()
+            const sourceSrc = event.dataTransfer.getData('text/plain') || draggedSrc
+            if (sourceSrc) moveCard(sourceSrc, image.src)
+            setDraggedSrc(null)
+          }}
+          onDragEnd={() => setDraggedSrc(null)}
         >
           <img
             className="profile-photo"
@@ -93,6 +124,7 @@ function ProfileDeck() {
             alt={image.alt}
             width="720"
             height="1280"
+            draggable={false}
             fetchPriority={index === 0 ? 'high' : undefined}
             onError={(event) => {
               event.currentTarget.src = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto

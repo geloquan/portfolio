@@ -492,6 +492,11 @@ section {
   z-index: 5
 }
 
+.profile-card.is-dragging {
+  opacity: .48;
+  cursor: grabbing
+}
+
 .profile-card:focus-visible {
   outline: 2px solid var(--color-accent-warm-text);
   outline-offset: 5px
@@ -501,6 +506,8 @@ section {
   display: block;
   width: 100%;
   height: 100%;
+  pointer-events: none;
+  user-select: none;
   object-fit: cover;
   object-position: center 26%;
   filter: saturate(.72)
