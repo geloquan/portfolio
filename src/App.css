@@ -759,7 +759,7 @@ section {
   user-select: none;
   object-fit: cover;
   object-position: center 26%;
-  filter: saturate(.68) contrast(.92) blur(var(--profile-image-softness));
+  filter: blur(var(--profile-image-softness));
   transform: scale(1.002);
   image-rendering: auto
 }

@@ -1,9 +1,27 @@
-import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import type {CSSProperties, ReactNode} from 'react'
+import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {gsap} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
-import {ArrowDown, ArrowUpRight, BrainCircuit, Database, FileQuestion, FileText, Github, Linkedin, Mail, Play, ScanSearch, ServerCog, Smartphone, UsersRound, VideoOff, Workflow, X} from 'lucide-react'
 import type {LucideIcon} from 'lucide-react'
+import {
+  ArrowDown,
+  ArrowUpRight,
+  BrainCircuit,
+  Database,
+  FileQuestion,
+  FileText,
+  Github,
+  Linkedin,
+  Mail,
+  Play,
+  ScanSearch,
+  ServerCog,
+  Smartphone,
+  UsersRound,
+  VideoOff,
+  Workflow,
+  X
+} from 'lucide-react'
 import './App.css'
 import portfolioLogo from './assets/portfolio-logo-light.svg'
 import portfolioLogoDark from './assets/portfolio-logo-dark.svg'
@@ -32,7 +50,7 @@ type Project = {
   avatarUrl: string
   category: string
   techstack: string
-  highlights: Array<{text: string; icon: LucideIcon}>
+  highlights: Array<{ text: string; icon: LucideIcon }>
   mediaType: 'image' | 'video'
   mediaUrl?: string
   role: string
@@ -42,6 +60,7 @@ type Project = {
 
 type Inquiry = { name: string; email: string; message: string }
 type FormState = 'idle' | 'validating' | 'submitting' | 'error'
+
 async function sendInquiry(_payload: Inquiry): Promise<void> {
   // Replace with a server-side contact endpoint; do not expose credentials in VITE_*.
   await new Promise((resolve) => window.setTimeout(resolve, 150))
@@ -59,10 +78,12 @@ type SectionHeadingProps = {
 }
 
 const profileDeckImages = [
-  {src: '/assets/media/me/01-me.jpg', alt: 'Marco Angelo P. Quanico seated outdoors'},
-  {src: '/assets/media/me/02-me.jpg', alt: 'Marco Angelo P. Quanico in a dark shirt'},
-  {src: '/assets/media/me/03-me.jpg', alt: 'Marco Angelo P. Quanico looking toward the camera'},
-  {src: '/assets/media/me/04-me.jpeg', alt: 'Marco Angelo P. Quanico in a warm indoor portrait'},
+  // {src: '/assets/media/me/01-me.jpg', alt: 'Marco Angelo P. Quanico seated outdoors'},
+  // {src: '/assets/media/me/02-me.jpg', alt: 'Marco Angelo P. Quanico in a dark shirt'},
+  // {src: '/assets/media/me/03-me.jpg', alt: 'Marco Angelo P. Quanico looking toward the camera'},
+  // {src: '/assets/media/me/04-me.jpeg', alt: 'Marco Angelo P. Quanico in a warm indoor portrait'},
+  {src: '/assets/media/me/05-me.jpg', alt: 'Marco Angelo P. Quanico 1x1 formal'},
+  {src: '/assets/media/me/06-me.jpg', alt: 'Marco Angelo P. Quanico live performing'}
 ]
 const randomizedProfileDeck = [...profileDeckImages].sort(() => Math.random() - 0.5)
 
@@ -140,14 +161,46 @@ function ProfileDeck() {
 }
 
 const homeSnapshots = [
-  {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: '/assets/media/projects/flagship/bento/01-chatbot.png'},
-  {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: '/assets/media/projects/flagship/bento/02-agent-orchestrator.svg'},
-  {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.', mediaUrl: '/assets/media/projects/flagship/bento/03-multidatabase.svg'},
-  {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.', mediaUrl: '/assets/media/projects/flagship/bento/04-planning-execution.svg'},
-  {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.', mediaUrl: '/assets/media/projects/flagship/bento/05-autopilot.svg'},
-  {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.', mediaUrl: '/assets/media/projects/flagship/bento/06-local-by-design.svg'},
-  {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.', mediaUrl: '/assets/media/projects/flagship/bento/07-built-for-operators.svg'},
-  {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.', mediaUrl: '/assets/media/projects/flagship/bento/08-any-domain.svg'},
+  {
+    name: 'Chatbot',
+    phrase: 'A practical front door for questions, tasks, and next steps.',
+    mediaUrl: '/assets/media/projects/flagship/bento/01-chatbot.png'
+  },
+  {
+    name: 'Agent orchestrator',
+    phrase: 'Delegate the work, keep the plan visible, and coordinate the result.',
+    mediaUrl: '/assets/media/projects/flagship/bento/02-agent-orchestrator.svg'
+  },
+  {
+    name: 'Multidatabase connection',
+    phrase: 'Bring the systems you already use into one working context.',
+    mediaUrl: '/assets/media/projects/flagship/bento/03-multidatabase.svg'
+  },
+  {
+    name: 'Intelligent planning & execution',
+    phrase: 'Turn an outcome into a sequence that can actually move.',
+    mediaUrl: '/assets/media/projects/flagship/bento/04-planning-execution.svg'
+  },
+  {
+    name: 'Autopilot',
+    phrase: 'Let repeatable work run with useful checkpoints, not blind automation.',
+    mediaUrl: '/assets/media/projects/flagship/bento/05-autopilot.svg'
+  },
+  {
+    name: 'Local by design',
+    phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.',
+    mediaUrl: '/assets/media/projects/flagship/bento/06-local-by-design.svg'
+  },
+  {
+    name: 'Built for operators',
+    phrase: 'A flexible workbench for small teams, VAs, and independent builders.',
+    mediaUrl: '/assets/media/projects/flagship/bento/07-built-for-operators.svg'
+  },
+  {
+    name: 'Any domain of work',
+    phrase: 'Shape the system around the work instead of forcing a fixed industry template.',
+    mediaUrl: '/assets/media/projects/flagship/bento/08-any-domain.svg'
+  },
 ]
 
 function SectionHeading({id, index, title, description, isVisible, onToggle}: SectionHeadingProps) {
@@ -196,23 +249,29 @@ function HomePage() {
   }, [])
 
   useEffect(() => {
+    if (!isSnapshotStageVisible) return
+
+    let cycleIndex = 0
+    let revealTimer: number | undefined
     let hideTimer: number | undefined
-    const revealTimer = window.setInterval(() => {
-      if (hideTimer) window.clearTimeout(hideTimer)
+    const revealOrder = [0, 3, 1, 2, 4, 7, 5, 6]
 
-      const nextActiveIndexes = homeSnapshots.reduce<Record<number, boolean>>((activeIndexes, _, index) => {
-        activeIndexes[index] = Math.random() < 0.5
-        return activeIndexes
-      }, {})
-      setActiveSnapshotIndexes(nextActiveIndexes)
-      hideTimer = window.setTimeout(() => setActiveSnapshotIndexes({}), 5000)
-    }, 5000)
+    const scheduleReveal = () => {
+      const index = revealOrder[cycleIndex % revealOrder.length]
+      cycleIndex += 1
+      setActiveSnapshotIndexes({[index]: true})
+      hideTimer = window.setTimeout(() => {
+        setActiveSnapshotIndexes({})
+        revealTimer = window.setTimeout(scheduleReveal, 1200)
+      }, 4200)
+    }
 
+    revealTimer = window.setTimeout(scheduleReveal, 900)
     return () => {
-      window.clearInterval(revealTimer)
+      if (revealTimer) window.clearTimeout(revealTimer)
       if (hideTimer) window.clearTimeout(hideTimer)
     }
-  }, [])
+  }, [isSnapshotStageVisible])
 
   const handleSnapshotImageLoad = (index: number, image: HTMLImageElement) => {
     const canvas = document.createElement('canvas')
@@ -276,7 +335,7 @@ function HomePage() {
 
   return (
     <div className="home-page">
-      <img className="home-doodle-layer" src={homeDoodles} alt="" aria-hidden="true" />
+      <img className="home-doodle-layer" src={homeDoodles} alt="" aria-hidden="true"/>
       <header className="home-nav">
         <a className="home-brand" href="#top" aria-label="Marco Angelo Quanico home">
           <img
@@ -304,34 +363,41 @@ function HomePage() {
 
       <main id="top">
         <section className="home-hero" aria-labelledby="home-title">
-          <img className="home-reference-doodle home-marks-doodle" src={homeDoodleMarks} alt="" aria-hidden="true" width="400" height="400" />
+          <img className="home-reference-doodle home-marks-doodle" src={homeDoodleMarks} alt="" aria-hidden="true"
+               width="400" height="400"/>
           <div className="home-hero-copy">
             <p className="home-overline">AI systems and product engineering</p>
             <h1 id="home-title">Useful software for work that matters.</h1>
             <p className="home-lead">
-              I am Marco, an AI and full-stack engineer in Bacolod. I build practical systems for teams with real processes, constraints, and people.
+              I am Marco, an AI and full-stack engineer in Bacolod. I build practical systems for teams with real
+              processes, constraints, and people.
             </p>
             <div className="home-actions">
               <a className="home-button home-button-primary" href="#work">See selected work</a>
-              <a className="home-button home-button-secondary" href="mailto:marcoangelo.quanico@gmail.com">Email Marco</a>
+              <a className="home-button home-button-secondary" href="mailto:marcoangelo.quanico@gmail.com">Email
+                Marco</a>
             </div>
           </div>
           <figure className="home-portrait home-portrait-deck">
-            <ProfileDeck />
+            <ProfileDeck/>
             <p className="profile-deck-caption">Bacolod City, Philippines.</p>
           </figure>
         </section>
 
         <section className="home-section home-work" id="work" aria-labelledby="work-title">
-          <img className="home-section-doodle home-work-doodle" src={homeDoodleWork} alt="" aria-hidden="true" />
-          <img className="home-reference-doodle home-swirl-doodle" src={homeDoodleSwirl} alt="" aria-hidden="true" width="400" height="400" />
+          <img className="home-section-doodle home-work-doodle" src={homeDoodleWork} alt="" aria-hidden="true"/>
+          <img className="home-reference-doodle home-swirl-doodle" src={homeDoodleSwirl} alt="" aria-hidden="true"
+               width="400" height="400"/>
           <div className="home-section-intro">
             <p className="home-overline">Flagship software</p>
             <h2 id="work-title">A local workbench for work that moves.</h2>
-            <p className="home-section-lead">A private, low-cost software system for small and medium businesses, virtual assistants, and anyone who wants to turn a messy workflow into a dependable one.</p>
+            <p className="home-section-lead">A private, low-cost software system for small and medium businesses,
+              virtual assistants, and anyone who wants to turn a messy workflow into a dependable one.</p>
           </div>
-          <img className="home-chopsticks-doodle" src={homeDoodleChopsticks} alt="" aria-hidden="true" width="400" height="400" />
-          <div ref={snapshotStageRef} className={`home-snapshot-grid ${isSnapshotStageVisible ? 'is-visible' : ''}`} aria-label="Flagship software capabilities">
+          <img className="home-chopsticks-doodle" src={homeDoodleChopsticks} alt="" aria-hidden="true" width="400"
+               height="400"/>
+          <div ref={snapshotStageRef} className={`home-snapshot-grid ${isSnapshotStageVisible ? 'is-visible' : ''}`}
+               aria-label="Flagship software capabilities">
             {homeSnapshots.map((snapshot, index) => (
               <figure className={`home-snapshot home-snapshot-${index + 1}`} key={snapshot.name}>
                 <div
@@ -341,7 +407,8 @@ function HomePage() {
                     '--snapshot-bg': snapshotBackgrounds[index] || 'var(--surface)',
                   } as CSSProperties}
                 >
-                  {snapshot.mediaUrl && <img src={snapshot.mediaUrl} alt="" aria-hidden="true" loading="lazy" onLoad={(event) => handleSnapshotImageLoad(index, event.currentTarget)} />}
+                  {snapshot.mediaUrl && <img src={snapshot.mediaUrl} alt="" aria-hidden="true" loading="lazy"
+                                             onLoad={(event) => handleSnapshotImageLoad(index, event.currentTarget)}/>}
                   <span className="home-snapshot-number">{String(index + 1).padStart(2, '0')}</span>
                   <div className="home-snapshot-reveal">
                     <strong>{snapshot.name}</strong>
@@ -361,12 +428,16 @@ function HomePage() {
               <span>WARE</span>
             </div>
           </div>
-          <p className="home-privacy-note">Designed to keep sensitive work local and leave a minimal digital footprint. <button type="button" onClick={() => window.location.href = 'mailto:marcoangelo.quanico@gmail.com?subject=Flagship%20software%20demo'}>Ask for a demo</button></p>
+          <p className="home-privacy-note">Designed to keep sensitive work local and leave a minimal digital
+            footprint. <button type="button"
+                               onClick={() => window.location.href = 'mailto:marcoangelo.quanico@gmail.com?subject=Flagship%20software%20demo'}>Ask
+              for a demo</button></p>
         </section>
 
         <section className="home-section home-approach" id="approach" aria-labelledby="approach-title">
-          <img className="home-section-doodle home-approach-doodle" src={homeDoodleApproach} alt="" aria-hidden="true" />
-          <img className="home-reference-doodle home-mountains-doodle" src={homeDoodleMountains} alt="" aria-hidden="true" width="400" height="400" />
+          <img className="home-section-doodle home-approach-doodle" src={homeDoodleApproach} alt="" aria-hidden="true"/>
+          <img className="home-reference-doodle home-mountains-doodle" src={homeDoodleMountains} alt=""
+               aria-hidden="true" width="400" height="400"/>
           <div>
             <p className="home-overline">Working approach</p>
             <h2 id="approach-title">Clarity before complexity.</h2>
@@ -383,8 +454,9 @@ function HomePage() {
       </main>
 
       <footer className="home-footer" id="contact">
-        <img className="home-section-doodle home-contact-doodle" src={homeDoodleContact} alt="" aria-hidden="true" />
-        <img className="home-reference-doodle home-sunrise-doodle" src={homeDoodleSunrise} alt="" aria-hidden="true" width="400" height="400" />
+        <img className="home-section-doodle home-contact-doodle" src={homeDoodleContact} alt="" aria-hidden="true"/>
+        <img className="home-reference-doodle home-sunrise-doodle" src={homeDoodleSunrise} alt="" aria-hidden="true"
+             width="400" height="400"/>
         <div>
           <p className="home-overline">Start a conversation</p>
           <h2>Have a real process to improve?</h2>
@@ -578,8 +650,13 @@ function DetailedHome() {
         if (!focusable.length) return
         const first = focusable[0]
         const last = focusable[focusable.length - 1]
-        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) { event.preventDefault(); last.focus() }
-        else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) { event.preventDefault(); first.focus() }
+        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+          event.preventDefault();
+          last.focus()
+        } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+          event.preventDefault();
+          first.focus()
+        }
       }
     }
     dialog.addEventListener('keydown', onKeyDown)
@@ -642,7 +719,11 @@ function DetailedHome() {
     if (formState === 'submitting') return
     const dirty = Boolean(inquiry.name || inquiry.email || inquiry.message)
     setContactOpen(false)
-    if (dirty) pushToast({kind: 'info', message: 'Draft saved. Reopen the form to continue.', retry: () => setContactOpen(true)})
+    if (dirty) pushToast({
+      kind: 'info',
+      message: 'Draft saved. Reopen the form to continue.',
+      retry: () => setContactOpen(true)
+    })
     window.setTimeout(() => contactTriggerRef.current?.focus(), 0)
   }, [formState, inquiry, pushToast])
   closeContactRef.current = closeContact
@@ -786,7 +867,10 @@ function DetailedHome() {
           <button
             className="theme-toggle"
             type="button"
-            onClick={() => { setTheme((t) => (t === 'dark' ? 'light' : 'dark')); tactileFeedback() }}
+            onClick={() => {
+              setTheme((t) => (t === 'dark' ? 'light' : 'dark'));
+              tactileFeedback()
+            }}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
             aria-pressed={theme === 'dark'}
           >
@@ -822,7 +906,8 @@ function DetailedHome() {
 
       <main>
         <section className="hero" id="about" data-reveal>
-          <div className="hero-index"><span className="eyebrow">Independent engineer · Bacolod, Philippines</span><span className="hero-index-number">Portfolio / 2026</span></div>
+          <div className="hero-index"><span className="eyebrow">Independent engineer · Bacolod, Philippines</span><span
+            className="hero-index-number">Portfolio / 2026</span></div>
           <div className="hero-grid">
             <div className="hero-copy hero-text">
               <p className="hero-kicker">AI / systems / product engineering</p>
@@ -831,21 +916,33 @@ function DetailedHome() {
                 <span>·</span>
                 <span>AI-integrated products for real operations</span>
               </div>
-              <h1>Useful AI,<br /><em>built to work.</em></h1>
-              <p className="hero-desc">I’m Marco Angelo P. Quanico, an AI/ML and full-stack software engineer. I build business systems that fit real operations, from offline document workflows to computer-vision products.</p>
-              <p className="hero-acknowledgement">This portfolio reflects my work, with direct and indirect help from the developer and engineer community. I acknowledge that support as part of my practice; it does not mean those contributors co-authored every project.</p>
-              <div className="hero-actions"><a href="#projects" className="btn-primary">Explore selected work <ArrowDown size={17} aria-hidden="true" /></a><a href={resumePdf} className="btn-ghost" target="_blank" rel="noreferrer">Download profile PDF <ArrowUpRight size={16} aria-hidden="true" /></a></div>
+              <h1>Useful AI,<br/><em>built to work.</em></h1>
+              <p className="hero-desc">I’m Marco Angelo P. Quanico, an AI/ML and full-stack software engineer. I build
+                business systems that fit real operations, from offline document workflows to computer-vision
+                products.</p>
+              <p className="hero-acknowledgement">This portfolio reflects my work, with direct and indirect help from
+                the developer and engineer community. I acknowledge that support as part of my practice; it does not
+                mean those contributors co-authored every project.</p>
+              <div className="hero-actions"><a href="#projects" className="btn-primary">Explore selected work <ArrowDown
+                size={17} aria-hidden="true"/></a><a href={resumePdf} className="btn-ghost" target="_blank"
+                                                     rel="noreferrer">Download profile PDF <ArrowUpRight size={16}
+                                                                                                         aria-hidden="true"/></a>
+              </div>
               <p className="hero-location">Based in Bacolod City, Negros Occidental · Philippines</p>
             </div>
             <div className="hero-visual">
               <div className="profile-wrap">
-                <ProfileDeck />
+                <ProfileDeck/>
                 <p className="profile-deck-caption">Four views, one working practice.</p>
               </div>
             </div>
           </div>
 
-          <div className="hero-proof" aria-label="Selected project outcomes"><div><span><strong>70%</strong><span>faster task execution</span></span></div><div><span><strong>80%</strong><span>less repetitive daily workload</span></span></div><div><span><strong>67%</strong><span>lower department overhead</span></span></div></div>
+          <div className="hero-proof" aria-label="Selected project outcomes">
+            <div><span><strong>70%</strong><span>faster task execution</span></span></div>
+            <div><span><strong>80%</strong><span>less repetitive daily workload</span></span></div>
+            <div><span><strong>67%</strong><span>lower department overhead</span></span></div>
+          </div>
 
         </section>
 
@@ -855,28 +952,77 @@ function DetailedHome() {
             <h2>Selected work</h2>
           </div>
           <article className="project-featured" aria-labelledby="project-title-1">
-            <div className="project-featured-meta"><span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div>
+            <div className="project-featured-meta">
+              <span>01</span><span>{projects[0].category}</span><span>{projects[0].year}</span></div>
             <div className="project-featured-body">
               <div className="project-featured-copy">
                 <p className="project-role">AI Systems Engineer · Rosian Liaison Services</p>
                 <h3 id="project-title-1">Offline AI Legal Document System</h3>
-                <p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language models, built for a legal workflow that needs to keep working without cloud model dependence.</p>
+                <p className="project-summary">Generates Deeds of Absolute Sale as DOCX and PDF using local language
+                  models, built for a legal workflow that needs to keep working without cloud model dependence.</p>
                 <div className="project-outcomes">
                   <div><span><strong>70%</strong><span>faster task execution</span></span></div>
                   <div><span><strong>80%</strong><span>less repetitive daily workload</span></span></div>
                   <div><span><strong>67%</strong><span>lower department overhead</span></span></div>
                 </div>
-                <p className="project-proof">Task time reduced 70%, repetitive daily workload reduced 80%, and department overhead reduced 67%, without headcount replacement. AI cost was about ₱1.11 per completed task.</p>
-                <div className="skill-list" aria-label="Capabilities">{projects[0].highlights.map((highlight, index) => { const Icon = highlight.icon; return <span key={highlight.text}><small>0{index + 1}</small><Icon size={16} strokeWidth={1.7} aria-hidden="true" />{highlight.text}</span> })}</div>
+                <p className="project-proof">Task time reduced 70%, repetitive daily workload reduced 80%, and
+                  department overhead reduced 67%, without headcount replacement. AI cost was about ₱1.11 per completed
+                  task.</p>
+                <div className="skill-list"
+                     aria-label="Capabilities">{projects[0].highlights.map((highlight, index) => {
+                  const Icon = highlight.icon;
+                  return <span key={highlight.text}><small>0{index + 1}</small><Icon size={16} strokeWidth={1.7}
+                                                                                     aria-hidden="true"/>{highlight.text}</span>
+                })}</div>
                 <p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p>
               </div>
               <div className="preview-box featured-preview">
-                {projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo under public/assets/media/projects/flagship.</small></div>}
+                {projects[0].mediaUrl ? <div className="video-frame">
+                    <video ref={(el) => {
+                      videoRefs.current[0] = el
+                    }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline
+                           onPlay={() => {
+                             pauseAllExcept(0);
+                             setPlayingIndex(0)
+                           }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview"/>
+                    <button className="video-control" type="button"
+                            aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'}
+                            aria-pressed={playingIndex === 0} onClick={() => {
+                      handleVideoClick(0);
+                      tactileFeedback()
+                    }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true"/>}</button>
+                  </div> :
+                  <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add
+                    an authorized demo under public/assets/media/projects/flagship.</small></div>}
               </div>
             </div>
           </article>
 
-          <div className="project-index">{projects.slice(1).map((project, index) => { const projectIndex = index + 1; return <article className="project-row" key={project.name}><div className="project-row-number">0{projectIndex + 1}</div><div className="project-row-main"><p className="project-category">{project.classification} · {project.category} · {project.year}</p><h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p className="techstack-text"><strong>Stack:</strong> {project.techstack}</p><div className="skill-list" aria-label={`${project.name} capabilities`}>{project.highlights.map((highlight, highlightIndex) => { const Icon = highlight.icon; return <span key={highlight.text}><small>0{highlightIndex + 1}</small><Icon size={16} strokeWidth={1.7} aria-hidden="true" />{highlight.text}</span> })}</div></div><div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ? <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline aria-label={`${project.name} preview`} /> : <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy" /> : <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42} loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span></div>}</div></article> })}</div>
+          <div className="project-index">{projects.slice(1).map((project, index) => {
+            const projectIndex = index + 1;
+            return <article className="project-row" key={project.name}>
+              <div className="project-row-number">0{projectIndex + 1}</div>
+              <div className="project-row-main"><p
+                className="project-category">{project.classification} · {project.category} · {project.year}</p>
+                <h3>{project.name}</h3><p>{project.summary}</p><p className="project-role">{project.role}</p><p
+                  className="techstack-text"><strong>Stack:</strong> {project.techstack}</p>
+                <div className="skill-list"
+                     aria-label={`${project.name} capabilities`}>{project.highlights.map((highlight, highlightIndex) => {
+                  const Icon = highlight.icon;
+                  return <span key={highlight.text}><small>0{highlightIndex + 1}</small><Icon size={16}
+                                                                                              strokeWidth={1.7}
+                                                                                              aria-hidden="true"/>{highlight.text}</span>
+                })}</div>
+              </div>
+              <div className="project-row-media">{project.mediaUrl ? project.mediaType === 'video' ?
+                  <video src={project.mediaUrl} preload="metadata" width="640" height="360" muted loop playsInline
+                         aria-label={`${project.name} preview`}/> :
+                  <img src={project.mediaUrl} alt={`${project.name} preview`} width="640" height="360" loading="lazy"/> :
+                <div className="project-media-placeholder"><img src={project.avatarUrl} alt="" width={42} height={42}
+                                                                loading="lazy"/><VideoOff size={18} aria-hidden="true"/><span>{project.name === 'Medical Arts Platform' ? 'Details need owner confirmation' : 'No public demo configured'}</span>
+                </div>}</div>
+            </article>
+          })}</div>
         </section>
 
         <section id="experience" data-reveal>
@@ -888,9 +1034,37 @@ function DetailedHome() {
             isVisible={isDescriptionVisible('experience')}
             onToggle={() => toggleSectionDescription('experience')}
           />
-          <article className="experience-feature"><div className="experience-feature-label"><span>01</span><span>AI systems engineering</span><span>Jan–Oct 2026</span></div><div><h3>Rosian Liaison Services</h3><p>Built an offline AI legal-document workflow using local LLMs, five specialized agent skills, RAG, and a PostgreSQL knowledge base. Task time reduced by 70% (~20 to ~7 minutes), repetitive daily workload by 80% (~5 to ~1 hour), and department overhead by 67% (₱15k to ₱5k), without headcount replacement.</p><p className="project-proof">Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL · Ollama · pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p><p className="project-proof">AI cost about ₱1.11 per completed task.</p></div></article>
-          <div className="experience-list"><article><span>02</span><div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60% of the outstanding fix backlog. Built an MSSQL-backed shift-scheduling workflow with swaps and approvals.</p></div></article><article><span>03</span><div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search, filtering, and record management.</p></div></article><article><span>04</span><div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent business software</h3><p>Built MERN applications and a multi-business financial-management platform with Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div></article></div>
-          <div className="skills-strip"><span>TOOLS / SYSTEMS</span><p>Local LLMs · Multi-agent orchestration · RAG · pgvector · YOLOv8/YOLOv11 · VLM-based OCR · Python · Laravel · React/TypeScript · C#/ASP.NET · PostgreSQL · MSSQL · Redis · Docker · GitHub Actions</p></div>
+          <article className="experience-feature">
+            <div className="experience-feature-label"><span>01</span><span>AI systems engineering</span><span>Jan–Oct 2026</span>
+            </div>
+            <div><h3>Rosian Liaison Services</h3><p>Built an offline AI legal-document workflow using local LLMs, five
+              specialized agent skills, RAG, and a PostgreSQL knowledge base. Task time reduced by 70% (~20 to ~7
+              minutes), repetitive daily workload by 80% (~5 to ~1 hour), and department overhead by 67% (₱15k to ₱5k),
+              without headcount replacement.</p><p className="project-proof">Llama 3.1 8B · CodeGemma · Qwen2.5-Coder/VL
+              · Ollama · pgvector · Laravel · React/TypeScript · Redis · PostgreSQL</p><p className="project-proof">AI
+              cost about ₱1.11 per completed task.</p></div>
+          </article>
+          <div className="experience-list">
+            <article><span>02</span>
+              <div><p className="project-category">System Developer · Jun 2025–Jan 2026</p><h3>Adventist Medical Center
+                Bacolod</h3><p>Maintained a C#/ASP.NET WinForms HR system, resolved production issues, and cleared 60%
+                of the outstanding fix backlog. Built an MSSQL-backed shift-scheduling workflow with swaps and
+                approvals.</p></div>
+            </article>
+            <article><span>03</span>
+              <div><p className="project-category">Software Developer · Mar–Jun 2025</p><h3>Riverside Medical Center
+                Inc.</h3><p>Designed and developed a Laravel, Livewire, and PostgreSQL doctor directory for search,
+                filtering, and record management.</p></div>
+            </article>
+            <article><span>04</span>
+              <div><p className="project-category">Freelance Full Stack Developer · 2021–Dec 2024</p><h3>Independent
+                business software</h3><p>Built MERN applications and a multi-business financial-management platform with
+                Laravel, PostgreSQL, React/TypeScript, PDF reporting, and GitHub Actions CI/CD.</p></div>
+            </article>
+          </div>
+          <div className="skills-strip"><span>TOOLS / SYSTEMS</span><p>Local LLMs · Multi-agent orchestration · RAG ·
+            pgvector · YOLOv8/YOLOv11 · VLM-based OCR · Python · Laravel · React/TypeScript · C#/ASP.NET · PostgreSQL ·
+            MSSQL · Redis · Docker · GitHub Actions</p></div>
 
         </section>
 
@@ -898,73 +1072,223 @@ function DetailedHome() {
           <SectionHeading
             id="research-context"
             index="03 / RESEARCH & LEARNING"
-            title={<>Research, study,<br />and recognition</>}
+            title={<>Research, study,<br/>and recognition</>}
             description="Computer vision in a local context, graduate study in progress, and work recognized by the academic community."
             isVisible={isDescriptionVisible('research')}
             onToggle={() => toggleSectionDescription('research')}
           />
-          <article className="research-spread"><div className="research-spread-mark" aria-hidden="true">RESEARCH<br />/ 01</div><div className="research-spread-content"><p className="project-category">Computer-vision research · Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection, Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3>          <p>Research on automated seashell detection, classification, and harvest assessment in coastal communities of Negros Occidental.</p><div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span data-claim-id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</span></div><div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer" className="btn-primary">View bundled thesis PDF <ArrowUpRight size={16} aria-hidden="true" /></a></div></div><div className="thesis-preview-card"><div className="preview-title">THESIS / PDF</div><iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy" /></div></article>
-          <div className="education-row"><article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer Science</h3><p>Recoletos de Bacolod Graduate School</p></article><article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros University</p></article><article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3><p>Champion, 19th ICT EXPO 2025; <span data-claim-id="web-design-champion-ict-olympics">Champion, ICT Olympics 2024 (Web Design and Development)</span>; invited CS industry panelist.</p></article></div>
+          <article className="research-spread">
+            <div className="research-spread-mark" aria-hidden="true">RESEARCH<br/>/ 01</div>
+            <div className="research-spread-content"><p className="project-category">Computer-vision research ·
+              Co-author</p><h3>AI-Driven YOLOv11 Instance Segmentation Model for Automated Seashell Detection,
+              Classification and Harvest Assessment in Coastal Communities of Negros Occidental</h3><p>Research on
+              automated seashell detection, classification, and harvest assessment in coastal communities of Negros
+              Occidental.</p>
+              <div className="research-points"><span>YOLOv11 instance segmentation</span><span>Android + Python inference workflow</span><span
+                data-claim-id="best-thesis-ict-expo-2025">Best Thesis · 19th ICT EXPO 2025</span></div>
+              <div className="research-actions"><a href={thesisPaperUrl} target="_blank" rel="noreferrer"
+                                                   className="btn-primary">View bundled thesis PDF <ArrowUpRight
+                size={16} aria-hidden="true"/></a></div>
+            </div>
+            <div className="thesis-preview-card">
+              <div className="preview-title">THESIS / PDF</div>
+              <iframe title="Seashell computer-vision thesis PDF preview" src={thesisPaperUrl} loading="lazy"/>
+            </div>
+          </article>
+          <div className="education-row">
+            <article><span className="project-category">2025 — present · 9 units completed</span><h3>MS Computer
+              Science</h3><p>Recoletos de Bacolod Graduate School</p></article>
+            <article><span className="project-category">2021 — 2025</span><h3>BS Computer Science</h3><p>STI West Negros
+              University</p></article>
+            <article><span className="project-category">Recognition</span><h3>Best Thesis + ICT Olympics</h3>
+              <p>Champion, 19th ICT EXPO 2025; <span data-claim-id="web-design-champion-ict-olympics">Champion, ICT Olympics 2024 (Web Design and Development)</span>;
+                invited CS industry panelist.</p></article>
+          </div>
         </section>
       </main>
 
       <section id="contact" className="contact-section" data-reveal>
         <div className="contact-inner">
-          <div><span className="section-index">04 / CONTACT</span><h2>Build something<br /><em>useful.</em></h2><p>For work around AI systems, product engineering, and practical automation, start a conversation by email or book a free call.</p></div>
-          <div className="contact-actions"><button ref={contactTriggerRef} type="button" className="btn-primary" onClick={() => setContactOpen(true)}>Open inquiry form <ArrowUpRight size={16} aria-hidden="true" /></button><a href="mailto:marcoangelo.quanico@gmail.com" className="btn-ghost"><Mail size={16} aria-hidden="true" /> Email directly</a><button type="button" className="text-action" onClick={() => void copyEmail()}>Copy email address</button><p>The inquiry form is not connected to a delivery service yet. Use the email link for a message that needs to reach me.</p></div>
+          <div><span className="section-index">04 / CONTACT</span><h2>Build something<br/><em>useful.</em></h2><p>For
+            work around AI systems, product engineering, and practical automation, start a conversation by email or book
+            a free call.</p></div>
+          <div className="contact-actions">
+            <button ref={contactTriggerRef} type="button" className="btn-primary"
+                    onClick={() => setContactOpen(true)}>Open inquiry form <ArrowUpRight size={16} aria-hidden="true"/>
+            </button>
+            <a href="mailto:marcoangelo.quanico@gmail.com" className="btn-ghost"><Mail size={16}
+                                                                                       aria-hidden="true"/> Email
+              directly</a>
+            <button type="button" className="text-action" onClick={() => void copyEmail()}>Copy email address</button>
+            <p>The inquiry form is not connected to a delivery service yet. Use the email link for a message that needs
+              to reach me.</p></div>
           <aside className="booking-card" aria-labelledby="booking-title">
             <p className="section-index">OPEN INVITATION</p>
             <h3 id="booking-title">Book a free call</h3>
-            <p>Everyone is welcome. You will leave with practical insights on possible solutions and a clear quotation for the work we discuss.</p>
-            <p className="booking-prep"><strong>Come prepared:</strong> bring your goals, current process, constraints, and any examples that help explain the problem.</p>
-            <a className="btn-ghost booking-link" href={calendlyUrl} target="_blank" rel="noreferrer">Choose a time on Calendly <ArrowUpRight size={16} aria-hidden="true" /></a>
-            <p className="booking-note">If we lock in a project, everything will be documented and transparent from scope through delivery. A support bot assistant will also help once the project is underway.</p>
+            <p>Everyone is welcome. You will leave with practical insights on possible solutions and a clear quotation
+              for the work we discuss.</p>
+            <p className="booking-prep"><strong>Come prepared:</strong> bring your goals, current process, constraints,
+              and any examples that help explain the problem.</p>
+            <a className="btn-ghost booking-link" href={calendlyUrl} target="_blank" rel="noreferrer">Choose a time on
+              Calendly <ArrowUpRight size={16} aria-hidden="true"/></a>
+            <p className="booking-note">If we lock in a project, everything will be documented and transparent from
+              scope through delivery. A support bot assistant will also help once the project is underway.</p>
           </aside>
         </div>
       </section>
-      <footer className="footer"><div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML + full-stack engineer · Bacolod City, Philippines</p><div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer" aria-label="GitHub"><Github size={18} aria-hidden="true" /></a><a href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer" aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true" /></a><a href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true" /></a></div></div><div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span><div className="footer-bottom-actions"><a className="footer-home-link" href="/">Back to overview</a><a href={resumePdf} target="_blank" rel="noreferrer">Profile PDF <ArrowUpRight size={14} aria-hidden="true" /></a></div></div></footer>
+      <footer className="footer">
+        <div className="footer-inner"><a className="footer-name" href="#about">Marco Angelo P. Quanico</a><p>AI/ML +
+          full-stack engineer · Bacolod City, Philippines</p>
+          <div className="social-links"><a href="https://github.com/geloquan" target="_blank" rel="noreferrer"
+                                           aria-label="GitHub"><Github size={18} aria-hidden="true"/></a><a
+            href="https://www.linkedin.com/in/marco-angelo-quanico-b33a2b225/" target="_blank" rel="noreferrer"
+            aria-label="LinkedIn"><Linkedin size={18} aria-hidden="true"/></a><a
+            href="mailto:marcoangelo.quanico@gmail.com" aria-label="Email"><Mail size={18} aria-hidden="true"/></a>
+          </div>
+        </div>
+        <div className="footer-bottom"><span>© 2026 Marco Angelo P. Quanico</span>
+          <div className="footer-bottom-actions"><a className="footer-home-link" href="/">Back to overview</a><a
+            href={resumePdf} target="_blank" rel="noreferrer">Profile PDF <ArrowUpRight size={14}
+                                                                                        aria-hidden="true"/></a></div>
+        </div>
+      </footer>
 
-      <ClaimLayer />
+      <ClaimLayer/>
       <dialog
         className="contact-dialog"
         ref={dialogRef}
         aria-labelledby="contact-title"
-        onCancel={(event) => { event.preventDefault(); if (formState !== 'submitting') closeContact() }}
-        onClick={(event) => { if (event.target === dialogRef.current && formState !== 'submitting') closeContact() }}
-        onClose={() => { if (contactOpen && formState !== 'submitting') closeContact() }}
+        onCancel={(event) => {
+          event.preventDefault();
+          if (formState !== 'submitting') closeContact()
+        }}
+        onClick={(event) => {
+          if (event.target === dialogRef.current && formState !== 'submitting') closeContact()
+        }}
+        onClose={() => {
+          if (contactOpen && formState !== 'submitting') closeContact()
+        }}
       >
         <div className="contact-modal">
           <div className="contact-modal-header">
-            <div><p className="project-category">AI product inquiry</p><h2 id="contact-title">Let&apos;s build something useful.</h2>            <p>Share a little context. Messages are not currently delivered; use the email link while the contact service is configured.</p></div>
-            <button type="button" className="modal-close" onClick={closeContact} disabled={formState === 'submitting'} aria-label="Close contact form"><X size={18} aria-hidden="true" /></button>
+            <div><p className="project-category">AI product inquiry</p><h2 id="contact-title">Let&apos;s build something
+              useful.</h2>            <p>Share a little context. Messages are not currently delivered; use the email
+              link while the contact service is configured.</p></div>
+            <button type="button" className="modal-close" onClick={closeContact} disabled={formState === 'submitting'}
+                    aria-label="Close contact form"><X size={18} aria-hidden="true"/></button>
           </div>
-            <form className="contact-form" noValidate onSubmit={(event) => { event.preventDefault(); void submitInquiry() }}>
-              <div className="honeypot" aria-hidden="true"><label htmlFor="company-website">Leave this field empty</label><input id="company-website" name="company-website" tabIndex={-1} autoComplete="off" /></div>
-              <div className="form-field">
-                <label htmlFor="contact-name">Your name</label>
-                <div className="input-wrap"><span aria-hidden="true">♙</span><input ref={firstInvalidRef as React.RefObject<HTMLInputElement>} id="contact-name" name="name" autoComplete="name" value={inquiry.name} disabled={formState === 'submitting'} aria-invalid={Boolean(touched.name && fieldErrors.name)} aria-describedby="name-error" onBlur={() => {setTouched((state) => ({...state, name: true})); setFieldErrors((state) => ({...state, name: validateInquiry(inquiry).name}))}} onChange={(event) => {setInquiry((state) => ({...state, name: event.target.value})); if (touched.name) setFieldErrors((state) => ({...state, name: validateInquiry({...inquiry, name: event.target.value}).name}))}} /></div>
-                <span className="field-status" aria-hidden="true">{touched.name && !fieldErrors.name ? '✓' : touched.name && fieldErrors.name ? '!' : ''}</span><small id="name-error" className="field-error">{touched.name ? fieldErrors.name || 'Your name helps me address the reply.' : ' '}</small>
+          <form className="contact-form" noValidate onSubmit={(event) => {
+            event.preventDefault();
+            void submitInquiry()
+          }}>
+            <div className="honeypot" aria-hidden="true"><label htmlFor="company-website">Leave this field empty</label><input
+              id="company-website" name="company-website" tabIndex={-1} autoComplete="off"/></div>
+            <div className="form-field">
+              <label htmlFor="contact-name">Your name</label>
+              <div className="input-wrap"><span aria-hidden="true">♙</span><input
+                ref={firstInvalidRef as React.RefObject<HTMLInputElement>} id="contact-name" name="name"
+                autoComplete="name" value={inquiry.name} disabled={formState === 'submitting'}
+                aria-invalid={Boolean(touched.name && fieldErrors.name)} aria-describedby="name-error" onBlur={() => {
+                setTouched((state) => ({...state, name: true}));
+                setFieldErrors((state) => ({...state, name: validateInquiry(inquiry).name}))
+              }} onChange={(event) => {
+                setInquiry((state) => ({...state, name: event.target.value}));
+                if (touched.name) setFieldErrors((state) => ({
+                  ...state,
+                  name: validateInquiry({...inquiry, name: event.target.value}).name
+                }))
+              }}/></div>
+              <span className="field-status"
+                    aria-hidden="true">{touched.name && !fieldErrors.name ? '✓' : touched.name && fieldErrors.name ? '!' : ''}</span><small
+              id="name-error"
+              className="field-error">{touched.name ? fieldErrors.name || 'Your name helps me address the reply.' : ' '}</small>
+            </div>
+            <div className="form-field">
+              <label htmlFor="contact-email">Email address</label>
+              <div className="input-wrap"><span aria-hidden="true">✉</span><input id="contact-email" name="email"
+                                                                                  type="email" autoComplete="email"
+                                                                                  value={inquiry.email}
+                                                                                  disabled={formState === 'submitting'}
+                                                                                  aria-invalid={Boolean(touched.email && fieldErrors.email)}
+                                                                                  aria-describedby="email-error"
+                                                                                  onBlur={() => {
+                                                                                    setTouched((state) => ({
+                                                                                      ...state,
+                                                                                      email: true
+                                                                                    }));
+                                                                                    setFieldErrors((state) => ({
+                                                                                      ...state,
+                                                                                      email: validateInquiry(inquiry).email
+                                                                                    }))
+                                                                                  }} onChange={(event) => {
+                setInquiry((state) => ({...state, email: event.target.value}));
+                if (touched.email) setFieldErrors((state) => ({
+                  ...state,
+                  email: validateInquiry({...inquiry, email: event.target.value}).email
+                }))
+              }}/></div>
+              <span className="field-status"
+                    aria-hidden="true">{touched.email && !fieldErrors.email ? '✓' : touched.email && fieldErrors.email ? '!' : ''}</span><small
+              id="email-error"
+              className="field-error">{touched.email ? fieldErrors.email || 'I’ll use this address to reply.' : ' '}</small>
+            </div>
+            <div className="form-field">
+              <label htmlFor="contact-message">What are you building?</label>
+              <div className="input-wrap textarea-wrap"><textarea id="contact-message" name="message" rows={4}
+                                                                  maxLength={2000} value={inquiry.message}
+                                                                  disabled={formState === 'submitting'}
+                                                                  aria-invalid={Boolean(touched.message && fieldErrors.message)}
+                                                                  aria-describedby="message-error message-count"
+                                                                  onBlur={() => {
+                                                                    setTouched((state) => ({...state, message: true}));
+                                                                    setFieldErrors((state) => ({
+                                                                      ...state,
+                                                                      message: validateInquiry(inquiry).message
+                                                                    }))
+                                                                  }} onChange={(event) => {
+                setInquiry((state) => ({...state, message: event.target.value}));
+                if (touched.message) setFieldErrors((state) => ({
+                  ...state,
+                  message: validateInquiry({...inquiry, message: event.target.value}).message
+                }))
+              }}/></div>
+              <span className="field-status"
+                    aria-hidden="true">{touched.message && !fieldErrors.message ? '✓' : touched.message && fieldErrors.message ? '!' : ''}</span><small
+              id="message-error"
+              className="field-error">{touched.message ? fieldErrors.message || 'Thanks — this gives me enough context to respond.' : ' '}</small>
+              <small id="message-count" className="character-count">{inquiry.message.length}/2000</small>
+            </div>
+            {formError && <p className="form-status-error" role="alert">{formError}</p>}
+            <div className="modal-footer"><p>Esc to close · Ctrl/⌘ + Enter to submit</p>
+              <div className="modal-actions">
+                <button type="button" className="btn-ghost" onClick={closeContact}
+                        disabled={formState === 'submitting'}>Cancel
+                </button>
+                <button type="submit" className="btn-primary"
+                        disabled={formState === 'submitting'}>{formState === 'validating' ? 'Checking…' : formState === 'submitting' ? 'Sending…' : formState === 'error' ? 'Retry sending' : 'Send inquiry'}</button>
               </div>
-              <div className="form-field">
-                <label htmlFor="contact-email">Email address</label>
-                <div className="input-wrap"><span aria-hidden="true">✉</span><input id="contact-email" name="email" type="email" autoComplete="email" value={inquiry.email} disabled={formState === 'submitting'} aria-invalid={Boolean(touched.email && fieldErrors.email)} aria-describedby="email-error" onBlur={() => {setTouched((state) => ({...state, email: true})); setFieldErrors((state) => ({...state, email: validateInquiry(inquiry).email}))}} onChange={(event) => {setInquiry((state) => ({...state, email: event.target.value})); if (touched.email) setFieldErrors((state) => ({...state, email: validateInquiry({...inquiry, email: event.target.value}).email}))}} /></div>
-                <span className="field-status" aria-hidden="true">{touched.email && !fieldErrors.email ? '✓' : touched.email && fieldErrors.email ? '!' : ''}</span><small id="email-error" className="field-error">{touched.email ? fieldErrors.email || 'I’ll use this address to reply.' : ' '}</small>
-              </div>
-              <div className="form-field">
-                <label htmlFor="contact-message">What are you building?</label>
-                <div className="input-wrap textarea-wrap"><textarea id="contact-message" name="message" rows={4} maxLength={2000} value={inquiry.message} disabled={formState === 'submitting'} aria-invalid={Boolean(touched.message && fieldErrors.message)} aria-describedby="message-error message-count" onBlur={() => {setTouched((state) => ({...state, message: true})); setFieldErrors((state) => ({...state, message: validateInquiry(inquiry).message}))}} onChange={(event) => {setInquiry((state) => ({...state, message: event.target.value})); if (touched.message) setFieldErrors((state) => ({...state, message: validateInquiry({...inquiry, message: event.target.value}).message}))}} /></div>
-                <span className="field-status" aria-hidden="true">{touched.message && !fieldErrors.message ? '✓' : touched.message && fieldErrors.message ? '!' : ''}</span><small id="message-error" className="field-error">{touched.message ? fieldErrors.message || 'Thanks — this gives me enough context to respond.' : ' '}</small>
-                <small id="message-count" className="character-count">{inquiry.message.length}/2000</small>
-              </div>
-              {formError && <p className="form-status-error" role="alert">{formError}</p>}
-              <div className="modal-footer"><p>Esc to close · Ctrl/⌘ + Enter to submit</p><div className="modal-actions"><button type="button" className="btn-ghost" onClick={closeContact} disabled={formState === 'submitting'}>Cancel</button><button type="submit" className="btn-primary" disabled={formState === 'submitting'}>{formState === 'validating' ? 'Checking…' : formState === 'submitting' ? 'Sending…' : formState === 'error' ? 'Retry sending' : 'Send inquiry'}</button></div></div>
-              <p className="backend-note">Demo mode: messages are not sent. A trusted contact-service endpoint must be configured before accepting inquiries.</p>
-            </form>
+            </div>
+            <p className="backend-note">Demo mode: messages are not sent. A trusted contact-service endpoint must be
+              configured before accepting inquiries.</p>
+          </form>
         </div>
       </dialog>
 
       <div className="toast-region" aria-live="polite" aria-label="Notifications">
-        {toasts.slice(-3).map((toast) => <div key={toast.id} className={`toast toast-${toast.kind}`} role={toast.kind === 'error' ? 'alert' : 'status'}><span>{toast.message}</span>{toast.message.toLowerCase().includes('draft was restored') && <button type="button" onClick={() => {setInquiry({name: '', email: '', message: ''}); try {localStorage.removeItem('portfolio-contact-draft')} catch { /* Optional storage. */ } setToasts((items) => items.filter((item) => item.id !== toast.id))}}>Discard</button>}{toast.message.startsWith('Draft saved.') ? <button type="button" onClick={() => {setToasts((items) => items.filter((item) => item.id !== toast.id)); setContactOpen(true)}}>Undo close</button> : toast.retry && <button type="button" onClick={toast.retry}>Retry</button>}</div>)}
+        {toasts.slice(-3).map((toast) => <div key={toast.id} className={`toast toast-${toast.kind}`}
+                                              role={toast.kind === 'error' ? 'alert' : 'status'}>
+          <span>{toast.message}</span>{toast.message.toLowerCase().includes('draft was restored') &&
+          <button type="button" onClick={() => {
+            setInquiry({name: '', email: '', message: ''});
+            try {
+              localStorage.removeItem('portfolio-contact-draft')
+            } catch { /* Optional storage. */
+            }
+            setToasts((items) => items.filter((item) => item.id !== toast.id))
+          }}>Discard</button>}{toast.message.startsWith('Draft saved.') ? <button type="button" onClick={() => {
+          setToasts((items) => items.filter((item) => item.id !== toast.id));
+          setContactOpen(true)
+        }}>Undo close</button> : toast.retry && <button type="button" onClick={toast.retry}>Retry</button>}</div>)}
       </div>
     </div>
   )
@@ -972,7 +1296,7 @@ function DetailedHome() {
 
 function App() {
   const isDetailedView = window.location.pathname === '/details' || window.location.pathname === '/archive'
-  return isDetailedView ? <DetailedHome /> : <HomePage />
+  return isDetailedView ? <DetailedHome/> : <HomePage/>
 }
 
 export default App
