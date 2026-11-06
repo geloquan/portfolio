@@ -1,4 +1,4 @@
-import type {CSSProperties, ReactNode} from 'react'
+import type {ReactNode} from 'react'
 import {useCallback, useEffect, useMemo, useRef, useState} from 'react'
 import {gsap} from 'gsap'
 import {ScrollTrigger} from 'gsap/ScrollTrigger'
@@ -252,24 +252,33 @@ function HomePage() {
     if (!isSnapshotStageVisible) return
 
     let cycleIndex = 0
-    let revealTimer: number | undefined
-    let hideTimer: number | undefined
-    const revealOrder = [0, 3, 1, 2, 4, 7, 5, 6]
+    let cycleTimer: number | undefined
+    let shownIndexes = new Set<number>()
+    const revealGroups = [
+      [0],
+      [3, 1],
+      [2, 4, 7],
+      [5, 6],
+    ]
 
     const scheduleReveal = () => {
-      const index = revealOrder[cycleIndex % revealOrder.length]
+      let group = revealGroups[cycleIndex % revealGroups.length]
+      if (group.some((index) => shownIndexes.has(index))) {
+        shownIndexes = new Set<number>()
+        cycleIndex = 0
+        group = revealGroups[cycleIndex]
+      }
+
       cycleIndex += 1
-      setActiveSnapshotIndexes({[index]: true})
-      hideTimer = window.setTimeout(() => {
-        setActiveSnapshotIndexes({})
-        revealTimer = window.setTimeout(scheduleReveal, 1200)
-      }, 4200)
+      group.forEach((index) => shownIndexes.add(index))
+      setActiveSnapshotIndexes(Object.fromEntries(group.map((index) => [index, true])))
+      if (shownIndexes.size === homeSnapshots.length) shownIndexes = new Set<number>()
+      cycleTimer = window.setTimeout(scheduleReveal, 5000)
     }
 
-    revealTimer = window.setTimeout(scheduleReveal, 900)
+    cycleTimer = window.setTimeout(scheduleReveal, 900)
     return () => {
-      if (revealTimer) window.clearTimeout(revealTimer)
-      if (hideTimer) window.clearTimeout(hideTimer)
+      if (cycleTimer) window.clearTimeout(cycleTimer)
     }
   }, [isSnapshotStageVisible])
 
