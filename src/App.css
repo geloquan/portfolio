@@ -453,7 +453,12 @@ section {
 .profile-card {
   position: absolute;
   inset: 5% 13% 9%;
+  display: block;
+  padding: 0;
   overflow: hidden;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
   border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
   border-radius: var(--radius-md) var(--radius-sm) var(--radius-lg) var(--radius-sm);
   background: var(--surface);
@@ -483,6 +488,15 @@ section {
   transform: translate(15%, 1%) rotate(10deg)
 }
 
+.profile-card.is-front {
+  z-index: 5
+}
+
+.profile-card:focus-visible {
+  outline: 2px solid var(--color-accent-warm-text);
+  outline-offset: 5px
+}
+
 .profile-photo {
   display: block;
   width: 100%;
@@ -509,20 +523,20 @@ section {
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .profile-deck:hover .profile-card-1 {
-    transform: translate(-23%, 3%) rotate(-16deg)
+  .profile-card-1:hover {
+    transform: translate(-15%, -10%) rotate(-12deg)
   }
 
-  .profile-deck:hover .profile-card-2 {
-    transform: translate(-8%, -3%) rotate(-7deg)
+  .profile-card-2:hover {
+    transform: translate(-5%, -13%) rotate(-5deg)
   }
 
-  .profile-deck:hover .profile-card-3 {
-    transform: translate(8%, -4%) rotate(5deg)
+  .profile-card-3:hover {
+    transform: translate(5%, -14%) rotate(3deg)
   }
 
-  .profile-deck:hover .profile-card-4 {
-    transform: translate(23%, 2%) rotate(14deg)
+  .profile-card-4:hover {
+    transform: translate(15%, -11%) rotate(10deg)
   }
 }
 
@@ -531,6 +545,7 @@ section {
   position: absolute;
   right: 0;
   bottom: 0;
+  margin: 0;
   font: .67rem/1.6 'DM Mono', monospace;
   letter-spacing: .06em;
   color: var(--muted)

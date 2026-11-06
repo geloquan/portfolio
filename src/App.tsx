@@ -66,6 +66,44 @@ const profileDeckImages = [
 ]
 const randomizedProfileDeck = [...profileDeckImages].sort(() => Math.random() - 0.5)
 
+function ProfileDeck() {
+  const [cards, setCards] = useState(randomizedProfileDeck)
+
+  const bringToFront = (src: string) => {
+    setCards((current) => {
+      const selected = current.find((card) => card.src === src)
+      if (!selected || current[current.length - 1].src === src) return current
+      return [...current.filter((card) => card.src !== src), selected]
+    })
+  }
+
+  return (
+    <div className="profile-deck" aria-label="A small fan of profile portraits">
+      {cards.map((image, index) => (
+        <button
+          className={`profile-card profile-card-${index + 1} ${index === cards.length - 1 ? 'is-front' : ''}`}
+          key={image.src}
+          type="button"
+          aria-label={`Show portrait ${index + 1} in front`}
+          onClick={() => bringToFront(image.src)}
+        >
+          <img
+            className="profile-photo"
+            src={image.src}
+            alt={image.alt}
+            width="720"
+            height="1280"
+            fetchPriority={index === 0 ? 'high' : undefined}
+            onError={(event) => {
+              event.currentTarget.src = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
+            }}
+          />
+        </button>
+      ))}
+    </div>
+  )
+}
+
 const homeSnapshots = [
   {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_01_URL},
   {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_02_URL},
@@ -244,24 +282,8 @@ function HomePage() {
             </div>
           </div>
           <figure className="home-portrait home-portrait-deck">
-            <div className="profile-deck" aria-label="A small fan of profile portraits">
-              {randomizedProfileDeck.map((image, index) => (
-                <div className={`profile-card profile-card-${index + 1}`} key={image.src}>
-                  <img
-                    className="profile-photo"
-                    src={image.src}
-                    alt={image.alt}
-                    width="720"
-                    height="1280"
-                    fetchPriority={index === 0 ? 'high' : undefined}
-                    onError={(event) => {
-                      event.currentTarget.src = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
-                    }}
-                  />
-                </div>
-              ))}
-              <span className="profile-deck-caption">Bacolod City, Philippines.</span>
-            </div>
+            <ProfileDeck />
+            <p className="profile-deck-caption">Bacolod City, Philippines.</p>
           </figure>
         </section>
 
@@ -603,7 +625,6 @@ function DetailedHome() {
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
   }, [])
 
-  const profileImageUrl = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
   const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL || '/assets/research/seashell-computer-vision-thesis.pdf'
   const calendlyUrl = import.meta.env.VITE_CALENDLY_URL || 'https://calendly.com/marco-angelo-quanico'
   const projectMedia = {
@@ -783,24 +804,8 @@ function DetailedHome() {
             </div>
             <div className="hero-visual">
               <div className="profile-wrap">
-                <figure className="profile-deck" aria-label="A small fan of profile portraits">
-                  {randomizedProfileDeck.map((image, index) => (
-                    <div className={`profile-card profile-card-${index + 1}`} key={image.src}>
-                      <img
-                        className="profile-photo"
-                        src={image.src}
-                        alt={image.alt}
-                        width="720"
-                        height="1280"
-                        fetchPriority={index === 0 ? 'high' : undefined}
-                        onError={(event) => {
-                          event.currentTarget.src = profileImageUrl
-                        }}
-                      />
-                    </div>
-                  ))}
-                  <figcaption className="profile-deck-caption">Four views, one working practice.</figcaption>
-                </figure>
+                <ProfileDeck />
+                <p className="profile-deck-caption">Four views, one working practice.</p>
               </div>
             </div>
           </div>
