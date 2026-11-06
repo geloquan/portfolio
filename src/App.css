@@ -2918,8 +2918,6 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   height: 100%;
   object-fit: contain;
   filter: saturate(.78);
-  transform: scale(1);
-  transition: filter .6s ease, transform .6s ease;
 }
 
 .home-snapshot-2 .home-snapshot-media > img,
@@ -2949,18 +2947,6 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
 .home-snapshot-media:hover,
 .home-snapshot-media:focus-visible {
   background-color: color-mix(in srgb, var(--color-accent-earth) 26%, var(--surface));
-}
-
-.home-snapshot-media.is-revealed > img {
-  filter: blur(18px) saturate(.5) brightness(1.3);
-  opacity: .52;
-  transform: scale(1.08);
-}
-
-.home-snapshot-2 .home-snapshot-media.is-revealed > img,
-.home-snapshot-3 .home-snapshot-media.is-revealed > img,
-.home-snapshot-4 .home-snapshot-media.is-revealed > img {
-  transform: scale(1.08);
 }
 
 .home-snapshot-media.is-revealed::before {
@@ -3097,6 +3083,7 @@ dialog[open] .snapshot-modal {
 }
 
 .snapshot-modal-copy {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -3106,12 +3093,13 @@ dialog[open] .snapshot-modal {
 }
 
 .snapshot-modal-copy h2 {
-  max-width: 12ch;
+  max-width: 100%;
   margin: .65rem 0 1.1rem;
   font-family: var(--font-display);
-  font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+  font-size: clamp(2.15rem, 4.2vw, 4.5rem);
   font-weight: 500;
   line-height: 1;
+  overflow-wrap: anywhere;
 }
 
 .snapshot-modal-copy > p:not(.home-overline) {
@@ -3444,15 +3432,10 @@ dialog[open] .snapshot-modal {
     transform: none;
   }
 
-  .home-snapshot-media > img,
   .home-snapshot-reveal {
     transition: none;
   }
 
-  .home-snapshot-media.is-revealed > img {
-    filter: none;
-    transform: none;
-  }
 }
 
 @media (max-width: 560px) {
