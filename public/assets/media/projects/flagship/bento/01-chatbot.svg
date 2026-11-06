@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Chatbot interface illustration</title><desc id="desc">A monoline chat interface with geometric message cards.</desc>
+  <rect width="640" height="420" rx="28" fill="#19231f"/>
+  <circle cx="78" cy="72" r="18" fill="#d6a85b"/><circle cx="566" cy="64" r="8" fill="#91aa7a"/>
+  <path d="M92 310c-22 18-31 34-28 48 18-4 35-13 50-28" fill="none" stroke="#d6a85b" stroke-width="4"/>
+  <rect x="104" y="82" width="432" height="254" rx="18" fill="#26352e" stroke="#d6a85b" stroke-width="3"/>
+  <circle cx="140" cy="122" r="14" fill="#91aa7a"/><path d="M168 114h136M168 132h92" stroke="#e8e1d3" stroke-width="7" stroke-linecap="round"/>
+  <path d="M142 174h188" stroke="#91aa7a" stroke-width="28" stroke-linecap="round"/><path d="M142 222h290" stroke="#d6a85b" stroke-width="28" stroke-linecap="round"/>
+  <path d="M142 270h124" stroke="#91aa7a" stroke-width="28" stroke-linecap="round"/>
+  <path d="M466 266l22 18-22 18" fill="none" stroke="#e8e1d3" stroke-width="5"/>
+</svg>

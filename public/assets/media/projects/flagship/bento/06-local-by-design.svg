@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Local by design illustration</title><desc id="desc">A protected local computer with a shield and contained network.</desc>
+  <rect width="640" height="420" rx="28" fill="#e9e2d5"/>
+  <rect x="142" y="92" width="356" height="218" rx="18" fill="#26352e" stroke="#d6a85b" stroke-width="6"/>
+  <path d="M116 338h408" stroke="#26352e" stroke-width="12" stroke-linecap="round"/>
+  <path d="M320 138l68 30v54c0 52-38 78-68 92-30-14-68-40-68-92v-54z" fill="#91aa7a" stroke="#26352e" stroke-width="6"/>
+  <path d="M284 226l25 25 48-54" fill="none" stroke="#26352e" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="104" cy="88" r="14" fill="#bd7652"/><circle cx="542" cy="324" r="20" fill="#d6a85b"/>
+</svg>

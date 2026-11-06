@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Multidatabase connection illustration</title><desc id="desc">Connected database cylinders forming a unified data network.</desc>
+  <rect width="640" height="420" rx="28" fill="#24332d"/>
+  <path d="M168 128L320 210l152-82M168 292l152-82 152 82M168 128v164M472 128v164" fill="none" stroke="#91aa7a" stroke-width="4"/>
+  <g fill="#d6a85b" stroke="#efe9dc" stroke-width="4"><ellipse cx="168" cy="110" rx="62" ry="24"/><path d="M106 110v72c0 14 28 24 62 24s62-10 62-24v-72"/><ellipse cx="320" cy="192" rx="62" ry="24"/><path d="M258 192v72c0 14 28 24 62 24s62-10 62-24v-72"/><ellipse cx="472" cy="110" rx="62" ry="24"/><path d="M410 110v72c0 14 28 24 62 24s62-10 62-24v-72"/></g>
+  <circle cx="80" cy="342" r="9" fill="#bd7652"/><circle cx="560" cy="74" r="12" fill="#bd7652"/>
+</svg>

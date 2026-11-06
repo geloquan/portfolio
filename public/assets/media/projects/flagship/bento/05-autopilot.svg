@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Autopilot illustration</title><desc id="desc">A control dial and repeating route arrows represent reliable automation.</desc>
+  <rect width="640" height="420" rx="28" fill="#19231f"/>
+  <circle cx="320" cy="210" r="112" fill="#26352e" stroke="#d6a85b" stroke-width="7"/>
+  <circle cx="320" cy="210" r="72" fill="none" stroke="#91aa7a" stroke-width="12" stroke-dasharray="18 14"/>
+  <path d="M320 210l52-48M320 210l-44 42" stroke="#efe9dc" stroke-width="8" stroke-linecap="round"/>
+  <circle cx="320" cy="210" r="14" fill="#d6a85b"/>
+  <path d="M120 210h60M460 210h60M320 42v54M320 324v54" stroke="#bd7652" stroke-width="6" stroke-linecap="round"/>
+  <path d="M102 126c35-34 74-48 114-44M538 294c-35 34-74 48-114 44" fill="none" stroke="#e8e1d3" stroke-width="4"/>
+  <path d="M206 70l12 12-18 4M434 350l-12-12 18-4" fill="none" stroke="#e8e1d3" stroke-width="4"/>
+</svg>

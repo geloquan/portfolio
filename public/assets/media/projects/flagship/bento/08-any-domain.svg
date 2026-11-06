@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Any domain of work illustration</title><desc id="desc">Interlocking geometric domains surrounding a flexible center.</desc>
+  <rect width="640" height="420" rx="28" fill="#f1eadf"/>
+  <circle cx="320" cy="210" r="64" fill="#26352e" stroke="#d6a85b" stroke-width="7"/>
+  <path d="M320 182v56M292 210h56" stroke="#f1eadf" stroke-width="7" stroke-linecap="round"/>
+  <g fill="none" stroke="#91aa7a" stroke-width="8"><path d="M320 146V82M320 274v64M256 210h-64M384 210h64"/></g>
+  <g fill="#d6a85b" stroke="#26352e" stroke-width="5"><rect x="274" y="42" width="92" height="44" rx="12"/><rect x="274" y="334" width="92" height="44" rx="12"/><rect x="92" y="188" width="100" height="44" rx="12"/><rect x="448" y="188" width="100" height="44" rx="12"/></g>
+  <path d="M82 84l18 18M100 84L82 102M540 318l18 18M558 318l-18 18" stroke="#bd7652" stroke-width="5"/>
+</svg>

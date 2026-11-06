@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+  <title id="title">Built for operators illustration</title><desc id="desc">A practical control panel with task rows and status indicators.</desc>
+  <rect width="640" height="420" rx="28" fill="#24332d"/>
+  <rect x="96" y="76" width="448" height="270" rx="16" fill="#f3eee4" stroke="#d6a85b" stroke-width="6"/>
+  <path d="M96 128h448" stroke="#d6a85b" stroke-width="5"/>
+  <circle cx="124" cy="102" r="7" fill="#bd7652"/><circle cx="148" cy="102" r="7" fill="#91aa7a"/>
+  <g stroke="#26352e" stroke-width="8" stroke-linecap="round"><path d="M136 176h138M136 224h202M136 272h112"/></g>
+  <g fill="#91aa7a"><rect x="410" y="158" width="84" height="28" rx="14"/><rect x="410" y="206" width="84" height="28" rx="14"/><rect x="410" y="254" width="84" height="28" rx="14"/></g>
+  <path d="M430 172l10 10 18-20M430 220l10 10 18-20M430 268l10 10 18-20" fill="none" stroke="#24332d" stroke-width="5"/>
+</svg>
