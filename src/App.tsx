@@ -259,6 +259,15 @@ function HomePage() {
                 <figcaption><strong>{snapshot.name}</strong></figcaption>
               </figure>
             ))}
+            <div className="home-wordmark home-wordmark-left" aria-hidden="true">
+              <span>THE</span>
+              <span>FLAG</span>
+              <span>SHIP</span>
+            </div>
+            <div className="home-wordmark home-wordmark-right" aria-hidden="true">
+              <span>SOFT</span>
+              <span>WARE</span>
+            </div>
           </div>
           <p className="home-privacy-note">Designed to keep sensitive work local and leave a minimal digital footprint. <button type="button" onClick={() => window.location.href = 'mailto:marcoangelo.quanico@gmail.com?subject=Flagship%20software%20demo'}>Ask for a demo</button></p>
         </section>
