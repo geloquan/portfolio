@@ -695,7 +695,8 @@ section {
   width: 100%;
   aspect-ratio: 4/5.5;
   margin: 0;
-  isolation: isolate
+  isolation: isolate;
+  --profile-image-softness: clamp(.12px, calc(.34px - .12vw), .24px)
 }
 
 .profile-card {
@@ -758,7 +759,9 @@ section {
   user-select: none;
   object-fit: cover;
   object-position: center 26%;
-  filter: saturate(.72)
+  filter: saturate(.68) contrast(.92) blur(var(--profile-image-softness));
+  transform: scale(1.002);
+  image-rendering: auto
 }
 
 .profile-card-1 .profile-photo {

@@ -122,10 +122,13 @@ function ProfileDeck() {
             className="profile-photo"
             src={image.src}
             alt={image.alt}
-            width="720"
-            height="1280"
+            width="240"
+            height="426"
             draggable={false}
-            fetchPriority={index === 0 ? 'high' : undefined}
+            loading={index === cards.length - 1 ? 'eager' : 'lazy'}
+            decoding="async"
+            sizes="(max-width: 720px) 34vw, 220px"
+            fetchPriority={index === cards.length - 1 ? 'high' : undefined}
             onError={(event) => {
               event.currentTarget.src = fallbackProfilePhoto
             }}
