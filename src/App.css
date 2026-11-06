@@ -3116,8 +3116,6 @@ dialog[open] .snapshot-modal {
   max-height: min(56vh, 32rem);
   object-fit: contain;
   filter: none;
-  border: 1px solid color-mix(in srgb, var(--color-accent-warm-text) 28%, transparent);
-  background: color-mix(in srgb, var(--color-bg-base) 28%, transparent);
 }
 
 @media (max-width: 680px) {
