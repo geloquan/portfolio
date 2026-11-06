@@ -191,7 +191,7 @@ p {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 1.25rem
+  gap: .9rem
 }
 
 .nav-links > a {
@@ -209,26 +209,29 @@ p {
 
 .theme-toggle, .feedback-toggle, .menu-toggle {
   min-height: 44px;
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  border-radius: 12px;
-  padding: .45rem .7rem;
+  border: 1px solid transparent;
+  background: transparent;
+  border-radius: 10px;
+  padding: .45rem .65rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: .4rem;
-  box-shadow: var(--color-raised-shadow);
+  box-shadow: none;
+  color: var(--color-text-secondary);
   transition: transform .2s var(--ease-out), background-color .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out)
 }
 
 .theme-toggle {
-  width: 42px;
-  padding: 0
+  min-width: 44px;
+  font-size: .72rem;
+  font-weight: 600
 }
 
 .theme-toggle:hover, .feedback-toggle:hover, .menu-toggle:hover {
   background: var(--color-card-hover);
   border-color: var(--color-accent-warm-text);
+  color: var(--text);
   transform: translateY(-1px)
 }
 
@@ -238,8 +241,8 @@ p {
 }
 
 .feedback-toggle {
-  font-size: .7rem;
-  color: var(--muted)
+  font-size: .68rem;
+  font-weight: 600
 }
 
 .feedback-toggle::before {
@@ -555,8 +558,8 @@ section {
 
 .context-toggle {
   width: auto;
-  font-size: .7rem;
-  color: var(--color-accent-warm-text)
+  font-size: .68rem;
+  font-weight: 600
 }
 
 .projects-section {
@@ -2151,7 +2154,7 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: .25rem .9rem;
+  gap: .15rem .65rem;
 }
 
 .home-nav-links a,
@@ -2161,7 +2164,7 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   display: inline-flex;
   align-items: center;
   color: var(--color-text-secondary);
-  font-size: 1rem;
+  font-size: .88rem;
 }
 
 .home-nav-links a:hover,
@@ -2171,18 +2174,21 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
 
 .home-theme-toggle {
   min-width: 44px;
-  border: 1px solid var(--border-strong);
-  background: var(--surface);
-  color: var(--text);
-  padding: .5rem .75rem;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--color-text-secondary);
+  padding: .45rem .6rem;
   border-radius: 10px;
-  box-shadow: var(--color-raised-shadow);
+  font-size: .72rem;
+  font-weight: 600;
+  box-shadow: none;
   transition: transform .2s var(--ease-out), background-color .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out)
 }
 
 .home-theme-toggle:hover {
   background: var(--color-card-hover);
   border-color: var(--color-accent-warm-text);
+  color: var(--text);
   transform: translateY(-1px);
 }
 

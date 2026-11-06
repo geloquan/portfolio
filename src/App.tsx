@@ -716,7 +716,7 @@ function DetailedHome() {
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} theme`}
             aria-pressed={theme === 'dark'}
           >
-            {theme === 'dark' ? '☀' : '◑'}
+            {theme === 'dark' ? 'Light' : 'Dark'}
           </button>
           <button
             className="theme-toggle feedback-toggle"
