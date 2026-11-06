@@ -155,7 +155,8 @@ p {
   .toast button,
   .home-button,
   .home-theme-toggle,
-  .home-privacy-note button {
+  .home-privacy-note button,
+  .footer-home-link {
     transition: none
   }
 
@@ -171,7 +172,8 @@ p {
   .toast button:hover,
   .home-button:hover,
   .home-theme-toggle:hover,
-  .home-privacy-note button:hover {
+  .home-privacy-note button:hover,
+  .footer-home-link:hover {
     transform: none
   }
 }
@@ -1231,6 +1233,34 @@ section {
   gap: .3rem
 }
 
+.footer-bottom-actions {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+}
+
+.footer-home-link {
+  min-height: 44px;
+  padding: .55rem .7rem;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--color-accent-warm-text);
+  box-shadow: var(--color-raised-shadow);
+  transition: transform .2s var(--ease-out), background-color .2s var(--ease-out), border-color .2s var(--ease-out), box-shadow .2s var(--ease-out);
+}
+
+.footer-home-link:hover {
+  background: var(--color-card-hover);
+  border-color: var(--color-accent-warm-text);
+  transform: translateY(-1px);
+}
+
+.footer-home-link:active {
+  transform: translateY(1px);
+  box-shadow: var(--color-pressed-shadow);
+}
+
 .contact-dialog {
   width: min(100% - 2rem, 600px);
   border-radius: var(--radius-md);
@@ -1939,6 +1969,11 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
 
   .footer-bottom {
     font-size: .53rem
+  }
+
+  .footer-bottom-actions {
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 
   .contact-modal {
