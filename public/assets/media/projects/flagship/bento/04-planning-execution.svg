@@ -1,9 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
   <title id="title">Planning and execution illustration</title><desc id="desc">A geometric plan moving through milestones toward completion.</desc>
-  <rect width="640" height="420" rx="28" fill="#f3eee4"/>
+  <rect width="640" height="400" rx="28" fill="#f3eee4"/>
+  <g transform="translate(0 -10) scale(1 .95238)">
   <path d="M92 302h456" stroke="#26352e" stroke-width="6" stroke-linecap="round"/>
   <g fill="#d6a85b" stroke="#26352e" stroke-width="5"><circle cx="138" cy="302" r="25"/><circle cx="270" cy="302" r="25"/><circle cx="402" cy="302" r="25"/><circle cx="534" cy="302" r="25"/></g>
   <path d="M138 302V174h132v128M270 302V122h132v180M402 302V208h132v94" fill="none" stroke="#91aa7a" stroke-width="12"/>
   <path d="M116 112h92M116 136h58M374 72h124" stroke="#26352e" stroke-width="8" stroke-linecap="round"/>
   <path d="M520 116l22 22-42 42" fill="none" stroke="#bd7652" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 </svg>

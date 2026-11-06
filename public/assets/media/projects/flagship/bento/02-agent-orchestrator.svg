@@ -1,6 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 760" role="img" aria-labelledby="title desc">
   <title id="title">Agent orchestration illustration</title><desc id="desc">A central workflow node coordinating three worker nodes.</desc>
-  <rect width="640" height="420" rx="28" fill="#efe9dc"/>
+  <rect width="640" height="760" rx="28" fill="#efe9dc"/>
+  <g transform="translate(0 170)">
   <path d="M112 108h416M112 210h416M112 312h416" stroke="#d5c9b3" stroke-width="2" stroke-dasharray="8 12"/>
   <path d="M320 210L174 112M320 210l146-98M320 210L174 312M320 210l146 98" fill="none" stroke="#26352e" stroke-width="5"/>
   <circle cx="320" cy="210" r="56" fill="#26352e" stroke="#d6a85b" stroke-width="8"/>
@@ -8,4 +9,5 @@
   <g fill="#d6a85b" stroke="#26352e" stroke-width="5"><circle cx="150" cy="96" r="28"/><circle cx="490" cy="96" r="28"/><circle cx="150" cy="324" r="28"/><circle cx="490" cy="324" r="28"/></g>
   <path d="M142 96h16M150 88v16M482 96h16M490 88v16M142 324h16M150 316v16M482 324h16M490 316v16" stroke="#26352e" stroke-width="4"/>
   <path d="M76 58l16 16M92 58L76 74M548 346l16 16M564 346l-16 16" stroke="#bd7652" stroke-width="5"/>
+  </g>
 </svg>

@@ -340,7 +340,7 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
   align-items: flex-end;
   padding: 1rem;
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--surface) 82%, var(--color-accent-earth) 18%), var(--color-bg-base));
+    linear-gradient(135deg, color-mix(in srgb, var(--snapshot-bg, var(--surface)) 88%, var(--color-accent-earth) 12%), color-mix(in srgb, var(--snapshot-bg, var(--surface)) 68%, var(--color-bg-base)));
   cursor: pointer;
   transition: background-color .2s ease;
 }
@@ -352,13 +352,21 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
   height: 100%;
   object-fit: contain;
   filter: saturate(.78);
+  transform: scale(1);
+  transition: filter .6s ease, transform .6s ease;
+}
+.home-snapshot-2 .home-snapshot-media > img,
+.home-snapshot-3 .home-snapshot-media > img,
+.home-snapshot-4 .home-snapshot-media > img {
+  object-fit: cover;
+  transform: scale(1.02);
 }
 .home-snapshot-media::before {
   content: '';
   position: absolute;
   inset: 0;
   z-index: 0;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--color-bg-base) 8%, transparent), color-mix(in srgb, var(--color-bg-base) 78%, transparent));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--snapshot-bg, var(--color-bg-base)) 8%, transparent), color-mix(in srgb, var(--snapshot-bg, var(--color-bg-base)) 78%, transparent));
   pointer-events: none;
 }
 .home-snapshot-media::after {
@@ -371,6 +379,22 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
 .home-snapshot-media:hover,
 .home-snapshot-media:focus-visible {
   background-color: color-mix(in srgb, var(--color-accent-earth) 26%, var(--surface));
+}
+.home-snapshot-media.is-revealed > img {
+  filter: blur(18px) saturate(.5) brightness(1.3);
+  opacity: .52;
+  transform: scale(1.08);
+}
+.home-snapshot-2 .home-snapshot-media.is-revealed > img,
+.home-snapshot-3 .home-snapshot-media.is-revealed > img,
+.home-snapshot-4 .home-snapshot-media.is-revealed > img {
+  transform: scale(1.08);
+}
+.home-snapshot-media.is-revealed::before {
+  background: color-mix(in srgb, #f8f6ef 82%, var(--snapshot-bg, var(--surface)) 18%);
+}
+.home-snapshot-media.is-revealed .home-snapshot-number {
+  color: #171814;
 }
 .home-snapshot-number {
   position: absolute;
@@ -387,7 +411,10 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
   gap: .5rem;
   max-width: 24ch;
   transform: translateY(1.3rem);
-  transition: transform .2s ease;
+  color: var(--snapshot-text-color, var(--text));
+  opacity: 0;
+  text-shadow: 0 1px 14px color-mix(in srgb, var(--snapshot-text-color, var(--text)) 22%, transparent);
+  transition: transform .6s ease, opacity .4s ease;
 }
 .home-snapshot-reveal strong {
   font-family: var(--font-display);
@@ -396,21 +423,19 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
   line-height: 1.05;
 }
 .home-snapshot-reveal span {
-  color: var(--color-text-secondary);
+  color: var(--snapshot-text-color, var(--color-text-secondary));
   font-size: .82rem;
   line-height: 1.45;
-  opacity: 0;
-  transition: opacity .2s ease;
+  opacity: .84;
 }
-.home-snapshot-media:hover .home-snapshot-reveal,
-.home-snapshot-media:focus-visible .home-snapshot-reveal,
-.home-snapshot-media:focus-within .home-snapshot-reveal {
+.home-snapshot-media.is-revealed .home-snapshot-reveal {
   transform: translateY(0);
-}
-.home-snapshot-media:hover .home-snapshot-reveal span,
-.home-snapshot-media:focus-visible .home-snapshot-reveal span,
-.home-snapshot-media:focus-within .home-snapshot-reveal span {
   opacity: 1;
+  color: #171814;
+  text-shadow: none;
+}
+.home-snapshot-media.is-revealed .home-snapshot-reveal span {
+  color: #171814;
 }
 .home-snapshot-empty {
   height: 100%;
@@ -612,6 +637,14 @@ main{position:relative;z-index:1;width:min(calc(100% - 3rem),var(--measure));mar
     transition: none;
   }
   .home-button:hover {
+    transform: none;
+  }
+  .home-snapshot-media > img,
+  .home-snapshot-reveal {
+    transition: none;
+  }
+  .home-snapshot-media.is-revealed > img {
+    filter: none;
     transform: none;
   }
 }
