@@ -9,7 +9,36 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
-  scrollbar-gutter: stable
+  scrollbar-gutter: stable;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-accent-earth) transparent
+}
+
+html::-webkit-scrollbar {
+  width: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  min-height: 3rem;
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background: var(--color-accent-earth);
+  background-clip: padding-box;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-warm);
+  background-clip: padding-box;
+}
+
+html.snapshot-modal-open,
+html.snapshot-modal-open body {
+  overflow: hidden;
+  overscroll-behavior: none;
 }
 
 body {
@@ -2873,6 +2902,11 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   padding: 1rem;
   background: linear-gradient(135deg, color-mix(in srgb, var(--snapshot-bg, var(--surface)) 88%, var(--color-accent-earth) 12%), color-mix(in srgb, var(--snapshot-bg, var(--surface)) 68%, var(--color-bg-base)));
   cursor: pointer;
+  border: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  text-align: left;
   transition: background-color .2s ease;
 }
 
@@ -2982,6 +3016,172 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
 
 .home-snapshot-media.is-revealed .home-snapshot-reveal span {
   color: #171814;
+}
+
+.snapshot-dialog {
+  width: min(90vw, 68rem);
+  max-width: none;
+  max-height: min(88dvh, 52rem);
+  margin: auto;
+  overflow: hidden;
+  overscroll-behavior: none;
+  padding: 0;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--color-raised-shadow), 0 24px 80px color-mix(in srgb, var(--color-bg-base) 44%, transparent);
+}
+
+.snapshot-dialog::backdrop {
+  background: color-mix(in srgb, var(--color-bg-base) 82%, transparent);
+  backdrop-filter: blur(8px);
+}
+
+.snapshot-modal {
+  overflow: hidden;
+  max-height: inherit;
+  border-radius: inherit;
+}
+
+dialog[open] .snapshot-modal {
+  animation: snapshot-modal-enter .38s var(--ease-out) both;
+}
+
+@keyframes snapshot-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(1rem) scale(.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.snapshot-modal-rail {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 3.5rem;
+  padding: .75rem 1.25rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--color-text-secondary);
+  font: .68rem 'DM Mono', monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.snapshot-modal-close {
+  min-height: 2.25rem;
+  padding: .35rem .7rem;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  letter-spacing: .04em;
+  transition: background-color .2s var(--ease-out), color .2s var(--ease-out);
+}
+
+.snapshot-modal-close:hover,
+.snapshot-modal-close:focus-visible {
+  color: var(--color-on-accent);
+  background: var(--color-accent-warm);
+}
+
+.snapshot-modal-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(18rem, .8fr);
+  min-height: min(64vh, 36rem);
+}
+
+.snapshot-modal-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  order: 2;
+  padding: clamp(1.5rem, 4vw, 3.5rem);
+  border-left: 1px solid var(--border);
+}
+
+.snapshot-modal-copy h2 {
+  max-width: 12ch;
+  margin: .65rem 0 1.1rem;
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4.5vw, 4.5rem);
+  font-weight: 500;
+  line-height: 1;
+}
+
+.snapshot-modal-copy > p:not(.home-overline) {
+  max-width: 30ch;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: clamp(1rem, 1.5vw, 1.25rem);
+  line-height: 1.5;
+}
+
+.snapshot-modal-instruction {
+  margin-top: 2.25rem;
+  color: var(--color-accent-warm-text);
+  font: .68rem 'DM Mono', monospace;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.snapshot-modal-art {
+  display: grid;
+  place-items: center;
+  order: 1;
+  min-height: 20rem;
+  padding: clamp(1rem, 3vw, 2.5rem);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--color-accent-earth) 18%, var(--surface)), var(--color-bg-base));
+}
+
+.snapshot-modal-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-height: min(56vh, 32rem);
+  object-fit: contain;
+  filter: none;
+  border: 1px solid color-mix(in srgb, var(--color-accent-warm-text) 28%, transparent);
+  background: color-mix(in srgb, var(--color-bg-base) 28%, transparent);
+}
+
+@media (max-width: 680px) {
+  .snapshot-modal-content {
+    display: block;
+  }
+
+  .snapshot-modal-copy {
+    min-height: 16rem;
+    order: 1;
+    border-right: 0;
+    border-left: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .snapshot-modal-copy h2 {
+    max-width: 14ch;
+  }
+
+  .snapshot-modal-instruction {
+    margin-top: 1.75rem;
+  }
+
+  .snapshot-modal-art {
+    order: 2;
+    min-height: 15rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  dialog[open] .snapshot-modal {
+    animation: none;
+  }
 }
 
 .home-snapshot-empty {

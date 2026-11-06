@@ -231,7 +231,9 @@ function HomePage() {
   const [snapshotTextColors, setSnapshotTextColors] = useState<Record<number, 'light' | 'dark'>>({})
   const [snapshotBackgrounds, setSnapshotBackgrounds] = useState<Record<number, string>>({})
   const [isSnapshotStageVisible, setIsSnapshotStageVisible] = useState(false)
+  const [selectedSnapshotIndex, setSelectedSnapshotIndex] = useState<number | null>(null)
   const snapshotStageRef = useRef<HTMLDivElement>(null)
+  const snapshotDialogRef = useRef<HTMLDialogElement>(null)
 
   useEffect(() => {
     const snapshotStage = snapshotStageRef.current
@@ -315,6 +317,24 @@ function HomePage() {
     setSnapshotTextColors((currentColors) => ({...currentColors, [index]: averageLuminance > 0.58 ? 'dark' : 'light'}))
     setSnapshotBackgrounds((currentBackgrounds) => ({...currentBackgrounds, [index]: averageColor}))
   }
+
+  useEffect(() => {
+    const dialog = snapshotDialogRef.current
+    if (!dialog) return
+
+    if (selectedSnapshotIndex === null) {
+      if (dialog.open) dialog.close()
+      return
+    }
+
+    if (!dialog.open) dialog.showModal()
+  }, [selectedSnapshotIndex])
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('snapshot-modal-open', selectedSnapshotIndex !== null)
+    return () => document.documentElement.classList.remove('snapshot-modal-open')
+  }, [selectedSnapshotIndex])
+
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
       const savedTheme = localStorage.getItem('theme')
@@ -400,8 +420,11 @@ function HomePage() {
                aria-label="Flagship software capabilities">
             {homeSnapshots.map((snapshot, index) => (
               <figure className={`home-snapshot home-snapshot-${index + 1}`} key={snapshot.name}>
-                <div
+                <button
+                  type="button"
                   className={`home-snapshot-media ${activeSnapshotIndexes[index] ? 'is-revealed' : ''}`}
+                  aria-label={`Open ${snapshot.name} details`}
+                  onClick={() => setSelectedSnapshotIndex(index)}
                   style={{
                     '--snapshot-text-color': snapshotTextColors[index] === 'dark' ? '#171814' : '#f8f6ef',
                     '--snapshot-bg': snapshotBackgrounds[index] || 'var(--surface)',
@@ -414,7 +437,7 @@ function HomePage() {
                     <strong>{snapshot.name}</strong>
                     <span>{snapshot.phrase}</span>
                   </div>
-                </div>
+                </button>
                 <figcaption><strong>{snapshot.name}</strong></figcaption>
               </figure>
             ))}
@@ -451,6 +474,42 @@ function HomePage() {
             </ul>
           </div>
         </section>
+        <dialog
+          ref={snapshotDialogRef}
+          className="snapshot-dialog"
+          aria-labelledby="snapshot-dialog-title"
+          onCancel={() => setSelectedSnapshotIndex(null)}
+          onClick={(event) => {
+            if (event.target === snapshotDialogRef.current) setSelectedSnapshotIndex(null)
+          }}
+        >
+          {selectedSnapshotIndex !== null && (
+            <article className="snapshot-modal">
+              <div className="snapshot-modal-rail">
+                <span>FLAGSHIP / {String(selectedSnapshotIndex + 1).padStart(2, '0')}</span>
+                <button className="snapshot-modal-close" type="button" onClick={() => setSelectedSnapshotIndex(null)}>
+                  Close
+                </button>
+              </div>
+              <div className="snapshot-modal-content">
+                <div className="snapshot-modal-copy">
+                  <p className="home-overline">Capability note</p>
+                  <h2 id="snapshot-dialog-title">{homeSnapshots[selectedSnapshotIndex].name}</h2>
+                  <p>{homeSnapshots[selectedSnapshotIndex].phrase}</p>
+                  <span className="snapshot-modal-instruction">Selected from the flagship workbench</span>
+                </div>
+                <div className="snapshot-modal-art">
+                  <img
+                    src={homeSnapshots[selectedSnapshotIndex].mediaUrl}
+                    alt={`${homeSnapshots[selectedSnapshotIndex].name} interface illustration`}
+                    width="1200"
+                    height="800"
+                  />
+                </div>
+              </div>
+            </article>
+          )}
+        </dialog>
       </main>
 
       <footer className="home-footer" id="contact">
