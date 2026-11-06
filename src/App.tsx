@@ -127,7 +127,7 @@ function ProfileDeck() {
             draggable={false}
             fetchPriority={index === 0 ? 'high' : undefined}
             onError={(event) => {
-              event.currentTarget.src = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
+              event.currentTarget.src = fallbackProfilePhoto
             }}
           />
         </button>
@@ -137,14 +137,14 @@ function ProfileDeck() {
 }
 
 const homeSnapshots = [
-  {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_01_URL},
-  {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_02_URL},
-  {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_03_URL},
-  {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_04_URL},
-  {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_05_URL},
-  {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_06_URL},
-  {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_07_URL},
-  {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_08_URL},
+  {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: '/assets/media/projects/flagship/bento/01-chatbot.png'},
+  {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: '/assets/media/projects/flagship/bento/02-agent-orchestrator.svg'},
+  {name: 'Multidatabase connection', phrase: 'Bring the systems you already use into one working context.', mediaUrl: '/assets/media/projects/flagship/bento/03-multidatabase.svg'},
+  {name: 'Intelligent planning & execution', phrase: 'Turn an outcome into a sequence that can actually move.', mediaUrl: '/assets/media/projects/flagship/bento/04-planning-execution.svg'},
+  {name: 'Autopilot', phrase: 'Let repeatable work run with useful checkpoints, not blind automation.', mediaUrl: '/assets/media/projects/flagship/bento/05-autopilot.svg'},
+  {name: 'Local by design', phrase: 'Keep sensitive work close, with lower operating costs and fewer moving parts.', mediaUrl: '/assets/media/projects/flagship/bento/06-local-by-design.svg'},
+  {name: 'Built for operators', phrase: 'A flexible workbench for small teams, VAs, and independent builders.', mediaUrl: '/assets/media/projects/flagship/bento/07-built-for-operators.svg'},
+  {name: 'Any domain of work', phrase: 'Shape the system around the work instead of forcing a fixed industry template.', mediaUrl: '/assets/media/projects/flagship/bento/08-any-domain.svg'},
 ]
 
 function SectionHeading({id, index, title, description, isVisible, onToggle}: SectionHeadingProps) {
@@ -657,13 +657,13 @@ function DetailedHome() {
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
   }, [])
 
-  const thesisPaperUrl = import.meta.env.VITE_THESIS_PAPER_URL || '/assets/research/seashell-computer-vision-thesis.pdf'
-  const calendlyUrl = import.meta.env.VITE_CALENDLY_URL || 'https://calendly.com/marco-angelo-quanico'
+  const thesisPaperUrl = '/assets/media/research/seashell-computer-vision-thesis.pdf'
+  const calendlyUrl = 'https://calendly.com/marco-angelo-quanico'
   const projectMedia = {
-    medicalArts: import.meta.env.VITE_PROJECT_MEDICAL_ARTS_MEDIA_URL,
-    aiLegal: import.meta.env.VITE_PROJECT_FLAGSHIP_MEDIA_URL,
-    seashell: import.meta.env.VITE_PROJECT_SEASHELL_MEDIA_URL,
-    doctorDirectory: import.meta.env.VITE_PROJECT_DOCTOR_DIRECTORY_MEDIA_URL,
+    medicalArts: undefined,
+    aiLegal: undefined,
+    seashell: '/assets/media/projects/seashell/demo.png',
+    doctorDirectory: '/assets/media/projects/doctor-directory/demo.png',
   }
 
   const projects: Project[] = useMemo(
@@ -709,7 +709,7 @@ function DetailedHome() {
           {text: 'Android application records inference-derived counts', icon: Smartphone},
           {text: 'Co-author research project', icon: BrainCircuit},
         ],
-        mediaType: 'video',
+        mediaType: 'image',
         mediaUrl: projectMedia.seashell,
         role: 'Co-author · Computer vision research',
         year: '2025–2026',
@@ -726,7 +726,7 @@ function DetailedHome() {
           {text: 'Iterated with the institution engineering team', icon: UsersRound},
           {text: '85% UX satisfaction following stakeholder feedback', icon: Database},
         ],
-        mediaType: 'video',
+        mediaType: 'image',
         mediaUrl: projectMedia.doctorDirectory,
         role: 'Software Developer · Mar–Jun 2025',
         year: '2025',
@@ -868,7 +868,7 @@ function DetailedHome() {
                 <p className="techstack-text"><strong>Built with</strong> {projects[0].techstack}</p>
               </div>
               <div className="preview-box featured-preview">
-                {projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo under public/assets/media/projects/flagship and configure VITE_PROJECT_FLAGSHIP_MEDIA_URL.</small></div>}
+                {projects[0].mediaUrl ? <div className="video-frame"><video ref={(el) => { videoRefs.current[0] = el }} preload="metadata" width="960" height="540" src={projects[0].mediaUrl} muted loop playsInline onPlay={() => { pauseAllExcept(0); setPlayingIndex(0) }} onPause={() => setPlayingIndex(-1)} aria-label="Offline AI legal document system preview" /><button className="video-control" type="button" aria-label={playingIndex === 0 ? 'Pause project preview' : 'Play project preview'} aria-pressed={playingIndex === 0} onClick={() => { handleVideoClick(0); tactileFeedback() }}>{playingIndex === 0 ? 'Ⅱ' : <Play size={22} aria-hidden="true" />}</button></div> : <div className="project-media-placeholder"><VideoOff size={34} aria-hidden="true"/><span>Demo media not configured</span><small>Add an authorized demo under public/assets/media/projects/flagship.</small></div>}
               </div>
             </div>
           </article>

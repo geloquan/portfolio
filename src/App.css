@@ -178,6 +178,254 @@ p {
   }
 }
 
+@media (max-width: 560px) {
+  .hero h1 {
+    font-size: clamp(2.8rem, 14vw, 4.5rem);
+  }
+
+  .hero-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-proof > div:last-of-type {
+    grid-column: 1 / -1;
+  }
+
+  .project-outcomes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-outcomes > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .skills-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-strip > span {
+    white-space: normal;
+  }
+
+  .home-snapshot-media {
+    padding: .8rem;
+  }
+
+  .home-snapshot-media::after {
+    inset: .5rem;
+  }
+
+  .home-snapshot-reveal strong {
+    font-size: clamp(1rem, 6vw, 1.4rem);
+  }
+
+  .home-snapshot-reveal span {
+    font-size: .75rem;
+  }
+}
+
+@media (max-width: 560px) {
+  .app-shell,
+  .home-page {
+    overflow-x: clip;
+  }
+
+  .top-nav,
+  main,
+  .footer,
+  .contact-section,
+  .home-nav,
+  .home-hero,
+  .home-section,
+  .home-footer {
+    width: calc(100% - 1.25rem);
+  }
+
+  .top-nav {
+    gap: .5rem;
+  }
+
+  .brand img,
+  .home-brand img {
+    max-width: 42vw;
+    height: auto;
+  }
+
+  .nav-links,
+  .home-nav-links {
+    gap: .25rem;
+  }
+
+  .nav-links > a,
+  .home-nav-links a,
+  .home-theme-toggle,
+  .theme-toggle,
+  .feedback-toggle {
+    font-size: .68rem;
+  }
+
+  .hero-index,
+  .project-featured-meta,
+  .experience-feature-label {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: .4rem .75rem;
+  }
+
+  .hero-index-number {
+    margin-left: auto;
+  }
+
+  .hero-proof,
+  .project-outcomes,
+  .education-row,
+  .contact-inner,
+  .project-featured-body,
+  .project-row,
+  .experience-feature,
+  .research-spread,
+  .footer-inner,
+  .footer-bottom {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-proof {
+    gap: .9rem;
+  }
+
+  .hero-proof > p,
+  .project-row-media,
+  .thesis-preview-card,
+  .contact-actions {
+    grid-column: auto;
+  }
+
+  .project-featured-body,
+  .contact-inner {
+    gap: 1.5rem;
+  }
+
+  .project-featured-meta {
+    padding-bottom: .75rem;
+  }
+
+  .project-row {
+    gap: 1rem;
+  }
+
+  .project-row-number {
+    padding-bottom: 0;
+  }
+
+  .project-row-media {
+    width: 100%;
+    max-width: 22rem;
+  }
+
+  .experience-feature {
+    gap: 1rem;
+  }
+
+  .research-spread {
+    gap: 1rem;
+  }
+
+  .research-spread-mark {
+    padding-bottom: 0;
+  }
+
+  .research-points {
+    grid-template-columns: 1fr;
+  }
+
+  .thesis-preview-card {
+    min-height: 18rem;
+  }
+
+  .thesis-preview-card iframe {
+    min-height: 18rem;
+  }
+
+  .education-row {
+    gap: 1rem;
+  }
+
+  .contact-actions {
+    align-items: stretch;
+  }
+
+  .contact-actions > * {
+    width: 100%;
+  }
+
+  .contact-dialog {
+    padding: .5rem;
+  }
+
+  .contact-modal {
+    width: 100%;
+    max-height: calc(100dvh - 1rem);
+    padding: 1rem;
+  }
+
+  .contact-modal-header {
+    gap: .75rem;
+  }
+
+  .contact-modal-header h2 {
+    font-size: clamp(1.5rem, 8vw, 2.2rem);
+  }
+
+  .modal-footer,
+  .modal-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .modal-actions > * {
+    width: 100%;
+  }
+
+  .footer-bottom {
+    align-items: flex-start;
+    gap: .75rem;
+  }
+
+  .footer-bottom-actions {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .home-hero h1 {
+    font-size: clamp(2.6rem, 13vw, 4.5rem);
+  }
+
+  .home-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .home-actions .home-button {
+    width: 100%;
+  }
+
+  .home-portrait {
+    width: min(100%, 20rem);
+  }
+
+  .home-work-item {
+    grid-template-columns: 1fr;
+  }
+
+  .home-footer-actions {
+    width: 100%;
+  }
+
+  .home-footer-actions .home-button {
+    width: 100%;
+  }
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -1770,8 +2018,8 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   .home-snapshot-grid {
     width: 100%;
     grid-template-columns:repeat(2, minmax(0, 1fr));
-    grid-template-rows:repeat(4, minmax(150px, 22vw));
-    grid-auto-rows: minmax(150px, 22vw)
+    grid-template-rows: repeat(4, minmax(0, clamp(11rem, 30vw, 15rem)));
+    grid-auto-rows: minmax(0, clamp(11rem, 30vw, 15rem))
   }
 
   .home-snapshot-2, .home-snapshot-3, .home-snapshot-4 {
@@ -2093,13 +2341,13 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
 @media (max-width: 560px) {
   .home-snapshot-grid {
     grid-template-columns:1fr;
-    grid-template-rows:repeat(8, 180px);
-    grid-auto-rows: 180px;
+    grid-template-rows: none;
+    grid-auto-rows: minmax(12rem, 58vw);
     gap: .65rem;
     margin-top: 2rem
   }
 
-  .home-snapshot-1, .home-snapshot-2 {
+  .home-snapshot-1, .home-snapshot-2, .home-snapshot-3, .home-snapshot-4 {
     grid-column: auto;
     grid-row: auto
   }
@@ -2489,9 +2737,9 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(4, 240px);
-  grid-template-rows: repeat(2, 300px);
-  width: max-content;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, clamp(14rem, 25vw, 19rem));
+  width: min(100%, 62rem);
   max-width: 100%;
   margin-inline: auto;
   gap: .75rem;
@@ -3001,5 +3249,51 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   .home-snapshot-media.is-revealed > img {
     filter: none;
     transform: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .hero h1 {
+    font-size: clamp(2.8rem, 14vw, 4.5rem);
+  }
+
+  .hero-proof {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .hero-proof > div:last-of-type {
+    grid-column: 1 / -1;
+  }
+
+  .project-outcomes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-outcomes > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .skills-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .skills-strip > span {
+    white-space: normal;
+  }
+
+  .home-snapshot-media {
+    padding: .8rem;
+  }
+
+  .home-snapshot-media::after {
+    inset: .5rem;
+  }
+
+  .home-snapshot-reveal strong {
+    font-size: clamp(1rem, 6vw, 1.4rem);
+  }
+
+  .home-snapshot-reveal span {
+    font-size: .75rem;
   }
 }
