@@ -58,6 +58,14 @@ type SectionHeadingProps = {
   onToggle: () => void
 }
 
+const profileDeckImages = [
+  {src: '/assets/media/me/01-me.jpg', alt: 'Marco Angelo P. Quanico seated outdoors'},
+  {src: '/assets/media/me/02-me.jpg', alt: 'Marco Angelo P. Quanico in a dark shirt'},
+  {src: '/assets/media/me/03-me.jpg', alt: 'Marco Angelo P. Quanico looking toward the camera'},
+  {src: '/assets/media/me/04-me.jpeg', alt: 'Marco Angelo P. Quanico in a warm indoor portrait'},
+]
+const randomizedProfileDeck = [...profileDeckImages].sort(() => Math.random() - 0.5)
+
 const homeSnapshots = [
   {name: 'Chatbot', phrase: 'A practical front door for questions, tasks, and next steps.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_01_URL},
   {name: 'Agent orchestrator', phrase: 'Delegate the work, keep the plan visible, and coordinate the result.', mediaUrl: import.meta.env.VITE_PROJECT_FLAGSHIP_BENTO_ITEM_02_URL},
@@ -235,15 +243,25 @@ function HomePage() {
               <a className="home-button home-button-secondary" href="mailto:marcoangelo.quanico@gmail.com">Email Marco</a>
             </div>
           </div>
-          <figure className="home-portrait">
-            {/*<img*/}
-            {/*  src={import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto}*/}
-            {/*  alt="Marco Angelo P. Quanico"*/}
-            {/*  width="720"*/}
-            {/*  height="1280"*/}
-            {/*  fetchPriority="high"*/}
-            {/*/>*/}
-            <figcaption>Bacolod City, Philippines</figcaption>
+          <figure className="home-portrait home-portrait-deck">
+            <div className="profile-deck" aria-label="A small fan of profile portraits">
+              {randomizedProfileDeck.map((image, index) => (
+                <div className={`profile-card profile-card-${index + 1}`} key={image.src}>
+                  <img
+                    className="profile-photo"
+                    src={image.src}
+                    alt={image.alt}
+                    width="720"
+                    height="1280"
+                    fetchPriority={index === 0 ? 'high' : undefined}
+                    onError={(event) => {
+                      event.currentTarget.src = import.meta.env.VITE_PROFILE_IMAGE_URL || fallbackProfilePhoto
+                    }}
+                  />
+                </div>
+              ))}
+              <span className="profile-deck-caption">Bacolod City, Philippines.</span>
+            </div>
           </figure>
         </section>
 
@@ -765,15 +783,24 @@ function DetailedHome() {
             </div>
             <div className="hero-visual">
               <div className="profile-wrap">
-                <img
-                  className="profile-photo"
-                  src={profileImageUrl}
-                  alt="Marco Angelo P. Quanico portrait"
-                  width="720"
-                  height="1280"
-                  fetchPriority="high"
-                />
-                <div className="profile-glow" aria-hidden="true"/>
+                <figure className="profile-deck" aria-label="A small fan of profile portraits">
+                  {randomizedProfileDeck.map((image, index) => (
+                    <div className={`profile-card profile-card-${index + 1}`} key={image.src}>
+                      <img
+                        className="profile-photo"
+                        src={image.src}
+                        alt={image.alt}
+                        width="720"
+                        height="1280"
+                        fetchPriority={index === 0 ? 'high' : undefined}
+                        onError={(event) => {
+                          event.currentTarget.src = profileImageUrl
+                        }}
+                      />
+                    </div>
+                  ))}
+                  <figcaption className="profile-deck-caption">Four views, one working practice.</figcaption>
+                </figure>
               </div>
             </div>
           </div>

@@ -439,24 +439,98 @@ section {
 
 .profile-wrap {
   position: relative;
-  padding: 1.2rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg) var(--radius-md) var(--radius-xl) var(--radius-md);
+  padding: 0 0 1.2rem
+}
+
+.profile-deck {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/5.5;
+  margin: 0;
+  isolation: isolate
+}
+
+.profile-card {
+  position: absolute;
+  inset: 5% 13% 9%;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+  border-radius: var(--radius-md) var(--radius-sm) var(--radius-lg) var(--radius-sm);
   background: var(--surface);
-  box-shadow: var(--color-raised-shadow)
+  box-shadow: var(--color-raised-shadow);
+  transform-origin: 50% 92%;
+  transition: transform 360ms cubic-bezier(.2, .75, .25, 1), box-shadow 360ms ease;
+  will-change: transform
+}
+
+.profile-card-1 {
+  z-index: 1;
+  transform: translate(-15%, 2%) rotate(-12deg)
+}
+
+.profile-card-2 {
+  z-index: 2;
+  transform: translate(-5%, -1%) rotate(-5deg)
+}
+
+.profile-card-3 {
+  z-index: 3;
+  transform: translate(5%, -2%) rotate(3deg)
+}
+
+.profile-card-4 {
+  z-index: 4;
+  transform: translate(15%, 1%) rotate(10deg)
 }
 
 .profile-photo {
+  display: block;
   width: 100%;
-  aspect-ratio: 4/5;
+  height: 100%;
   object-fit: cover;
   object-position: center 26%;
   filter: saturate(.72)
 }
 
-.profile-photo-caption {
+.profile-card-1 .profile-photo {
+  object-position: 52% 32%
+}
+
+.profile-card-2 .profile-photo {
+  object-position: 50% 24%
+}
+
+.profile-card-3 .profile-photo {
+  object-position: 50% 28%
+}
+
+.profile-card-4 .profile-photo {
+  object-position: 50% 20%
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .profile-deck:hover .profile-card-1 {
+    transform: translate(-23%, 3%) rotate(-16deg)
+  }
+
+  .profile-deck:hover .profile-card-2 {
+    transform: translate(-8%, -3%) rotate(-7deg)
+  }
+
+  .profile-deck:hover .profile-card-3 {
+    transform: translate(8%, -4%) rotate(5deg)
+  }
+
+  .profile-deck:hover .profile-card-4 {
+    transform: translate(23%, 2%) rotate(14deg)
+  }
+}
+
+.profile-deck-caption {
   display: block;
-  padding-top: .8rem;
+  position: absolute;
+  right: 0;
+  bottom: 0;
   font: .67rem/1.6 'DM Mono', monospace;
   letter-spacing: .06em;
   color: var(--muted)
@@ -1759,14 +1833,10 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   }
 
   .profile-wrap {
-    padding: .6rem
+    padding-bottom: .8rem
   }
 
-  .profile-photo {
-    aspect-ratio: 4/4.8
-  }
-
-  .profile-photo-caption {
+  .profile-deck-caption {
     font-size: .55rem
   }
 
@@ -2349,6 +2419,22 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   padding: .75rem .25rem .1rem;
   color: var(--color-text-secondary);
   font-size: 1rem;
+}
+
+.home-portrait-deck {
+  padding: 0 0 1.2rem;
+  border: 0;
+  background: transparent;
+}
+
+.home-portrait-deck .profile-deck {
+  width: 100%;
+}
+
+.home-portrait-deck .profile-deck-caption {
+  padding: 0;
+  color: var(--color-text-secondary);
+  font-size: .78rem;
 }
 
 .home-section {
