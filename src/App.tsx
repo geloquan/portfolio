@@ -39,6 +39,7 @@ import homeDoodleMountains from './assets/home-doodle-mountains.svg'
 import homeDoodleSunrise from './assets/home-doodle-sunrise.svg'
 import homeDoodleChopsticks from './assets/home-doodle-chopsticks.svg'
 import resumePdf from './resume-ma-quanico.pdf'
+import seashellCountingPdf from './seashell-counting.pdf'
 import {isFeedbackEnabled, setFeedbackEnabled, tactileFeedback} from './feedback.js'
 import ClaimLayer from './claims-overlay/ClaimLayer'
 
@@ -758,7 +759,7 @@ function DetailedHome() {
     return () => mediaQuery.removeEventListener('change', onPreferenceChange)
   }, [])
 
-  const thesisPaperUrl = '/assets/media/research/seashell-computer-vision-thesis.pdf'
+  const thesisPaperUrl = seashellCountingPdf
   const calendlyUrl = 'https://calendly.com/marco-angelo-quanico'
   const projectMedia = {
     medicalArts: undefined,
