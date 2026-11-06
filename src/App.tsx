@@ -228,8 +228,6 @@ function SectionHeading({id, index, title, description, isVisible, onToggle}: Se
 
 function HomePage() {
   const [activeSnapshotIndexes, setActiveSnapshotIndexes] = useState<Record<number, boolean>>({})
-  const [snapshotTextColors, setSnapshotTextColors] = useState<Record<number, 'light' | 'dark'>>({})
-  const [snapshotBackgrounds, setSnapshotBackgrounds] = useState<Record<number, string>>({})
   const [isSnapshotStageVisible, setIsSnapshotStageVisible] = useState(false)
   const [selectedSnapshotIndex, setSelectedSnapshotIndex] = useState<number | null>(null)
   const snapshotStageRef = useRef<HTMLDivElement>(null)
@@ -274,49 +272,6 @@ function HomePage() {
       if (hideTimer) window.clearTimeout(hideTimer)
     }
   }, [isSnapshotStageVisible])
-
-  const handleSnapshotImageLoad = (index: number, image: HTMLImageElement) => {
-    const canvas = document.createElement('canvas')
-    const context = canvas.getContext('2d', {willReadFrequently: true})
-    if (!context || image.naturalWidth === 0 || image.naturalHeight === 0) return
-
-    const sampleSize = 24
-    canvas.width = sampleSize
-    canvas.height = sampleSize
-    try {
-      context.drawImage(image, 0, 0, sampleSize, sampleSize)
-    } catch {
-      return
-    }
-
-    let luminanceTotal = 0
-    let redTotal = 0
-    let greenTotal = 0
-    let blueTotal = 0
-    let pixels: Uint8ClampedArray
-    try {
-      pixels = context.getImageData(0, 0, sampleSize, sampleSize).data
-    } catch {
-      return
-    }
-    let alphaTotal = 0
-    for (let pixel = 0; pixel < pixels.length; pixel += 4) {
-      const alpha = pixels[pixel + 3] / 255
-      if (alpha === 0) continue
-      alphaTotal += alpha
-      redTotal += pixels[pixel] * alpha
-      greenTotal += pixels[pixel + 1] * alpha
-      blueTotal += pixels[pixel + 2] * alpha
-      const luminance = (0.2126 * pixels[pixel] + 0.7152 * pixels[pixel + 1] + 0.0722 * pixels[pixel + 2]) / 255
-      luminanceTotal += luminance * alpha
-    }
-
-    if (alphaTotal === 0) return
-    const averageLuminance = luminanceTotal / alphaTotal
-    const averageColor = `rgb(${Math.round(redTotal / alphaTotal)}, ${Math.round(greenTotal / alphaTotal)}, ${Math.round(blueTotal / alphaTotal)})`
-    setSnapshotTextColors((currentColors) => ({...currentColors, [index]: averageLuminance > 0.58 ? 'dark' : 'light'}))
-    setSnapshotBackgrounds((currentBackgrounds) => ({...currentBackgrounds, [index]: averageColor}))
-  }
 
   useEffect(() => {
     const dialog = snapshotDialogRef.current
@@ -425,14 +380,8 @@ function HomePage() {
                   className={`home-snapshot-media ${activeSnapshotIndexes[index] ? 'is-revealed' : ''}`}
                   aria-label={`Open ${snapshot.name} details`}
                   onClick={() => setSelectedSnapshotIndex(index)}
-                  style={{
-                    '--snapshot-text-color': snapshotTextColors[index] === 'dark' ? '#171814' : '#f8f6ef',
-                    '--snapshot-bg': snapshotBackgrounds[index] || 'var(--surface)',
-                  } as CSSProperties}
                 >
-                  {snapshot.mediaUrl && <img src={snapshot.mediaUrl} alt="" aria-hidden="true" loading="lazy"
-                                             onLoad={(event) => handleSnapshotImageLoad(index, event.currentTarget)}/>}
-                  <span className="home-snapshot-number">{String(index + 1).padStart(2, '0')}</span>
+                  {snapshot.mediaUrl && <img src={snapshot.mediaUrl} alt="" aria-hidden="true" loading="lazy"/>}
                   <div className="home-snapshot-reveal">
                     <strong>{snapshot.name}</strong>
                     <span>{snapshot.phrase}</span>

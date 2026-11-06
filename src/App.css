@@ -2900,14 +2900,13 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   display: flex;
   align-items: flex-end;
   padding: 1rem;
-  background: linear-gradient(135deg, color-mix(in srgb, var(--snapshot-bg, var(--surface)) 88%, var(--color-accent-earth) 12%), color-mix(in srgb, var(--snapshot-bg, var(--surface)) 68%, var(--color-bg-base)));
+  background: var(--surface);
   cursor: pointer;
   border: 0;
   appearance: none;
   -webkit-appearance: none;
   font: inherit;
   text-align: left;
-  transition: background-color .2s ease;
 }
 
 .home-snapshot-media > img {
@@ -2918,64 +2917,42 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   height: 100%;
   object-fit: contain;
   filter: saturate(.78);
+  transition: opacity .4s ease, filter .4s ease;
 }
 
-.home-snapshot-2 .home-snapshot-media > img,
-.home-snapshot-3 .home-snapshot-media > img,
-.home-snapshot-4 .home-snapshot-media > img {
-  object-fit: cover;
-  transform: scale(1.02);
-}
-
+/* Scrim: now ABOVE the image (z-index 1). Theme tokens only, so contrast is predictable. */
+/* Idle: light fade at the bottom */
 .home-snapshot-media::before {
   content: '';
   position: absolute;
   inset: 0;
-  z-index: 0;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--snapshot-bg, var(--color-bg-base)) 8%, transparent), color-mix(in srgb, var(--snapshot-bg, var(--color-bg-base)) 78%, transparent));
+  z-index: 1;
+  background: linear-gradient(180deg, transparent 40%, rgba(23, 24, 20, .45));
   pointer-events: none;
+  transition: background .4s ease, backdrop-filter .4s ease;
 }
 
-.home-snapshot-media::after {
-  content: '';
-  position: absolute;
-  inset: .7rem;
-  border: 1px solid color-mix(in srgb, var(--color-accent-warm-text) 38%, transparent);
-  pointer-events: none;
-}
-
-.home-snapshot-media:hover,
-.home-snapshot-media:focus-visible {
-  background-color: color-mix(in srgb, var(--color-accent-earth) 26%, var(--surface));
+/* Revealed: dark scrim, so light text works in both themes */
+.home-snapshot-media.is-revealed > img {
+  opacity: .3;
+  filter: saturate(.5) blur(2px);
 }
 
 .home-snapshot-media.is-revealed::before {
-  background: color-mix(in srgb, #f8f6ef 82%, var(--snapshot-bg, var(--surface)) 18%);
-}
-
-.home-snapshot-media.is-revealed .home-snapshot-number {
-  color: #171814;
-}
-
-.home-snapshot-number {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
-  z-index: 1;
-  font: .68rem 'DM Mono', monospace;
-  color: var(--color-accent-warm-text);
+  background: rgba(23, 24, 20, .88);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .home-snapshot-reveal {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   display: grid;
   gap: .5rem;
   max-width: 24ch;
   transform: translateY(1.3rem);
-  color: var(--snapshot-text-color, var(--text));
+  color: #f8f6ef;
   opacity: 0;
-  text-shadow: 0 1px 14px color-mix(in srgb, var(--snapshot-text-color, var(--text)) 22%, transparent);
   transition: transform .6s ease, opacity .4s ease;
 }
 
@@ -2984,24 +2961,28 @@ html[data-debug-claims] .claim[data-claim-status="needs-explanation"] {
   font-size: clamp(1.1rem, 2vw, 1.8rem);
   font-weight: 500;
   line-height: 1.05;
+  color: #f8f6ef;
 }
 
 .home-snapshot-reveal span {
-  color: var(--snapshot-text-color, var(--color-text-secondary));
+  color: #e9e6da;   /* light description */
   font-size: .82rem;
   line-height: 1.45;
-  opacity: .84;
 }
 
 .home-snapshot-media.is-revealed .home-snapshot-reveal {
   transform: translateY(0);
   opacity: 1;
-  color: #171814;
-  text-shadow: none;
 }
 
+.home-snapshot-media .home-snapshot-reveal strong {
+  color: #f8f6ef;
+}
+
+.home-snapshot-media .home-snapshot-reveal span,
 .home-snapshot-media.is-revealed .home-snapshot-reveal span {
-  color: #171814;
+  color: #e9e6da;
+  opacity: 1;
 }
 
 .snapshot-dialog {
