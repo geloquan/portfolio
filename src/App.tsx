@@ -96,6 +96,23 @@ function HomePage() {
   const [activeSnapshotIndexes, setActiveSnapshotIndexes] = useState<Record<number, boolean>>({})
   const [snapshotTextColors, setSnapshotTextColors] = useState<Record<number, 'light' | 'dark'>>({})
   const [snapshotBackgrounds, setSnapshotBackgrounds] = useState<Record<number, string>>({})
+  const [isSnapshotStageVisible, setIsSnapshotStageVisible] = useState(false)
+  const snapshotStageRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const snapshotStage = snapshotStageRef.current
+    if (!snapshotStage) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setIsSnapshotStageVisible(true)
+        observer.disconnect()
+      }
+    }, {threshold: 0.2})
+
+    observer.observe(snapshotStage)
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     let hideTimer: number | undefined
@@ -239,7 +256,7 @@ function HomePage() {
             <p className="home-section-lead">A private, low-cost software system for small and medium businesses, virtual assistants, and anyone who wants to turn a messy workflow into a dependable one.</p>
           </div>
           <img className="home-chopsticks-doodle" src={homeDoodleChopsticks} alt="" aria-hidden="true" width="400" height="400" />
-          <div className="home-snapshot-grid" aria-label="Flagship software capabilities">
+          <div ref={snapshotStageRef} className={`home-snapshot-grid ${isSnapshotStageVisible ? 'is-visible' : ''}`} aria-label="Flagship software capabilities">
             {homeSnapshots.map((snapshot, index) => (
               <figure className={`home-snapshot home-snapshot-${index + 1}`} key={snapshot.name}>
                 <div
